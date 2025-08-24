@@ -1,0 +1,43 @@
+models:
+  Product:
+    name: string
+    description: longText
+    status: string
+    category_id: unsignedInteger
+    relationships:
+      belongsToMany: Port, Tag, ReservationItem
+      belongsTo: Category
+
+  Port:
+    name: string
+    gender: enum:male,female
+    relationships:
+      belongsToMany: Product
+
+  Category:
+    name: string
+    relationships:
+      hasMany: Product
+
+  Tag:
+    name: string
+    relationships:
+      belongsToMany: Product
+
+  Reservation:
+    name: string
+    email: string
+    start_date: datetime
+    end_date: datetime
+    note: string
+    is_active: bool default:false
+    is_paid: bool default:false
+    relationships:
+      hasMany: ReservationItem
+
+  ReservationItem:
+    amount: integer
+    reservation_id: unsignedInteger
+    relationships:
+      belongsToMany: Product
+      belongsTo: Reservation
