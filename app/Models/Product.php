@@ -17,6 +17,19 @@ class Product extends Model implements HasMedia
     use HasFactory;
     use InteractsWithMedia;
 
+    public function bundleItems(): BelongsToMany
+    {
+        // Products that compose this product as a bundle (child products with quantities)
+        return $this->belongsToMany(Product::class, 'bundle_items', 'bundle_product_id', 'product_id')
+            ->withPivot('amount');
+    }
+
+    public function isBundle(): bool
+    {
+        // No eager count here to keep minimal change; safe lazy count
+        return $this->bundleItems()->count() > 0;
+    }
+
     /**
      * The attributes that are mass assignable.
      *

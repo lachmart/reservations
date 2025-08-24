@@ -21,6 +21,7 @@ class Reservation extends Model
         'phone',
         'start_date',
         'end_date',
+        'price',
         'note',
         'is_active',
         'is_paid',
@@ -35,6 +36,7 @@ class Reservation extends Model
         'id' => 'integer',
         'start_date' => 'datetime',
         'end_date' => 'datetime',
+        'price' => 'decimal:2',
         'is_active' => 'boolean',
         'is_paid' => 'boolean',
     ];

@@ -10,6 +10,9 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Infolists\Infolist;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\IconEntry;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -28,16 +31,24 @@ class ReservationResource extends Resource
                 Forms\Components\TextInput::make('email')
                     ->email()
                     ->required(),
+                Forms\Components\TextInput::make('phone')
+                    ->tel()
+                    ->maxLength(50),
                 Forms\Components\DateTimePicker::make('start_date')
-//                    ->native(false)
                     ->required(),
                 Forms\Components\DateTimePicker::make('end_date')
                     ->required(),
+                Forms\Components\TextInput::make('price')
+                    ->label('Price')
+                    ->numeric()
+                    ->minValue(0)
+                    ->suffix('CZK')
+                    ->required(),
                 Forms\Components\TextInput::make('note')
+                    ->maxLength(1000),
+                Forms\Components\Toggle::make('is_active')
                     ->required(),
-                Forms\Components\Toggle::make('active')
-                    ->required(),
-                Forms\Components\Toggle::make('paid')
+                Forms\Components\Toggle::make('is_paid')
                     ->required(),
             ]);
     }
@@ -50,6 +61,8 @@ class ReservationResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('phone')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('start_date')
                     ->dateTime()
                     ->sortable(),
@@ -58,10 +71,13 @@ class ReservationResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('note')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('active')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('paid')
-                    ->searchable(),
+                Tables\Columns\TextColumn::make('price')
+                    ->money('CZK')
+                    ->sortable(),
+                Tables\Columns\IconColumn::make('is_active')
+                    ->boolean(),
+                Tables\Columns\IconColumn::make('is_paid')
+                    ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -72,9 +88,13 @@ class ReservationResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('is_active')
+                    ->options([1 => 'Active', 0 => 'Inactive']),
+                Tables\Filters\SelectFilter::make('is_paid')
+                    ->options([1 => 'Paid', 0 => 'Unpaid']),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -87,7 +107,7 @@ class ReservationResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\ReservationItemsRelationManager::class,
         ];
     }
 
@@ -96,7 +116,24 @@ class ReservationResource extends Resource
         return [
             'index' => Pages\ListReservations::route('/'),
             'create' => Pages\CreateReservation::route('/create'),
+            'view' => Pages\ViewReservation::route('/{record}'),
             'edit' => Pages\EditReservation::route('/{record}/edit'),
         ];
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                TextEntry::make('name'),
+                TextEntry::make('email'),
+                TextEntry::make('phone'),
+                TextEntry::make('start_date')->dateTime(),
+                TextEntry::make('end_date')->dateTime(),
+                TextEntry::make('note'),
+                TextEntry::make('price')->money('CZK'),
+                IconEntry::make('is_active')->boolean(),
+                IconEntry::make('is_paid')->boolean(),
+            ]);
     }
 }

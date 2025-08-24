@@ -85,6 +85,14 @@ class ProductResource extends Resource
                 Tables\Columns\TextColumn::make('status')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('category.name')
+                    ->label('Category')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('price_per_day')
+                    ->label('Price per day')
+                    ->money('CZK')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('stock')
+                    ->label('Stock')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
@@ -113,6 +121,7 @@ class ProductResource extends Resource
     {
         return [
             RelationManagers\PortsRelationManager::class,
+            RelationManagers\BundleItemsRelationManager::class,
         ];
     }
 

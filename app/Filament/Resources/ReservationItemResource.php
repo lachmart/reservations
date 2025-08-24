@@ -23,16 +23,18 @@ class ReservationItemResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('amount')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\Toggle::make('active')
-                    ->required(),
-                Forms\Components\Toggle::make('paid')
+                Forms\Components\Select::make('product_id')
+                    ->relationship('product', 'name')
+                    ->searchable()
                     ->required(),
                 Forms\Components\Select::make('reservation_id')
                     ->relationship('reservation', 'name')
+                    ->searchable()
                     ->required(),
+                Forms\Components\TextInput::make('amount')
+                    ->required()
+                    ->numeric()
+                    ->minValue(1),
             ]);
     }
 
@@ -40,14 +42,13 @@ class ReservationItemResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('amount')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\IconColumn::make('active')
-                    ->boolean(),
-                Tables\Columns\IconColumn::make('paid')
-                    ->boolean(),
+                Tables\Columns\TextColumn::make('product.name')
+                    ->label('Product')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('reservation.name')
+                    ->label('Reservation')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('amount')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
