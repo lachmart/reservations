@@ -23,11 +23,55 @@
             localStorage.setItem('theme', isDark ? 'dark' : 'light');
         }
     </script>
+    <script>
+        // Provide Axios fallback if Vite bundle didn't load yet
+        (function(){
+            if (!window.axios) {
+                try {
+                    var s = document.createElement('script');
+                    s.src = 'https://cdn.jsdelivr.net/npm/axios@1.7.7/dist/axios.min.js';
+                    s.async = true;
+                    s.onload = function(){
+                        try {
+                            const token = document.head.querySelector('meta[name="csrf-token"]');
+                            if (window.axios) {
+                                window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+                                if (token) window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
+                            }
+                        } catch(_) {}
+                    };
+                    document.head.appendChild(s);
+                } catch(_) {}
+            }
+        })();
+    </script>
+    <script>
+        // Global toast helper to unify notifications across pages
+        window.showToast = function(message, isError = false){
+            try {
+                let box = document.getElementById('toast-box');
+                if (!box) {
+                    box = document.createElement('div');
+                    box.id = 'toast-box';
+                    box.style.position = 'fixed';
+                    box.style.top = '1rem';
+                    box.style.right = '1rem';
+                    box.style.zIndex = '9999';
+                    document.body.appendChild(box);
+                }
+                const toast = document.createElement('div');
+                toast.className = `mb-2 rounded border px-4 py-2 text-sm ${isError ? 'border-red-300 bg-red-50 text-red-800' : 'border-green-300 bg-green-50 text-green-800'} dark:${isError ? 'border-red-700/60 bg-red-900/30 text-red-200' : 'border-green-700/60 bg-green-900/30 text-green-200'}`;
+                toast.textContent = message;
+                box.appendChild(toast);
+                setTimeout(() => { toast.remove(); if (box.childElementCount === 0) box.remove(); }, 3000);
+            } catch (_) {}
+        };
+    </script>
 </head>
 <body class="h-full min-h-screen bg-slate-50 text-slate-900 dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 dark:text-slate-200">
     <div class="relative min-h-screen">
         <div aria-hidden="true" class="pointer-events-none fixed inset-0 opacity-30 dark:opacity-60">
-            <div class="absolute -top-24 -left-24 size-72 rounded-full bg-indigo-500 blur-3xl"></div>
+            <div class="absolute -top-24 -left-24 size-72 rounded-full bg-emerald-500 blur-3xl"></div>
             <div class="absolute top-1/2 -right-24 size-72 rounded-full bg-fuchsia-500 blur-3xl"></div>
         </div>
 
@@ -44,7 +88,7 @@
                     <a href="{{ route('cart.index') }}" class="nav-link inline-flex items-center gap-2" id="nav-cart-link">
                         <span>Košík</span>
                         @if($__cartCount > 0)
-                            <span class="ml-1 inline-flex items-center justify-center rounded-full bg-indigo-600 px-2 py-0.5 text-xs font-semibold text-white" data-cart-count>
+                            <span class="ml-1 inline-flex items-center justify-center rounded-full bg-emerald-600 px-2 py-0.5 text-xs font-semibold text-white" data-cart-count>
                                 {{ $__cartCount }}
                             </span>
                         @endif
@@ -55,9 +99,9 @@
 
         <main class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
             @if(session('success'))
-                <div class="mb-4 rounded border border-green-300/60 bg-green-50 px-4 py-3 text-sm text-green-800 dark:border-green-700/60 dark:bg-green-900/30 dark:text-green-200">
-                    {{ session('success') }}
-                </div>
+                <script>
+                    try { if (window.showToast) window.showToast(@json(session('success')), false); } catch(_) {}
+                </script>
             @endif
             @if($errors->any())
                 <div class="mb-4 rounded border border-red-300/60 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-700/60 dark:bg-red-900/30 dark:text-red-200">
@@ -76,7 +120,7 @@
                 <span>&copy; {{ date('Y') }} Rezervace</span>
                 <div class="flex items-center gap-2">
                     <span class="hidden sm:block">Vytvořeno pomocí Laravelu a Tailwindu</span>
-                    <button type="button" onclick="toggleTheme()" class="ml-2 inline-flex items-center gap-2 rounded-md border border-slate-300/60 dark:border-slate-700/60 bg-white/60 dark:bg-slate-800/60 px-3 py-1.5 text-sm text-slate-700 dark:text-slate-200 hover:bg-white/90 hover:dark:bg-slate-800/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500">
+                    <button type="button" onclick="toggleTheme()" class="ml-2 inline-flex items-center gap-2 rounded-md border border-slate-300/60 dark:border-slate-700/60 bg-white/60 dark:bg-slate-800/60 px-3 py-1.5 text-sm text-slate-700 dark:text-slate-200 hover:bg-white/90 hover:dark:bg-slate-800/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500">
                         <svg class="size-4 hidden dark:block" viewBox="0 0 24 24" fill="currentColor"><path d="M21.64 13.65A9 9 0 1 1 10.35 2.36a7 7 0 1 0 11.29 11.29Z"/></svg>
                         <svg class="size-4 dark:hidden" viewBox="0 0 24 24" fill="currentColor"><path d="M6.76 4.84 4.95 3.03 3.54 4.44l1.82 1.82 1.4-1.41Zm10.48 14.32 1.82 1.82 1.41-1.41-1.82-1.82-1.41 1.41ZM12 5a1 1 0 0 0 1-1V1h-2v3a1 1 0 0 0 1 1Zm0 14a1 1 0 0 0-1 1v3h2v-3a1 1 0 0 0-1-1Zm7-7a1 1 0 0 0 1-1h3V8h-3a1 1 0 0 0-1 1Zm-14 0a1 1 0 0 0-1-1H1v2h3a1 1 0 0 0 1-1Zm10.95-7.05 1.82-1.82-1.41-1.41-1.82 1.82 1.41 1.41ZM6.76 19.16l-1.82 1.82 1.41 1.41 1.82-1.82-1.41-1.41ZM18 12a6 6 0 1 1-12 0 6 6 0 0 1 12 0Z"/></svg>
                         <span class="hidden sm:inline">Téma</span>

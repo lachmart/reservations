@@ -20,3 +20,4 @@ Route::patch('/cart/bundle/{product}', [CartController::class, 'updateBundle'])-
 Route::delete('/cart/bundle/{product}', [CartController::class, 'removeBundle'])->name('cart.removeBundle');
 Route::delete('/cart', [CartController::class, 'clear'])->name('cart.clear');
 Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+Route::get('/thank-you', [CartController::class, 'thankyou'])->name('cart.thankyou');

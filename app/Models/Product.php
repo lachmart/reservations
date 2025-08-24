@@ -17,6 +17,14 @@ class Product extends Model implements HasMedia
     use HasFactory;
     use InteractsWithMedia;
 
+    /**
+     * Scope: only products with positive price and stock.
+     */
+    public function scopeAvailable(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
+    {
+        return $query->where('price_per_day', '>', 0)->where('stock', '>', 0);
+    }
+
     public function bundleItems(): BelongsToMany
     {
         // Products that compose this product as a bundle (child products with quantities)
@@ -24,10 +32,13 @@ class Product extends Model implements HasMedia
             ->withPivot('amount');
     }
 
+    /**
+     * Whether this product is a bundle (has bundle item relations).
+     */
     public function isBundle(): bool
     {
-        // No eager count here to keep minimal change; safe lazy count
-        return $this->bundleItems()->count() > 0;
+        // Use exists() for efficiency (avoids COUNT(*))
+        return $this->bundleItems()->exists();
     }
 
     /**
@@ -76,6 +87,9 @@ class Product extends Model implements HasMedia
         return $this->belongsTo(Category::class);
     }
 
+    /**
+     * Sum of reserved amount overlapping the given date range [start, end].
+     */
     public function reservedAmountBetween(string $start, string $end): int
     {
         return (int) $this->reservationItems()
@@ -86,6 +100,9 @@ class Product extends Model implements HasMedia
             ->sum('amount');
     }
 
+    /**
+     * Calculate available stock for the given date range.
+     */
     public function availableForRange(string $start, string $end): int
     {
         $stock = (int) ($this->stock ?? 0);
@@ -93,15 +110,19 @@ class Product extends Model implements HasMedia
         $available = $stock - $reserved;
         return $available > 0 ? $available : 0;
     }
-//    public function registerMediaConversions(?Media $media = null): void
-//    {
-//        $this
-//            ->addMediaConversion('preview')
-//            ->fit(Fit::Contain, 50, 50)
-//            ->nonQueued();
-//        $this->addMediaConversion('thumb')
-//            ->width(100)  // Resize to 100px width
-//            ->height(100) // Resize to 100px height
-//            ->sharpen(10); // Optional: sharpen the image for clarity
-//    }
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this
+            ->addMediaConversion('preview')
+            ->keepOriginalImageFormat()
+            ->fit(Fit::Contain, 50, 50)
+            ->nonQueued();
+        $this->addMediaConversion('thumb')
+            ->keepOriginalImageFormat()
+            ->width(100)  // Resize to 100px width
+            ->height(100) // Resize to 100px height
+            // Optional: sharpen the image for clarity
+            ->sharpen(10)
+            ->nonQueued();
+    }
 }

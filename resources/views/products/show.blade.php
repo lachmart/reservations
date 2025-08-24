@@ -5,22 +5,135 @@
 @section('content')
     <div class="flex items-center justify-between">
         <div>
-            <a href="{{ route('products.index') }}" class="text-sm text-indigo-600 hover:underline dark:text-indigo-400">← Zpět na produkty</a>
+            <a href="{{ route('products.index') }}" class="text-sm text-emerald-600 hover:underline dark:text-emerald-400">← Zpět na produkty</a>
             <h1 class="mt-2 text-2xl font-bold text-slate-900 dark:text-white">{{ $product->name }}</h1>
         </div>
         <a href="{{ route('cart.index') }}" class="btn-primary">Přejít do košíku</a>
     </div>
 
     <div class="card mt-6 overflow-hidden">
-        <div class="bg-slate-200/70 dark:bg-slate-800/50">
-            @php($media = method_exists($product,'getFirstMediaUrl') ? $product->getFirstMediaUrl() : null)
-            @if(!empty($media))
-                <img src="{{ $media }}" alt="{{ $product->name }}" class="w-full h-80 object-cover">
-            @else
-                <div class="w-full h-64 flex items-center justify-center text-slate-500 dark:text-slate-400">Bez obrázku</div>
-            @endif
-        </div>
         <div class="card-body">
+            <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                <div>
+                    @php($galleryItems = method_exists($product,'getMedia') ? $product->getMedia('product-images') : collect())
+                    @php($avatarUrl = method_exists($product,'getFirstMediaUrl') ? $product->getFirstMediaUrl('avatar') : null)
+                    @php($fallbackAny = method_exists($product,'getFirstMediaUrl') ? $product->getFirstMediaUrl() : null)
+                    @php($galleryFirstUrl = ($galleryItems && $galleryItems->count() > 0) ? ($galleryItems->first()?->getUrl()) : null)
+                    @php($mainUrl = $avatarUrl ?: ($galleryFirstUrl ?: $fallbackAny))
+                    @if(!empty($mainUrl))
+                        <div class="mx-auto max-w-lg lg:max-w-xl">
+                            <div id="product-image-viewport" class="overflow-hidden">
+                                <img id="product-main-image" src="{{ $mainUrl }}" alt="{{ $product->name }}" class="block w-full h-auto max-h-[420px] object-contain rounded transition-transform duration-300 ease-out cursor-default">
+                            </div>
+                            @if($galleryItems && $galleryItems->count() > 0)
+                                <div id="product-thumbnails" class="mt-3 flex gap-2 overflow-x-auto">
+                                    @foreach($galleryItems as $m)
+                                        <button type="button" class="shrink-0 rounded-md p-0.5 border border-transparent bg-white/60 dark:bg-slate-800/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900" data-full-url="{{ $m->getUrl() }}">
+                                            <img src="{{ $m->getUrl('preview') }}" alt="{{ $product->name }} thumbnail" class="block h-16 w-16 rounded object-cover">
+                                        </button>
+                                    @endforeach
+                                </div>
+                                <script>
+                                    (function(){
+                                        const mainImg = document.getElementById('product-main-image');
+                                        if (!mainImg) return;
+                                        const viewport = document.getElementById('product-image-viewport') || mainImg.parentElement;
+
+                                        // --- 1:1 Zoom within container ---
+                                        let isHovering = false;
+                                        let pointerInside = false;
+                                        let lastX = 50; // last known cursor X inside container in %
+                                        let lastY = 50; // last known cursor Y inside container in %
+                                        let zoomScale = 1;
+
+                                        function computeZoomScale() {
+                                            // natural width vs current displayed width
+                                            const nw = mainImg.naturalWidth || 0;
+                                            const cw = mainImg.clientWidth || 0;
+                                            if (!nw || !cw) return 1;
+                                            // We want to zoom to 100% (natural size) but not beyond
+                                            return Math.max(1, nw / cw);
+                                        }
+
+                                        function applyZoom(scale) {
+                                            mainImg.style.transform = `scale(${scale})`;
+                                        }
+
+                                        function setOriginFromEvent(e) {
+                                            const rect = viewport.getBoundingClientRect();
+                                            const x = Math.min(100, Math.max(0, ((e.clientX - rect.left) / rect.width) * 100));
+                                            const y = Math.min(100, Math.max(0, ((e.clientY - rect.top) / rect.height) * 100));
+                                            lastX = x; lastY = y;
+                                            mainImg.style.transformOrigin = `${x}% ${y}%`;
+                                        }
+
+                                        function onEnter(e) {
+                                            pointerInside = true;
+                                            zoomScale = computeZoomScale();
+                                            isHovering = true;
+                                            if (e) setOriginFromEvent(e);
+                                            applyZoom(zoomScale);
+                                        }
+
+                                        function onLeave() {
+                                            pointerInside = false;
+                                            isHovering = false;
+                                            mainImg.style.transformOrigin = 'center center';
+                                            applyZoom(1);
+                                        }
+
+                                        function onMove(e) {
+                                            // Track last known pointer position always
+                                            const rect = viewport.getBoundingClientRect();
+                                            lastX = Math.min(100, Math.max(0, ((e.clientX - rect.left) / rect.width) * 100));
+                                            lastY = Math.min(100, Math.max(0, ((e.clientY - rect.top) / rect.height) * 100));
+                                            pointerInside = true;
+                                            if (!isHovering) return;
+                                            mainImg.style.transformOrigin = `${lastX}% ${lastY}%`;
+                                        }
+
+                                        viewport.addEventListener('mouseenter', (e) => onEnter(e));
+                                        viewport.addEventListener('mouseleave', onLeave);
+                                        viewport.addEventListener('mousemove', onMove);
+
+                                        // Recompute on image load (e.g., after switching thumbnails)
+                                        mainImg.addEventListener('load', () => {
+                                            // Reset state for new image
+                                            isHovering = false;
+                                            mainImg.style.transformOrigin = 'center center';
+                                            applyZoom(1);
+                                            // If pointer is still inside, immediately re-apply zoom at last position
+                                            if (pointerInside) {
+                                                zoomScale = computeZoomScale();
+                                                mainImg.style.transformOrigin = `${lastX}% ${lastY}%`;
+                                                applyZoom(zoomScale);
+                                                isHovering = true;
+                                            }
+                                        });
+
+                                        // --- Gallery switching ---
+                                        const thumbs = document.getElementById('product-thumbnails');
+                                        const buttons = thumbs?.querySelectorAll('button[data-full-url]');
+                                        if (buttons) {
+                                            buttons.forEach(btn => {
+                                                btn.addEventListener('click', () => {
+                                                    const url = btn.getAttribute('data-full-url');
+                                                    if (!url) return;
+                                                    // Reset transform while loading new image
+                                                    onLeave();
+                                                    mainImg.setAttribute('src', url);
+                                                });
+                                            });
+                                        }
+                                    })();
+                                </script>
+                            @endif
+                        </div>
+                    @else
+                        <div class="w-full h-64 flex items-center justify-center text-slate-500 dark:text-slate-400">Bez obrázku</div>
+                    @endif
+                </div>
+                <div>
             <div class="flex flex-wrap items-center gap-2">
                 @if(!empty($product->status))
                     <span class="badge">Stav: {{ ucfirst($product->status) }}</span>
@@ -30,6 +143,7 @@
                 @endif
             </div>
 
+            @php($datesSet = !empty($start) && !empty($end))
             <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
                 <div class="p-3 rounded bg-slate-50 dark:bg-slate-900/30">
                     <div class="text-xs uppercase text-slate-500">Cena za den</div>
@@ -39,18 +153,24 @@
                     <div class="text-xs uppercase text-slate-500">Sklad</div>
                     <div class="text-lg font-semibold text-slate-900 dark:text-white">{{ (int)($product->stock ?? 0) }} ks</div>
                 </div>
-                <div id="availability-box" class="p-3 rounded bg-slate-50 dark:bg-slate-900/30">
+                <div id="availability-box" class="p-3 rounded bg-slate-50 dark:bg-slate-900/30 sm:col-span-3">
                     <div class="text-xs uppercase text-slate-500">Dostupnost (podle termínu)</div>
                     @if(isset($available))
                         <div class="text-lg font-semibold text-slate-900 dark:text-white">{{ $available }} ks</div>
-                        <div class="text-xs text-slate-500">pro termín {{ $start }} → {{ $end }}</div>
+                        <div class="text-xs text-slate-500">pro termín {{ $start ? \Carbon\Carbon::parse($start)->format('d.m.y H:i') : '' }} → {{ $end ? \Carbon\Carbon::parse($end)->format('d.m.y H:i') : '' }}</div>
                     @else
                         <div class="text-sm text-slate-600 dark:text-slate-300">Vyberte termín níže</div>
+                    @endif
+                    @if($datesSet)
+                        <div class="mt-2">
+                            <button id="toggle-date-inputs" type="button" class="btn-secondary text-xs px-2 py-1">Změnit termín</button>
+                        </div>
                     @endif
                 </div>
             </div>
 
-            <form id="product-availability-form" method="get" action="{{ route('products.show', $product) }}" class="mt-4 flex flex-wrap items-end gap-3">
+
+            <form id="product-availability-form" method="get" action="{{ route('products.show', $product) }}" class="mt-4 flex flex-wrap items-end gap-3 {{ $datesSet ? 'hidden' : '' }}">
                 <div>
                     <label for="start_date" class="block text-xs text-slate-500">Od</label>
                     <input id="start_date" type="datetime-local" name="start_date" value="{{ old('start_date', $start) }}" class="input">
@@ -71,6 +191,17 @@
                     const end = form.querySelector('#end_date');
                     const availabilityBox = document.getElementById('availability-box');
                     const availabilityUrlBase = form.getAttribute('action');
+
+                    const toggleBtn = document.getElementById('toggle-date-inputs');
+                    if (toggleBtn) {
+                        toggleBtn.addEventListener('click', function(){
+                            form.classList.remove('hidden');
+                            toggleBtn.classList.add('hidden');
+                            // focus the first input for convenience
+                            const first = form.querySelector('#start_date');
+                            if (first) first.focus();
+                        });
+                    }
 
                     function bothFilled(){ return start && start.value && end && end.value; }
 
@@ -151,7 +282,7 @@
                             if (!badge) {
                                 badge = document.createElement('span');
                                 badge.setAttribute('data-cart-count','');
-                                badge.className = 'ml-1 inline-flex items-center justify-center rounded-full bg-indigo-600 px-2 py-0.5 text-xs font-semibold text-white';
+                                badge.className = 'ml-1 inline-flex items-center justify-center rounded-full bg-emerald-600 px-2 py-0.5 text-xs font-semibold text-white';
                                 link.appendChild(badge);
                             }
                             badge.textContent = String(count);
@@ -181,6 +312,9 @@
                     });
                 })();
             </script>
+
+                </div>
+            </div>
 
             <p class="mt-4 text-slate-700 dark:text-slate-300 whitespace-pre-line">{{ $product->description }}</p>
         </div>

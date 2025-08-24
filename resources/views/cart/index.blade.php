@@ -5,7 +5,7 @@
 @section('content')
     <div class="flex items-center justify-between">
         <div>
-            <a href="{{ route('products.index') }}" class="text-sm text-indigo-600 hover:underline dark:text-indigo-400">← Pokračovat v prohlížení</a>
+            <a href="{{ route('products.index') }}" class="text-sm text-emerald-600 hover:underline dark:text-emerald-400">← Pokračovat v prohlížení</a>
             <h1 class="mt-2 text-2xl font-bold text-slate-900 dark:text-white">Košík</h1>
         </div>
         @if(count($items) > 0)
@@ -38,19 +38,102 @@
                     </form>
                     <script>
                         (function(){
+                            console.log('[cart] inline script running: binding handlers');
                             const cartRoot = document.getElementById('cart-root');
-                            if (!cartRoot) return;
+                            if (!cartRoot) { console.log('[cart] cart-root not found'); return; }
+
+                            async function ajaxUpdateAmount(form){
+                                const url = form.getAttribute('action');
+                                const method = (form.querySelector('input[name="_method"]')?.value || form.getAttribute('method') || 'post').toLowerCase();
+                                const amountInput = form.querySelector('input[name="amount"]');
+                                const payload = { amount: amountInput ? parseInt(amountInput.value || '1', 10) : 1 };
+                                try {
+                                    const resp = await axios({ url, method: method === 'patch' ? 'patch' : method, data: payload, headers: { 'Accept': 'application/json' } });
+                                    if (resp?.data) {
+                                        const d = resp.data;
+                                        // Update input value with possibly clamped amount
+                                        if (amountInput) {
+                                            if (d.product_is_bundle && typeof d.bundle_amount !== 'undefined') {
+                                                amountInput.value = d.bundle_amount;
+                                            } else if (!d.product_is_bundle && typeof d.standalone_amount !== 'undefined') {
+                                                amountInput.value = d.standalone_amount;
+                                            }
+                                        }
+                                        // Update nav cart count
+                                        const nav = document.getElementById('nav-cart-link');
+                                        if (nav) {
+                                            let badge = nav.querySelector('[data-cart-count]');
+                                            if (!badge) {
+                                                if (d.cart_count > 0) {
+                                                    badge = document.createElement('span');
+                                                    badge.setAttribute('data-cart-count', '');
+                                                    badge.className = 'ml-1 inline-flex items-center justify-center rounded-full bg-emerald-600 px-2 py-0.5 text-xs font-semibold text-white';
+                                                    nav.appendChild(badge);
+                                                }
+                                            }
+                                            if (badge) {
+                                                if (d.cart_count > 0) {
+                                                    badge.textContent = String(d.cart_count);
+                                                } else {
+                                                    badge.remove();
+                                                }
+                                            }
+                                        }
+                                        // Reload cart-root fragment to refresh availability/subtotals
+                                        await refreshCartRoot();
+                                        window.showToast && window.showToast(d.message || 'Množství bylo aktualizováno.');
+                                    }
+                                } catch (e) {
+                                    window.showToast && window.showToast('Nepodařilo se aktualizovat množství.', true);
+                                }
+                            }
+
+                            async function refreshCartRoot(){
+                                const res = await fetch(window.location.href, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+                                const html = await res.text();
+                                const parser = new DOMParser();
+                                const doc = parser.parseFromString(html, 'text/html');
+                                const newRoot = doc.getElementById('cart-root');
+                                if (newRoot) {
+                                    cartRoot.innerHTML = newRoot.innerHTML;
+                                    // rebind for newly injected nodes
+                                    bindAutoSubmit(cartRoot);
+                                    bindDateChange();
+                                }
+                            }
 
                             function bindAutoSubmit(root){
                                 const forms = root.querySelectorAll('form.auto-submit-on-change');
                                 forms.forEach(form => {
                                     const input = form.querySelector('input[type="number"][name="amount"]');
                                     if (input && !input.__autoSubmitBound) {
-                                        input.addEventListener('change', () => form.submit());
+                                        let timer = null;
+                                        let lastValue = input.value;
+                                        let inFlight = false;
+                                        const trigger = () => {
+                                            if (inFlight) return; // avoid piling up
+                                            inFlight = true;
+                                            ajaxUpdateAmount(form).finally(() => { inFlight = false; });
+                                        };
+                                        input.addEventListener('input', (ev) => {
+                                            ev.preventDefault();
+                                            const v = input.value;
+                                            if (v === lastValue) return;
+                                            lastValue = v;
+                                            if (timer) clearTimeout(timer);
+                                            timer = setTimeout(trigger, 400);
+                                        });
+                                        input.addEventListener('change', (ev) => {
+                                            ev.preventDefault();
+                                            if (timer) { clearTimeout(timer); timer = null; }
+                                            trigger();
+                                        });
+                                        form.addEventListener('submit', (ev) => { ev.preventDefault(); if (timer) { clearTimeout(timer); timer = null; } trigger(); });
                                         input.__autoSubmitBound = true;
                                     }
                                 });
                             }
+
 
                             async function postDatesAndRefresh(){
                                 const form = document.getElementById('cart-dates-form');
@@ -85,13 +168,13 @@
                                 if (end && !end.__dateBound) { end.addEventListener('change', handler); end.__dateBound = true; }
                             }
 
-                            // initial bind
-                            bindAutoSubmit(cartRoot);
-                            bindDateChange();
+                            // initial bind after full DOM is ready to ensure item forms exist
+                            const __cartInit = () => { bindAutoSubmit(cartRoot); bindDateChange(); };
+                            if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', __cartInit); } else { __cartInit(); }
                         })();
                     </script>
                     @if(!empty($start) && !empty($end) && !empty($days))
-                        <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Zvolený termín: {{ $start }} → {{ $end }} ({{ $days }} {{ $days == 1 ? 'den' : 'dny' }})</p>
+                        <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Zvolený termín: {{ $start ? \Carbon\Carbon::parse($start)->format('d.m.y H:i') : '' }} → {{ $end ? \Carbon\Carbon::parse($end)->format('d.m.y H:i') : '' }} ({{ $days }} {{ $days == 1 ? 'den' : 'dny' }})</p>
                     @endif
                     @error('start_date')<p class="text-sm text-red-600 mt-2">{{ $message }}</p>@enderror
                     @error('end_date')<p class="text-sm text-red-600 mt-1">{{ $message }}</p>@enderror
@@ -111,7 +194,7 @@
                                         <div class="font-medium text-slate-900 dark:text-white">
                                             {{ $row['product']->name }}
                                             @if(($row['type'] ?? 'product') === 'bundle')
-                                                <span class="ml-2 text-xs inline-flex items-center px-2 py-0.5 rounded bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300">Balíček</span>
+                                                <span class="ml-2 text-xs inline-flex items-center px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300">Balíček</span>
                                             @endif
                                         </div>
                                         <div class="text-sm text-slate-600 dark:text-slate-300">Cena/den: {{ number_format((float)($row['price_per_day'] ?? ($row['product']->price_per_day ?? 0)), 2, ',', ' ') }} Kč</div>
@@ -167,20 +250,6 @@
                     @endif
                 </div>
             </div>
-            <script>
-                (function(){
-                    // Auto-submit any form with class auto-submit-on-change when its number input changes
-                    const forms = document.querySelectorAll('form.auto-submit-on-change');
-                    forms.forEach(form => {
-                        const input = form.querySelector('input[type="number"][name="amount"]');
-                        if (input) {
-                            input.addEventListener('change', () => {
-                                form.submit();
-                            });
-                        }
-                    });
-                })();
-            </script>
         </div>
 
         <div class="lg:col-span-1">

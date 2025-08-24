@@ -127,16 +127,6 @@
             });
 
             // Intercept pagination links inside the list
-            function showToast(message){
-                try {
-                    const toast = document.createElement('div');
-                    toast.textContent = message;
-                    toast.className = 'fixed top-4 right-4 z-50 rounded border border-green-300/60 bg-green-50 px-4 py-2 text-sm text-green-800 shadow dark:border-green-700/60 dark:bg-green-900/30 dark:text-green-200';
-                    document.body.appendChild(toast);
-                    setTimeout(()=>{ toast.remove(); }, 2000);
-                } catch(_) {}
-            }
-
             function updateHeaderCartCount(count){
                 const link = document.getElementById('nav-cart-link');
                 if (!link) return;
@@ -145,7 +135,7 @@
                     if (!badge) {
                         badge = document.createElement('span');
                         badge.setAttribute('data-cart-count','');
-                        badge.className = 'ml-1 inline-flex items-center justify-center rounded-full bg-indigo-600 px-2 py-0.5 text-xs font-semibold text-white';
+                        badge.className = 'ml-1 inline-flex items-center justify-center rounded-full bg-emerald-600 px-2 py-0.5 text-xs font-semibold text-white';
                         link.appendChild(badge);
                     }
                     badge.textContent = String(count);
@@ -176,9 +166,9 @@
                                     else row.classList.add('hidden');
                                 }
                             }
-                            showToast(data.message || 'Přidáno do košíku');
+                            window.showToast && window.showToast(data.message || 'Přidáno do košíku');
                         } catch (err) {
-                            showToast((err?.response?.data?.message) || 'Nelze přidat do košíku');
+                            window.showToast && window.showToast((err?.response?.data?.message) || 'Nelze přidat do košíku', true);
                         }
                     });
                     form.__boundAddToCart = true;

@@ -3,11 +3,11 @@
     @forelse($products as $product)
         @php($isBundle = method_exists($product,'isBundle') && $product->isBundle())
         @php($initialCount = (int) ($isBundle ? (($__cart['bundles'][$product->id] ?? 0)) : (($__cart['items'][$product->id] ?? 0))))
-        <div class="card overflow-hidden hover:ring-2 hover:ring-indigo-400/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500" data-product-card data-product-id="{{ $product->id }}">
+        <div class="card overflow-hidden hover:ring-2 hover:ring-emerald-400/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500" data-product-card data-product-id="{{ $product->id }}">
             <a href="{{ route('products.show', $product) }}" class="block bg-slate-200/70 dark:bg-slate-800/50">
                 @php($media = method_exists($product,'getFirstMediaUrl') ? $product->getFirstMediaUrl() : null)
                 @if(!empty($media))
-                    <img src="{{ $media }}" alt="{{ $product->name }}" class="w-full h-48 object-cover">
+                    <img src="{{ $media }}" alt="{{ $product->name }}" class="w-full h-48 object-contain">
                 @else
                     <div class="w-full h-48 flex items-center justify-center text-slate-500 dark:text-slate-400">Bez obrázku</div>
                 @endif

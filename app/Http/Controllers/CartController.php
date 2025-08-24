@@ -10,6 +10,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ReservationCreated;
 
 class CartController extends Controller
 {
@@ -250,23 +252,32 @@ class CartController extends Controller
         return redirect()->back()->with('success', 'Položka byla přidána do košíku.');
     }
 
-    public function update(Request $request, Product $product): RedirectResponse
+    public function update(Request $request, Product $product): RedirectResponse|\Illuminate\Http\JsonResponse
     {
         $data = $request->validate([
             'amount' => ['required', 'integer', 'min:1'],
         ]);
         $cart = $this->getCart($request);
         if (!isset($cart['items'][$product->id])) {
+            if ($request->expectsJson()) {
+                return response()->json(['status' => 'error', 'message' => 'Položka není v košíku.'], 404);
+            }
             return back()->withErrors(['item' => 'Položka není v košíku.']);
         }
         // The provided amount is intended to update only the standalone quantity (excluding bundle contributions)
         $newStandalone = (int) $data['amount'];
         $bundleContrib = $this->bundleContributionForProduct($product, $cart);
         $desiredTotal = $bundleContrib + $newStandalone;
+
+        $message = 'Množství bylo aktualizováno.';
         if (!empty($cart['start_date']) && !empty($cart['end_date'])) {
             $available = $product->availableForRange($cart['start_date'], $cart['end_date']);
             if ($desiredTotal > $available) {
-                return back()->withErrors(['amount' => 'Požadované množství není pro zadaný termín dostupné.'])->withInput();
+                // clamp to maximum available standalone amount
+                $maxStandalone = max(0, (int) $available - (int) $bundleContrib);
+                $newStandalone = $maxStandalone;
+                $desiredTotal = $bundleContrib + $newStandalone;
+                $message = 'Požadované množství nebylo dostupné, proto bylo upraveno na maximálně dostupné.';
             }
         }
         if ($desiredTotal > 0) {
@@ -275,10 +286,25 @@ class CartController extends Controller
             unset($cart['items'][$product->id]);
         }
         $this->putCart($request, $cart);
-        return back()->with('success', 'Množství bylo aktualizováno.');
+
+        if ($request->expectsJson()) {
+            $totalCount = (int) array_sum((array) ($cart['items'] ?? []));
+            return response()->json([
+                'status' => 'ok',
+                'message' => $message,
+                'product_id' => (int) $product->id,
+                'product_is_bundle' => false,
+                // amounts for UI
+                'standalone_amount' => (int) $newStandalone,
+                'total_amount' => (int) ($cart['items'][$product->id] ?? 0),
+                'cart_count' => $totalCount,
+            ]);
+        }
+
+        return back()->with('success', $message);
     }
 
-    public function updateBundle(Request $request, Product $product): RedirectResponse
+    public function updateBundle(Request $request, Product $product): RedirectResponse|\Illuminate\Http\JsonResponse
     {
         // $product is the bundle product
         $data = $request->validate([
@@ -286,24 +312,36 @@ class CartController extends Controller
         ]);
         $cart = $this->getCart($request);
         if (!isset($cart['bundles'][$product->id])) {
+            if ($request->expectsJson()) {
+                return response()->json(['status' => 'error', 'message' => 'Balíček není v košíku.'], 404);
+            }
             return back()->withErrors(['item' => 'Balíček není v košíku.']);
         }
         $current = (int) $cart['bundles'][$product->id];
-        $newAmount = (int) $data['amount'];
-        $delta = $newAmount - $current; // positive to add more, negative to reduce
+        $requestedAmount = (int) $data['amount'];
+        $message = 'Množství balíčku bylo aktualizováno.';
 
-        if ($delta !== 0) {
-            if ($delta > 0 && !empty($cart['start_date']) && !empty($cart['end_date'])) {
-                // Validate additional components availability
-                foreach ($product->bundleItems as $child) {
-                    $available = $child->availableForRange($cart['start_date'], $cart['end_date']);
-                    $existing = (int) Arr::get($cart['items'], $child->id, 0);
-                    $required = (int) $child->pivot->amount * $delta;
-                    if (($existing + $required) > $available) {
-                        return back()->withErrors(['amount' => 'Požadované množství bundlu není pro zadaný termín dostupné.'])->withInput();
-                    }
-                }
+        // Clamp to max available bundles when dates are set
+        $newAmount = $requestedAmount;
+        if (!empty($cart['start_date']) && !empty($cart['end_date'])) {
+            $maxNew = PHP_INT_MAX;
+            foreach ($product->bundleItems as $child) {
+                $available = $child->availableForRange($cart['start_date'], $cart['end_date']);
+                $existing = (int) Arr::get($cart['items'], $child->id, 0);
+                $perBundle = max(1, (int) $child->pivot->amount);
+                // current items already include current bundle contribution; compute bound for newAmount
+                $maxForChild = $current + intdiv(max(0, $available - $existing), $perBundle);
+                $maxNew = min($maxNew, $maxForChild);
             }
+            if (is_infinite($maxNew)) { $maxNew = $current; }
+            if ($newAmount > $maxNew) {
+                $newAmount = (int) $maxNew;
+                $message = 'Požadované množství bundlu nebylo dostupné, proto bylo upraveno na maximálně dostupné.';
+            }
+        }
+
+        $delta = $newAmount - $current; // positive to add more, negative to reduce
+        if ($delta !== 0) {
             // Apply delta to items
             foreach ($product->bundleItems as $child) {
                 $cart['items'][$child->id] = (int) Arr::get($cart['items'], $child->id, 0) + ((int) $child->pivot->amount * $delta);
@@ -319,7 +357,20 @@ class CartController extends Controller
             unset($cart['bundles'][$product->id]);
         }
         $this->putCart($request, $cart);
-        return back()->with('success', 'Množství balíčku bylo aktualizováno.');
+
+        if ($request->expectsJson()) {
+            $totalCount = (int) array_sum((array) ($cart['items'] ?? []));
+            return response()->json([
+                'status' => 'ok',
+                'message' => $message,
+                'product_id' => (int) $product->id,
+                'product_is_bundle' => true,
+                'bundle_amount' => (int) ($cart['bundles'][$product->id] ?? 0),
+                'cart_count' => $totalCount,
+            ]);
+        }
+
+        return back()->with('success', $message);
     }
 
     public function remove(Request $request, Product $product): RedirectResponse
@@ -367,6 +418,11 @@ class CartController extends Controller
         return back()->with('success', 'Košík byl vyprázdněn.');
     }
 
+    public function thankyou(): View
+    {
+        return view('cart.thankyou');
+    }
+
     public function checkout(Request $request): RedirectResponse
     {
         $cart = $this->getCart($request);
@@ -381,6 +437,17 @@ class CartController extends Controller
         ]);
         if (empty($cart['start_date']) || empty($cart['end_date'])) {
             return back()->withErrors(['dates' => 'Nejprve nastavte termín rezervace.']);
+        }
+
+        // Validate dates order (end must be after start)
+        try {
+            $start = \Carbon\Carbon::parse($cart['start_date']);
+            $end = \Carbon\Carbon::parse($cart['end_date']);
+            if ($end->lessThanOrEqualTo($start)) {
+                return back()->withErrors(['dates' => 'Koncové datum musí být později než počáteční datum.'])->withInput();
+            }
+        } catch (\Throwable $e) {
+            return back()->withErrors(['dates' => 'Neplatný termín rezervace.'])->withInput();
         }
 
         // Validate availability for all items atomically and create reservation
@@ -399,8 +466,6 @@ class CartController extends Controller
 
             // Calculate total price for the reservation
             try {
-                $start = \Carbon\Carbon::parse($cart['start_date']);
-                $end = \Carbon\Carbon::parse($cart['end_date']);
                 $minutes = $start->diffInMinutes($end);
                 $days = max(1, (int) ceil($minutes / (60 * 24)));
             } catch (\Throwable $e) {
@@ -443,6 +508,16 @@ class CartController extends Controller
         // Clear cart
         $request->session()->forget('cart');
 
-        return redirect()->route('products.index')->with('success', 'Rezervace byla vytvořena. Děkujeme!');
+        // Send confirmation email (non-blocking try/catch to avoid breaking UX)
+        try {
+            Mail::to($reservation->email)->send(new ReservationCreated($reservation));
+        } catch (\Throwable $e) {
+            // Optionally log error; keeping silent to not disrupt the flow
+            \Log::warning('Reservation confirmation email failed: ' . $e->getMessage(), [
+                'reservation_id' => $reservation->id ?? null,
+            ]);
+        }
+
+        return redirect()->route('cart.thankyou')->with('success', 'Rezervace byla vytvořena. Děkujeme!');
     }
 }

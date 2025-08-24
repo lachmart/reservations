@@ -13,8 +13,6 @@ use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\IconEntry;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ReservationResource extends Resource
 {
@@ -27,25 +25,31 @@ class ReservationResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->maxLength(255)
                     ->required(),
                 Forms\Components\TextInput::make('email')
                     ->email()
+                    ->maxLength(255)
                     ->required(),
                 Forms\Components\TextInput::make('phone')
                     ->tel()
                     ->maxLength(50),
                 Forms\Components\DateTimePicker::make('start_date')
-                    ->required(),
+                    ->required()
+                    ->rule('before:end_date'),
                 Forms\Components\DateTimePicker::make('end_date')
-                    ->required(),
+                    ->required()
+                    ->rule('after:start_date'),
                 Forms\Components\TextInput::make('price')
                     ->label('Price')
                     ->numeric()
                     ->minValue(0)
+                    ->step(0.01)
                     ->suffix('CZK')
                     ->required(),
                 Forms\Components\TextInput::make('note')
-                    ->maxLength(1000),
+                    ->maxLength(1000)
+                    ->nullable(),
                 Forms\Components\Toggle::make('is_active')
                     ->required(),
                 Forms\Components\Toggle::make('is_paid')

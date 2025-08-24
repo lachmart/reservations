@@ -21,7 +21,7 @@ class ProductController extends Controller
         $sort = $request->input('sort', 'newest');
         $q = trim((string) $request->input('q', ''));
 
-        $query = Product::query()->with(['category', 'tags']);
+        $query = Product::query()->available()->with(['category', 'tags']);
 
         if ($categoryId) {
             $query->where('category_id', $categoryId);
