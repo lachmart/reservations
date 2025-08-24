@@ -18,6 +18,7 @@ class Reservation extends Model
     protected $fillable = [
         'name',
         'email',
+        'phone',
         'start_date',
         'end_date',
         'note',
@@ -34,6 +35,8 @@ class Reservation extends Model
         'id' => 'integer',
         'start_date' => 'datetime',
         'end_date' => 'datetime',
+        'is_active' => 'boolean',
+        'is_paid' => 'boolean',
     ];
 
     public function reservationItems(): HasMany

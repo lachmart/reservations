@@ -1,0 +1,36 @@
+name: reservations
+type: laravel
+docroot: public
+php_version: "8.2"
+webserver_type: nginx-fpm
+xdebug_enabled: false
+router_http_port: "80"
+router_https_port: "443"
+use_dns_when_possible: true
+composer_version: ""
+web_environment:
+  - APP_ENV=local
+  - APP_DEBUG=true
+  - LOG_CHANNEL=stack
+  - LOG_LEVEL=debug
+  - DB_CONNECTION=mysql
+  - DB_HOST=db
+  - DB_PORT=3306
+  - DB_DATABASE=db
+  - DB_USERNAME=db
+  - DB_PASSWORD=db
+
+web_extra_exposed_ports:
+  - name: node-vite
+    container_port: 5173
+    http_port: 5172
+    https_port: 5173
+
+# You can run `ddev describe` to see connection details.
+# After `ddev start` you can run:
+#   ddev composer install
+#   ddev artisan key:generate
+#   ddev artisan migrate --seed
+# For Vite dev server (hot reloading):
+#   ddev npm install
+#   ddev npm run dev

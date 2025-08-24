@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('reservation_items', function (Blueprint $table) {
             $table->id();
             $table->integer('amount');
-            $table->foreignId('reservation_id');
+            $table->foreignId('reservation_id')->constrained('reservations')->cascadeOnDelete();
+            $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
             $table->timestamps();
         });
     }

@@ -1,3 +1,45 @@
+# Local development with DDEV
+
+This repository is configured to run locally using DDEV (Docker-based dev environment).
+
+Prerequisites
+- Install DDEV: https://ddev.readthedocs.io/en/stable/
+- Install Docker (Desktop) and ensure it’s running.
+
+First-time setup
+1. ddev start
+2. ddev composer install
+3. Copy the DDEV environment or adjust your .env:
+   - cp .env.ddev .env
+4. Generate app key, create storage symlink, and run migrations/seeders:
+   - ddev artisan key:generate
+   - ddev artisan storage:link
+   - ddev artisan migrate --seed
+5. Frontend assets (optional for Vite dev server):
+   - ddev npm install
+   - ddev npm run dev
+   
+   Production build:
+   - ddev npm run build
+   - Note: If you previously ran the Vite dev server, Laravel will prefer the dev server whenever the file public/hot exists. The build script now removes public/hot automatically so your app will use the compiled assets in public/build. If styles still don’t appear updated, hard refresh your browser (or clear cache) and run: ddev artisan view:clear
+
+Open the app:
+- https://reservations.ddev.site (HTTPS) or http://reservations.ddev.site
+
+Useful commands
+- ddev describe                # Shows connection details (DB, URLs, etc.)
+- ddev poweroff                # Stops all DDEV projects/containers
+- ddev xdebug on|off           # Toggle Xdebug if you need step debugging
+
+Notes
+- The DDEV MySQL database is available with:
+  - host: db, port: 3306, database: db, username: db, password: db
+- If you want Redis, Mailpit, or other services, you can add DDEV addons (e.g., `ddev get ddev/ddev-redis`). This project currently uses the log mailer by default.
+- Vite HMR in containers: if hot reload doesn’t connect, set Vite server host/HMR host. Example vite.config.js snippet:
+  server: { host: true, hmr: { host: 'reservations.ddev.site' } }
+
+---
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">

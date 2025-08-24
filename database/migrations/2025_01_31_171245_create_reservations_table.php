@@ -15,11 +15,12 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email');
+            $table->string('phone');
             $table->dateTime('start_date');
             $table->dateTime('end_date');
-            $table->string('note');
-            $table->string('is_active')->default('false');
-            $table->string('is_paid')->default('false');
+            $table->text('note')->nullable();
+            $table->boolean('is_active')->default(false);
+            $table->boolean('is_paid')->default(false);
             $table->timestamps();
         });
     }

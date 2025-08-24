@@ -36,6 +36,18 @@ class ProductResource extends Resource
                 Forms\Components\Select::make('category_id')
                     ->relationship('category', 'name')
                     ->required(),
+                Forms\Components\TextInput::make('price_per_day')
+                    ->label('Price per day')
+                    ->numeric()
+                    ->prefix('Kč')
+                    ->required()
+                    ->default(0),
+                Forms\Components\TextInput::make('stock')
+                    ->label('Stock')
+                    ->numeric()
+                    ->minValue(0)
+                    ->required()
+                    ->default(0),
 //                Forms\Components\Select::make('ports')
 //                    ->multiple()
 //                    ->preload()

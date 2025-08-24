@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class ReservationItem extends Model
 {
@@ -19,6 +18,7 @@ class ReservationItem extends Model
     protected $fillable = [
         'amount',
         'reservation_id',
+        'product_id',
     ];
 
     /**
@@ -29,11 +29,12 @@ class ReservationItem extends Model
     protected $casts = [
         'id' => 'integer',
         'reservation_id' => 'integer',
+        'product_id' => 'integer',
     ];
 
-    public function products(): BelongsToMany
+    public function product(): BelongsTo
     {
-        return $this->belongsToMany(Product::class);
+        return $this->belongsTo(Product::class);
     }
 
     public function reservation(): BelongsTo

@@ -18,6 +18,8 @@ return new class extends Migration
             $table->longText('description');
             $table->string('status');
             $table->foreignId('category_id');
+            $table->decimal('price_per_day', 10, 2)->default(0);
+            $table->unsignedInteger('stock')->default(0);
             $table->timestamps();
         });
     }
