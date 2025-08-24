@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $product->name . ' — Rezervace')
+@section('title', $product->name . ' — Maraka rental')
 
 @section('content')
     <div class="flex items-center justify-between">
@@ -260,7 +260,6 @@
                     V košíku: <span id="product-count-{{ $product->id }}">{{ $initialCount }}</span> ks
                 </div>
             </form>
-            <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Termín rezervace nastavíte v košíku.</p>
             <script>
                 (function(){
                     const form = document.getElementById('product-add-form');

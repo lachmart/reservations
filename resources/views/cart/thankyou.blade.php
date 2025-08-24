@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Děkujeme — Rezervace')
+@section('title', 'Děkujeme — Maraka rental')
 
 @section('content')
     <div class="mx-auto max-w-2xl text-center">

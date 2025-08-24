@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Produkty — Rezervace')
+@section('title', 'Produkty — Maraka rental')
 
 @section('content')
     <div class="flex items-center justify-between">
@@ -40,10 +40,15 @@
                 <span class="block text-xs text-slate-500 mb-1">Štítky</span>
                 <div class="flex flex-wrap gap-2">
                     @foreach($allTags as $tag)
-                        <label class="inline-flex items-center gap-2 rounded border border-slate-300/60 dark:border-slate-700/60 px-2 py-1 text-sm">
-                            <input type="checkbox" name="tags[]" value="{{ $tag->id }}" @checked(in_array($tag->id, $selectedTags ?? []))>
-                            <span>{{ $tag->name }}</span>
-                        </label>
+                        <div class="relative">
+                            <input id="tag-{{ $tag->id }}" type="checkbox" name="tags[]" value="{{ $tag->id }}" @checked(in_array($tag->id, $selectedTags ?? [])) class="peer sr-only" />
+                            <label for="tag-{{ $tag->id }}" class="inline-flex items-center cursor-pointer select-none rounded-full border border-slate-300/60 px-3 py-1 text-sm text-slate-700 transition-colors hover:border-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60 dark:border-slate-700/60 dark:text-slate-200 dark:hover:border-slate-600 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white">
+                                <svg class="hidden h-3.5 w-3.5 peer-checked:inline" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M16.704 5.29a1 1 0 010 1.415l-7.25 7.25a1 1 0 01-1.414 0l-3.25-3.25A1 1 0 016.496 9.29l2.543 2.543 6.543-6.543a1 1 0 011.122-.207z" clip-rule="evenodd" />
+                                </svg>
+                                <span class="peer-checked:ml-1">{{ $tag->name }}</span>
+                            </label>
+                        </div>
                     @endforeach
                 </div>
             </div>

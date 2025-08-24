@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Rezervace')</title>
+    <title>@yield('title', 'Maraka rental')</title>
     @vite(['resources/css/app.css','resources/js/app.js'])
     <script>
         // Initialize theme early to avoid FOUC
@@ -78,7 +78,7 @@
         <header class="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-white/60 bg-white/80 dark:bg-slate-900/60 border-b border-slate-200/60 dark:border-slate-700/50">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                 <a href="/" class="flex items-center gap-2 font-semibold text-slate-800 dark:text-slate-100">
-                    <span>Rezervace</span>
+                    <span>Maraka rental</span>
                 </a>
                 <nav class="flex items-center gap-1 sm:gap-2">
                     <a href="/" class="nav-link">Domů</a>
@@ -117,7 +117,7 @@
 
         <footer class="mt-8 border-t border-slate-200/60 dark:border-slate-700/50">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 text-xs text-slate-600 dark:text-slate-400 flex items-center justify-between">
-                <span>&copy; {{ date('Y') }} Rezervace</span>
+                <span>&copy; {{ date('Y') }} Maraka rental</span>
                 <div class="flex items-center gap-2">
                     <span class="hidden sm:block">Vytvořeno pomocí Laravelu a Tailwindu</span>
                     <button type="button" onclick="toggleTheme()" class="ml-2 inline-flex items-center gap-2 rounded-md border border-slate-300/60 dark:border-slate-700/60 bg-white/60 dark:bg-slate-800/60 px-3 py-1.5 text-sm text-slate-700 dark:text-slate-200 hover:bg-white/90 hover:dark:bg-slate-800/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500">
