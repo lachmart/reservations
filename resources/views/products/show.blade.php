@@ -315,7 +315,7 @@
                 </div>
             </div>
 
-            <p class="mt-4 text-slate-700 dark:text-slate-300 whitespace-pre-line">{{ $product->description }}</p>
+            <p class="mt-4 text-slate-700 dark:text-slate-300 whitespace-pre-line">{!! $product->description !!}</p>
         </div>
     </div>
 @endsection

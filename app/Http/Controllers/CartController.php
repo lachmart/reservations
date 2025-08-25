@@ -106,12 +106,10 @@ class CartController extends Controller
                 $possibleCounts = [];
                 foreach ($bundle->bundleItems as $child) {
                     $availableChild = $child->availableForRange($cart['start_date'], $cart['end_date']);
-                    // Existing quantity of this child already in cart (both direct and from other bundles)
-                    $existingChild = (int) Arr::get($cart['items'], $child->id, 0);
                     // Child quantity required per single bundle
-                    $perBundle = (int) $child->pivot->amount;
-                    // Max additional bundles possible given current existing reservations in cart
-                    $remainingForNewBundles = intdiv(max(0, $availableChild - $existingChild), max(1, $perBundle));
+                    $perBundle = max(1, (int) $child->pivot->amount);
+                    // IMPORTANT: Do not subtract items already in the cart when showing availability.
+                    $remainingForNewBundles = intdiv(max(0, $availableChild), $perBundle);
                     $possibleCounts[] = $remainingForNewBundles;
                 }
                 $availableBundles = !empty($possibleCounts) ? min($possibleCounts) : 0;
@@ -473,10 +471,40 @@ class CartController extends Controller
                 return back()->withErrors(['dates' => 'Neplatný termín rezervace.'])->withInput();
             }
 
+            // Compute total using bundle pricing where applicable, and standalone items excluding bundle contributions
             $totalPrice = 0.0;
+
+            // Resolve products for items and bundles
+            $productIds = array_keys($cart['items'] ?: []);
+            $bundleIds = array_keys($cart['bundles'] ?: []);
+            $allIds = array_unique(array_merge($productIds, $bundleIds));
+            $products = Product::whereIn('id', $allIds)->get()->keyBy('id');
+
+            // Sum bundle prices
+            foreach ($cart['bundles'] as $bundleId => $bundleQty) {
+                $bundle = $products[$bundleId] ?? null;
+                if (!$bundle) continue;
+                $bundlePricePerDay = (float) ($bundle->price_per_day ?? 0);
+                $totalPrice += $bundlePricePerDay * (int) $bundleQty * $days;
+            }
+
+            // Compute bundle contributions map
+            $bundleContrib = [];
+            foreach ($cart['bundles'] as $bundleId => $bundleQty) {
+                $bundle = $products[$bundleId] ?? null;
+                if (!$bundle) continue;
+                foreach ($bundle->bundleItems as $child) {
+                    $bundleContrib[$child->id] = ($bundleContrib[$child->id] ?? 0) + ((int) $child->pivot->amount * (int) $bundleQty);
+                }
+            }
+
+            // Add standalone items (excluding quantities covered by bundles)
             foreach ($cart['items'] as $productId => $amount) {
-                $product = Product::findOrFail($productId);
-                $totalPrice += ((float) ($product->price_per_day ?? 0)) * (int) $amount * $days;
+                $product = $products[$productId] ?? null;
+                if (!$product) continue;
+                $standaloneAmount = (int) $amount - (int) ($bundleContrib[$productId] ?? 0);
+                if ($standaloneAmount <= 0) continue;
+                $totalPrice += ((float) ($product->price_per_day ?? 0)) * $standaloneAmount * $days;
             }
 
             $reservation = Reservation::create([

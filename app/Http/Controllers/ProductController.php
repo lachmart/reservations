@@ -101,7 +101,20 @@ class ProductController extends Controller
 
         $available = null;
         if ($start && $end) {
-            $available = $product->availableForRange($start, $end);
+            // If the product is a bundle, its availability is limited by its components
+            if (method_exists($product, 'isBundle') && $product->isBundle()) {
+                $possibleCounts = [];
+                foreach ($product->bundleItems as $child) {
+                    $availableChild = $child->availableForRange($start, $end);
+                    $perBundle = max(1, (int) $child->pivot->amount);
+                    // IMPORTANT: Do not subtract items already in the user's cart here.
+                    $remainingBundles = intdiv(max(0, $availableChild), $perBundle);
+                    $possibleCounts[] = $remainingBundles;
+                }
+                $available = !empty($possibleCounts) ? min($possibleCounts) : 0;
+            } else {
+                $available = $product->availableForRange($start, $end);
+            }
         }
         return view('products.show', compact('product', 'available', 'start', 'end'));
     }
