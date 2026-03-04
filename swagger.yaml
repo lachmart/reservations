@@ -1,0 +1,187 @@
+openapi: 3.0.0
+info:
+  title: Reservation System API
+  description: API for the reservation system frontend
+  version: 1.0.0
+servers:
+  - url: /api
+paths:
+  /products:
+    get:
+      summary: List products
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: integer
+        - name: tags
+          in: query
+          schema:
+            type: array
+            items:
+              type: integer
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [newest, price_asc, price_desc, name_asc, name_desc]
+        - name: q
+          in: query
+          schema:
+            type: string
+        - name: start_date
+          in: query
+          description: Used for availability check
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          description: Used for availability check
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: A list of products
+  /products/{id}:
+    get:
+      summary: Get product details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: start_date
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Product details
+  /categories:
+    get:
+      summary: List categories
+      responses:
+        '200':
+          description: A list of categories
+  /tags:
+    get:
+      summary: List tags
+      responses:
+        '200':
+          description: A list of tags
+  /cart:
+    get:
+      summary: Get current cart
+      responses:
+        '200':
+          description: Cart content
+    delete:
+      summary: Clear cart
+      responses:
+        '200':
+          description: Cart cleared
+  /cart/dates:
+    post:
+      summary: Set reservation dates
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [start_date, end_date]
+              properties:
+                start_date:
+                  type: string
+                  format: date
+                end_date:
+                  type: string
+                  format: date
+      responses:
+        '200':
+          description: Dates updated
+  /cart/add:
+    post:
+      summary: Add product to cart
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [product_id, amount]
+              properties:
+                product_id:
+                  type: integer
+                amount:
+                  type: integer
+                  minimum: 1
+      responses:
+        '200':
+          description: Product added
+  /cart/{product_id}:
+    patch:
+      summary: Update item quantity in cart
+      parameters:
+        - name: product_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [amount]
+              properties:
+                amount:
+                  type: integer
+                  minimum: 0
+      responses:
+        '200':
+          description: Cart updated
+    delete:
+      summary: Remove item from cart
+      parameters:
+        - name: product_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Product removed
+  /cart/checkout:
+    post:
+      summary: Create a reservation from cart
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, email, phone]
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                phone:
+                  type: string
+                note:
+                  type: string
+      responses:
+        '201':
+          description: Reservation created

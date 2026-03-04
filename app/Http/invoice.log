@@ -1,0 +1,385 @@
+[2025-08-26 12-48-46] Found 206 on FTP  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110621-2504400840.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31622 already exists for order 110621  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110647-2502500054.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31623 already exists for order 110647  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110516-2504201946.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31219 already exists for order 110516  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110568-2504400827.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31358 already exists for order 110568  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110673-2504202011.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31624 already exists for order 110673  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110657-2504202005.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31625 already exists for order 110657  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110543-2503300337.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31291 already exists for order 110543  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110546-2504400822.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31359 already exists for order 110546  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110636-2504202004.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31626 already exists for order 110636  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110605-2504201983.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31571 already exists for order 110605  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110539-2562400527.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31292 already exists for order 110539  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110513-2562400522.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31220 already exists for order 110513  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110552-2505600019.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31360 already exists for order 110552  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110586-2504201974.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31426 already exists for order 110586  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /97732-2304202780.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Created invoice 31802 for order 97732  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110511-2504201941.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31222 already exists for order 110511  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110631-2504201994.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31628 already exists for order 110631  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110541-2504400821.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31294 already exists for order 110541  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /104656-2462740001.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Created invoice 31803 for order 104656  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110660-2504400845.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31630 already exists for order 110660  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110538-2504201958.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31296 already exists for order 110538  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110628-2504201986.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31574 already exists for order 110628  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110607-2504202002.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31631 already exists for order 110607  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110583-2504201982.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31429 already exists for order 110583  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110328-2502600240.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Created invoice 31804 for order 110328  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110532-2504201955.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31298 already exists for order 110532  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110549-2504201967.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31364 already exists for order 110549  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110394-2500700386.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31225 already exists for order 110394  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110648-2504400843.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31633 already exists for order 110648  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110616-2504201992.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31634 already exists for order 110616  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110530-2504400820.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31299 already exists for order 110530  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110559-2504201964.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31365 already exists for order 110559  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110496-2504201932.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31226 already exists for order 110496  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /105124-2400700609.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Created invoice 31805 for order 105124  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110540-2503300336.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31301 already exists for order 110540  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110396-2505600017.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31228 already exists for order 110396  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110542-2504201957.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31302 already exists for order 110542  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110525-2504201951.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31303 already exists for order 110525  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110557-2504201963.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31367 already exists for order 110557  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110626-2504201996.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31636 already exists for order 110626  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110502-2562400521.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31229 already exists for order 110502  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110531-2562400526.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31304 already exists for order 110531  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110544-2502500051.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31368 already exists for order 110544  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110510-2503300335.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31230 already exists for order 110510  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110522-2504201952.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31305 already exists for order 110522  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110632-2504201995.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31637 already exists for order 110632  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110506-2504201934.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31231 already exists for order 110506  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110592-2504400829.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31432 already exists for order 110592  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /105124-2404202663.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Created invoice 31806 for order 105124  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110528-2504201948.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31307 already exists for order 110528  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110553-2504201965.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31370 already exists for order 110553  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110608-2504400836.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31578 already exists for order 110608  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /97190-2300700392.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Created invoice 31807 for order 97190  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110456-2562400524.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31309 already exists for order 110456  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110613-2504400835.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31580 already exists for order 110613  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110395-2500700392.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31372 already exists for order 110395  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110561-2504400824.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31373 already exists for order 110561  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /101741-2402600275.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Created invoice 31808 for order 101741  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110645-2504202003.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31641 already exists for order 110645  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110596-2504201979.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31436 already exists for order 110596  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110566-2504400826.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31375 already exists for order 110566  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110642-2562400535.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31642 already exists for order 110642  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /98462-2400700009.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Created invoice 31809 for order 98462  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110505-2504201933.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31236 already exists for order 110505  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110514-2562400528.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31377 already exists for order 110514  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110610-2504400837.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31583 already exists for order 110610  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110475-2500700393.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31378 already exists for order 110475  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110507-2504400815.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31237 already exists for order 110507  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110587-2504201975.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31438 already exists for order 110587  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110520-2504201940.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31238 already exists for order 110520  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110630-2504201990.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31644 already exists for order 110630  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110599-2565600002.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31645 already exists for order 110599  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110529-2504300128.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31312 already exists for order 110529  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110558-2504300129.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31379 already exists for order 110558  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /110489-2500700388.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] Invoice 31313 already exists for order 110489  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-46] File: /98462-2404200062.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Created invoice 31810 for order 98462  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110443-2562400525.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31315 already exists for order 110443  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110653-2505600022.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31647 already exists for order 110653  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110551-2504201960.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31381 already exists for order 110551  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110519-2504201945.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31240 already exists for order 110519  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110603-2502600245.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31440 already exists for order 110603  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110577-2504201973.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31441 already exists for order 110577  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110560-2504201962.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31382 already exists for order 110560  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110437-2504201981.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31442 already exists for order 110437  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /106660-2504600012.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Created invoice 31811 for order 106660  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110521-2504201949.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31317 already exists for order 110521  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110470-2562400520.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31242 already exists for order 110470  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110569-2502600243.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31444 already exists for order 110569  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110609-2504400838.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31586 already exists for order 110609  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110427-2505600016.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31384 already exists for order 110427  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /106660-2562400113.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Created invoice 31812 for order 106660  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110646-2562400536.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31650 already exists for order 110646  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110574-2503300339.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31446 already exists for order 110574  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110570-2504201969.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31386 already exists for order 110570  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110625-2562400532.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31588 already exists for order 110625  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110459-2562400523.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31244 already exists for order 110459  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110658-2562400533.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31651 already exists for order 110658  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110460-2504201937.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31245 already exists for order 110460  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110664-2562400534.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31652 already exists for order 110664  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110547-2504201966.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31387 already exists for order 110547  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110517-2504201942.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31246 already exists for order 110517  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110480-2504201980.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31447 already exists for order 110480  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110446-2561300001.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31319 already exists for order 110446  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110501-2504201930.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31247 already exists for order 110501  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110477-2504201939.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31248 already exists for order 110477  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /97732-2304202872.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Created invoice 31813 for order 97732  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110620-2504201988.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31654 already exists for order 110620  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110612-2504400839.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31590 already exists for order 110612  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110593-2504201978.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31449 already exists for order 110593  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /101243-2403300279.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Created invoice 31814 for order 101243  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110641-2504202000.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31656 already exists for order 110641  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110669-2503300344.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31657 already exists for order 110669  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110535-2504400819.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31322 already exists for order 110535  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110584-2503300342.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31658 already exists for order 110584  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110634-2504400841.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31659 already exists for order 110634  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110575-2562400529.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31451 already exists for order 110575  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110589-2502600244.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31452 already exists for order 110589  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /101243-2403300280.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Created invoice 31815 for order 101243  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110606-2504201984.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31593 already exists for order 110606  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110545-2504201968.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31391 already exists for order 110545  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110600-2562400531.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31454 already exists for order 110600  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110578-2504400830.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31455 already exists for order 110578  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110486-2500700390.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31324 already exists for order 110486  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110518-2505600018.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31325 already exists for order 110518  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110604-2502500052.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31661 already exists for order 110604  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110500-2504400816.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31252 already exists for order 110500  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110565-2504400825.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31392 already exists for order 110565  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110503-2500700396.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31662 already exists for order 110503  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110388-2500700395.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31663 already exists for order 110388  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110497-2504400817.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31253 already exists for order 110497  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110550-2504201961.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31393 already exists for order 110550  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110627-2504201998.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31664 already exists for order 110627  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110618-2504201985.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31594 already exists for order 110618  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110321-2500700387.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31254 already exists for order 110321  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110571-2503300340.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31456 already exists for order 110571  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /103535-2402600438.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Created invoice 31816 for order 103535  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110556-2504201959.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31395 already exists for order 110556  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110617-2504201997.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31666 already exists for order 110617  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110579-2504400833.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31458 already exists for order 110579  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110663-2504202010.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31667 already exists for order 110663  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110619-2504201987.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31596 already exists for order 110619  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110594-2565600001.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Created invoice 31817 for order 110594  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110624-2504201993.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31669 already exists for order 110624  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110572-2504201971.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31396 already exists for order 110572  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110601-2505600021.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31670 already exists for order 110601  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110508-2504201936.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31256 already exists for order 110508  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110640-2504400842.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31671 already exists for order 110640  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110594-2505600020.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Created invoice 31818 for order 110594  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110509-2504201944.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31257 already exists for order 110509  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /103535-2402600435.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Created invoice 31819 for order 103535  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110655-2504202007.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31674 already exists for order 110655  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110667-2503300343.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31675 already exists for order 110667  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110650-2504202006.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31676 already exists for order 110650  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110649-2502500053.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31677 already exists for order 110649  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110554-2504400823.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31398 already exists for order 110554  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110651-2504400844.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31678 already exists for order 110651  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110562-2504201977.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31461 already exists for order 110562  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110423-2500700384.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31259 already exists for order 110423  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110623-2504201991.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31679 already exists for order 110623  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110523-2504400818.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31260 already exists for order 110523  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110656-2504202008.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31680 already exists for order 110656  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110639-2504201999.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31681 already exists for order 110639  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110524-2504201953.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31328 already exists for order 110524  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110499-2504201931.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31261 already exists for order 110499  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110597-2562400530.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31462 already exists for order 110597  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /101741-2402600274.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Created invoice 31820 for order 101741  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110492-2502500049.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31263 already exists for order 110492  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110527-2504201950.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31330 already exists for order 110527  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110638-2502600246.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31683 already exists for order 110638  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110576-2504201972.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31464 already exists for order 110576  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110588-2504400831.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31465 already exists for order 110588  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110662-2504300130.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31684 already exists for order 110662  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110629-2504201989.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31685 already exists for order 110629  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110661-2562400537.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31686 already exists for order 110661  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110515-2504201943.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31264 already exists for order 110515  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110534-2504201956.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31331 already exists for order 110534  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /97190-2300700381.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Created invoice 31821 for order 97190  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110498-2504201938.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31266 already exists for order 110498  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110328-2502600238.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Created invoice 31822 for order 110328  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /104656-2462700001.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Created invoice 31823 for order 104656  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110504-2504201935.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31269 already exists for order 110504  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110494-2500700391.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31335 already exists for order 110494  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110548-2503300338.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31403 already exists for order 110548  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110512-2504201954.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31336 already exists for order 110512  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110580-2504400832.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31469 already exists for order 110580  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110491-2502500048.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31270 already exists for order 110491  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110573-2504400828.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31404 already exists for order 110573  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110598-2504400834.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31470 already exists for order 110598  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110533-2504201947.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31337 already exists for order 110533  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110637-2503300341.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31690 already exists for order 110637  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110654-2504202009.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31691 already exists for order 110654  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] File: /110564-2504201970.pdf  @  CLI (PID: 64303): bin/console app:importInvoices 
+[2025-08-26 12-48-47] Invoice 31405 already exists for order 110564  @  CLI (PID: 64303): bin/console app:importInvoices 
