@@ -127,6 +127,40 @@ class CartController extends Controller
         $cart = $this->getCart($request);
         $amount = (int)$validated['amount'];
 
+        $isBundle = $product->isBundle();
+        $currentQty = $isBundle ? ($cart['bundles'][$product->id] ?? 0) : ($cart['items'][$product->id] ?? 0);
+        $available = $product->available_quantity ?? $product->stock;
+
+        // If dates are set, use more precise availability (especially for bundles)
+        if (!empty($cart['start_date']) && !empty($cart['end_date'])) {
+            if ($isBundle) {
+                foreach ($product->bundleItems as $child) {
+                    $childAvailable = $child->availableForRange($cart['start_date'], $cart['end_date']);
+                    $childInCart = $cart['items'][$child->id] ?? 0;
+                    $needed = $child->pivot->amount * $amount;
+                    if (($childInCart + $needed) > $childAvailable) {
+                        return response()->json([
+                            'message' => "Bundle cannot be added – component '{$child->name}' is not available in requested amount (available {$childAvailable} pcs, already in cart indirectly {$childInCart} pcs)."
+                        ], 422);
+                    }
+                }
+            } else {
+                $rangeAvailable = $product->availableForRange($cart['start_date'], $cart['end_date']);
+                if (($currentQty + $amount) > $rangeAvailable) {
+                    return response()->json([
+                        'message' => "Cannot add – for selected term there are {$rangeAvailable} pcs available, you already have {$currentQty} pcs in cart."
+                    ], 422);
+                }
+            }
+        } else {
+            // Without dates, just basic stock validation (if not null)
+            if ($available !== null && ($currentQty + $amount) > $available) {
+                return response()->json([
+                    'message' => "Cannot add – available quantity is {$available} pcs, you already have {$currentQty} pcs in cart."
+                ], 422);
+            }
+        }
+
         if ($product->isBundle()) {
             $cart['bundles'][$product->id] = ($cart['bundles'][$product->id] ?? 0) + $amount;
         } else {
@@ -146,6 +180,40 @@ class CartController extends Controller
 
         $cart = $this->getCart($request);
         $amount = (int)$validated['amount'];
+
+        $isBundle = $product->isBundle();
+        $available = $product->available_quantity ?? $product->stock;
+
+        if (!empty($cart['start_date']) && !empty($cart['end_date'])) {
+            if ($isBundle) {
+                // For bundle, we must simulate how many items would be in cart after change
+                $oldAmount = $cart['bundles'][$product->id] ?? 0;
+                $diff = $amount - $oldAmount;
+                foreach ($product->bundleItems as $child) {
+                    $childAvailable = $child->availableForRange($cart['start_date'], $cart['end_date']);
+                    $childInCart = $cart['items'][$child->id] ?? 0;
+                    $neededDiff = $child->pivot->amount * $diff;
+                    if (($childInCart + $neededDiff) > $childAvailable) {
+                        return response()->json([
+                            'message' => "Bundle cannot be updated – component '{$child->name}' would exceed availability (available {$childAvailable} pcs)."
+                        ], 422);
+                    }
+                }
+            } else {
+                $rangeAvailable = $product->availableForRange($cart['start_date'], $cart['end_date']);
+                if ($amount > $rangeAvailable) {
+                    return response()->json([
+                        'message' => "Maximum quantity for selected term is {$rangeAvailable} pcs."
+                    ], 422);
+                }
+            }
+        } else {
+            if ($available !== null && $amount > $available) {
+                return response()->json([
+                    'message' => "Maximum quantity is {$available} pcs."
+                ], 422);
+            }
+        }
 
         if ($product->isBundle()) {
             if ($amount <= 0) {
