@@ -11,18 +11,18 @@ koncerty, svatby a firemní akce.
 Veřejný Model Context Protocol server (HTTP, bez autentizace) umožňuje AI asistentům
 procházet techniku, ověřit dostupnost na konkrétní termín a založit rezervaci:
 
-- Endpoint: https://api.marakarental.cz/mcp/reservations (POST, JSON-RPC 2.0)
+- Endpoint: https://www.marakarental.cz/mcp/reservations (POST, JSON-RPC 2.0)
 - Nástroje:
   - `list-products` — výpis dostupné techniky (název, kategorie, cena za den, sklad)
   - `check-product-availability` — dostupnost kusů na termín (start_date, end_date)
   - `create-reservation` — vytvoření rezervace (jméno, e-mail, termín)
-- Dokumentace: https://api.marakarental.cz/ai
+- Dokumentace: https://www.marakarental.cz/ai
 
 ## Klíčové stránky
 
-- Katalog techniky: https://api.marakarental.cz/products
-- Rezervace přes AI: https://api.marakarental.cz/ai
-- Sitemap: https://api.marakarental.cz/sitemap.xml
+- Katalog techniky: https://www.marakarental.cz/products
+- Rezervace přes AI: https://www.marakarental.cz/ai
+- Sitemap: https://www.marakarental.cz/sitemap.xml
 
 ## Kontakt
 

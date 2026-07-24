@@ -1,6 +1,6 @@
 # Deployment
 
-Production host: **SSH-enabled shared hosting** (`api.marakarental.cz`).
+Production host: **SSH-enabled shared hosting** (`www.marakarental.cz`).
 Approach: build assets locally, `rsync` the code up, run Composer + Artisan on the
 server. Automated by [`deploy.sh`](./deploy.sh).
 
@@ -19,7 +19,7 @@ Do these once, by hand, before the first `./deploy.sh`.
 
 3. **Upload the environment file** (the script never uploads it — it holds secrets):
    ```bash
-   scp .env.production <user>@api.marakarental.cz:~/www/reservations/.env
+   scp .env.production <user>@www.marakarental.cz:~/www/reservations/.env
    ```
    Confirm on the server that `APP_ENV=production`, `APP_DEBUG=false`, the `DB_*` values,
    and `MCP_TOKEN` are correct. `APP_KEY` is already set in `.env.production`.
@@ -60,7 +60,7 @@ What `deploy.sh` does each run:
 ## MCP servers in production
 
 The MCP endpoints (`/mcp/reservations`, `/mcp/admin` — see [MCP.md](./MCP.md)) ship with
-the app, so they'll be live at `https://api.marakarental.cz/mcp/...` after deploy. Make
+the app, so they'll be live at `https://www.marakarental.cz/mcp/...` after deploy. Make
 sure a **strong** `MCP_TOKEN` is set in the server `.env` (different from local). With
 `APP_DEBUG=false` (now fixed), errors no longer leak that token.
 

@@ -12,6 +12,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // Redirect old/non-canonical hosts (api.*) to the canonical APP_URL host.
+        $middleware->prepend(\App\Http\Middleware\EnforceCanonicalDomain::class);
+
         $middleware->api(append: [
             \Illuminate\Session\Middleware\StartSession::class,
         ]);

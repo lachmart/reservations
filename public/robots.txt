@@ -4,4 +4,4 @@ Disallow: /admin
 Disallow: /cart
 Disallow: /thank-you
 
-Sitemap: https://api.marakarental.cz/sitemap.xml
+Sitemap: https://www.marakarental.cz/sitemap.xml
