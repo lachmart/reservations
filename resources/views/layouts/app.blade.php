@@ -117,9 +117,12 @@
             </div>
             <div>
                 <div class="text-xs font-semibold uppercase tracking-wide text-faint">Sídlo</div>
+                @php($addrParts = array_map('trim', explode(',', config('contact.address'))))
+                @php($addrCity = array_pop($addrParts))
                 <address class="mt-3 space-y-1 text-sm not-italic text-muted">
                     <div class="text-ink">{{ config('contact.name') }}</div>
-                    <div>{{ config('contact.address') }}</div>
+                    <div>{{ implode(', ', $addrParts) }},</div>
+                    <div>{{ $addrCity }}</div>
                     <div>IČO: {{ config('contact.ico') }}</div>
                 </address>
             </div>
