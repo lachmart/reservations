@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "reservations-public": {
+      "type": "http",
+      "url": "https://reservations.ddev.site/mcp/reservations"
+    },
+    "reservations-admin": {
+      "type": "http",
+      "url": "https://reservations.ddev.site/mcp/admin",
+      "headers": {
+        "Authorization": "Bearer ${MCP_TOKEN}"
+      }
+    }
+  }
+}

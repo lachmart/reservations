@@ -1,0 +1,166 @@
+#!/usr/bin/env bash
+#
+# Repeatable deploy for the Reservations app to shared/SSH hosting.
+#
+# Strategy (host has SSH but usually no Node):
+#   1. Build front-end assets LOCALLY  (npm run build -> public/build)
+#   2. rsync the code up over SSH       (excludes secrets, dev-only, runtime dirs)
+#   3. Run Composer + Artisan ON THE SERVER (server's own PHP builds vendor/)
+#
+# Config lives in .deploy.env (git-ignored). Copy .deploy.env.example first.
+#
+# Usage:
+#   ./deploy.sh            # full deploy
+#   ./deploy.sh --dry-run  # rsync in dry-run mode, no server changes
+#
+set -euo pipefail
+
+cd "$(dirname "$0")"
+
+RED=$'\033[0;31m'; GREEN=$'\033[0;32m'; YELLOW=$'\033[1;33m'; BLUE=$'\033[0;34m'; NC=$'\033[0m'
+info()  { printf '%s==>%s %s\n' "$BLUE" "$NC" "$*"; }
+ok()    { printf '%s✓%s %s\n' "$GREEN" "$NC" "$*"; }
+warn()  { printf '%s!%s %s\n' "$YELLOW" "$NC" "$*"; }
+die()   { printf '%s✗ %s%s\n' "$RED" "$*" "$NC" >&2; exit 1; }
+
+DRY_RUN=0
+[[ "${1:-}" == "--dry-run" ]] && DRY_RUN=1
+
+# --- Load config ---------------------------------------------------------------
+[[ -f .deploy.env ]] || die "Missing .deploy.env — copy .deploy.env.example and fill it in."
+# shellcheck disable=SC1091
+set -a; source .deploy.env; set +a
+
+: "${SSH_HOST:?set SSH_HOST in .deploy.env}"
+: "${SSH_USER:?set SSH_USER in .deploy.env}"
+: "${REMOTE_PATH:?set REMOTE_PATH in .deploy.env}"
+SSH_PORT="${SSH_PORT:-22}"
+REMOTE_PHP="${REMOTE_PHP:-php}"
+REMOTE_COMPOSER="${REMOTE_COMPOSER:-composer}"
+WEB_USER="${WEB_USER:-www-data}"
+WEB_GROUP="${WEB_GROUP:-www-data}"
+USE_MAINTENANCE_MODE="${USE_MAINTENANCE_MODE:-1}"
+RUN_MIGRATIONS="${RUN_MIGRATIONS:-1}"
+
+SSH="ssh -p ${SSH_PORT} ${SSH_USER}@${SSH_HOST}"
+REMOTE="cd '${REMOTE_PATH}' &&"
+
+# --- Preflight -----------------------------------------------------------------
+for bin in rsync ssh npm; do command -v "$bin" >/dev/null || die "'$bin' not found locally."; done
+
+# Guard against shipping a non-production .env.production by mistake.
+if [[ -f .env.production ]]; then
+  grep -q '^APP_ENV=production' .env.production || warn ".env.production: APP_ENV is not 'production'."
+  grep -q '^APP_DEBUG=false'    .env.production || warn ".env.production: APP_DEBUG is not 'false' (leaks errors publicly!)."
+fi
+
+info "Deploy target: ${SSH_USER}@${SSH_HOST}:${REMOTE_PATH}  (port ${SSH_PORT})"
+[[ $DRY_RUN -eq 1 ]] && warn "DRY RUN — no changes will be written to the server."
+
+# --- 1. Build assets locally ---------------------------------------------------
+info "Building front-end assets locally…"
+if [[ -f package-lock.json ]]; then npm ci; else npm install; fi
+npm run build
+[[ -f public/build/manifest.json ]] || die "public/build/manifest.json missing after build."
+ok "Assets built."
+
+# --- 2. Verify remote .env exists (never uploaded by this script) -------------
+if [[ $DRY_RUN -eq 0 ]]; then
+  if $SSH "test -f '${REMOTE_PATH}/.env'"; then
+    ok "Remote .env present."
+  else
+    warn "Remote ${REMOTE_PATH}/.env is MISSING."
+    warn "Upload it once manually (e.g. scp .env.production ${SSH_USER}@${SSH_HOST}:${REMOTE_PATH}/.env) then re-run."
+    die "Refusing to deploy without a server .env."
+  fi
+fi
+
+# --- 3. rsync code up ----------------------------------------------------------
+# Excludes: secrets, VCS, local-only, and server-owned runtime dirs (uploaded
+# media, logs, sessions, caches). public/build IS shipped (built above).
+# Ownership during transfer: prefer rsync --chown (needs rsync >= 3.1, i.e. NOT
+# the ancient macOS system rsync). If unavailable, don't stamp the local UID —
+# leave files root-owned; the server-side chown at the end fixes ownership anyway.
+OWNERSHIP_ARGS=(--no-owner --no-group)
+RSYNC_VER="$(rsync --version 2>/dev/null | sed -n '1s/.*version \([0-9.]*\).*/\1/p')"
+# Use --chown only when rsync >= 3.1.0 (sequence [3.1.0, VER] is ascending).
+if [[ -n "$RSYNC_VER" ]] && printf '3.1.0\n%s\n' "$RSYNC_VER" | sort -V -C 2>/dev/null; then
+  OWNERSHIP_ARGS=(--chown="${WEB_USER}:${WEB_GROUP}")
+fi
+
+RSYNC_ARGS=(-az --delete --human-readable
+  "${OWNERSHIP_ARGS[@]}"
+  --exclude '.git' --exclude '.github'
+  --exclude '*.env' --exclude '.env' --exclude '.env.*'   # never touch any env file
+  --exclude '.deploy.env' --exclude 'deploy.sh' --exclude '.deploy.env.example'
+  --exclude '.DS_Store'                     # macOS junk
+  --exclude '.claude'                       # local AI/editor config
+  --exclude '*.log'                         # stray logs (e.g. app/Http/*.log)
+  --exclude 'node_modules'
+  --exclude 'vendor'                        # rebuilt on the server by Composer
+  --exclude '.ddev'
+  --exclude 'tests' --exclude '.idea' --exclude '.vscode' --exclude '.fleet'
+  --exclude 'auth.json'
+  --exclude '/public/hot' --exclude '/public/storage'
+  --exclude '/storage/**'                   # ALL runtime + uploaded media — never touch
+  --exclude '/bootstrap/cache/**'           # regenerated by artisan on the server
+)
+[[ $DRY_RUN -eq 1 ]] && RSYNC_ARGS+=(--dry-run --verbose)
+
+info "Syncing files…"
+rsync "${RSYNC_ARGS[@]}" -e "ssh -p ${SSH_PORT}" ./ "${SSH_USER}@${SSH_HOST}:${REMOTE_PATH}/"
+ok "Files synced."
+
+if [[ $DRY_RUN -eq 1 ]]; then ok "Dry run complete."; exit 0; fi
+
+# --- 4. Server-side install + migrate + caches --------------------------------
+info "Running install & migrations on the server (PHP: ${REMOTE_PHP})…"
+
+DOWN_CMD=""
+[[ "$USE_MAINTENANCE_MODE" == "1" ]] && DOWN_CMD="${REMOTE_PHP} artisan down --render='errors::503' || true"
+
+MIGRATE_CMD=""
+[[ "$RUN_MIGRATIONS" == "1" ]] && MIGRATE_CMD="${REMOTE_PHP} artisan migrate --force"
+
+# Everything runs under ${REMOTE_PHP} so the app uses the intended PHP version,
+# not the server's (possibly newer) default. Composer is a phar invoked via PHP.
+#
+# NOTE: we deliberately do NOT run `route:cache`. The MCP servers register
+# closure routes (routes/ai.php) that Laravel cannot serialize — route:cache
+# crashes with a stack overflow. `config:cache` + `view:cache` give the
+# important production speedups without that problem.
+#
+# The `finish` trap guarantees the site is brought back up and ownership handed
+# to the web user even if a step fails — so a broken deploy never leaves the
+# site stuck in maintenance mode or owned by root. (Composer/Artisan run as root
+# here and create root-owned files; the chown hands them to the web user.)
+REMOTE_SCRIPT="
+set -u
+cd '${REMOTE_PATH}' || exit 1
+
+finish() {
+  set +e
+  ${REMOTE_PHP} artisan up || true
+  chown -R ${WEB_USER}:${WEB_GROUP} '${REMOTE_PATH}'
+  chmod -R ug+rwX '${REMOTE_PATH}/storage' '${REMOTE_PATH}/bootstrap/cache'
+}
+trap finish EXIT
+
+set -e
+${DOWN_CMD}
+COMPOSER_ALLOW_SUPERUSER=1 ${REMOTE_PHP} -d error_reporting='E_ALL & ~E_DEPRECATED' ${REMOTE_COMPOSER} install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+${MIGRATE_CMD}
+${REMOTE_PHP} artisan storage:link 2>/dev/null || true
+
+set +e
+${REMOTE_PHP} artisan optimize:clear
+${REMOTE_PHP} artisan config:cache
+${REMOTE_PHP} artisan view:cache
+${REMOTE_PHP} artisan filament:cache-components
+"
+
+# shellcheck disable=SC2029
+$SSH "$REMOTE_SCRIPT"
+
+ok "Site up; files owned by ${WEB_USER}:${WEB_GROUP}; storage & bootstrap/cache writable."
+ok "Deploy complete → ${APP_URL:-$SSH_HOST}"
