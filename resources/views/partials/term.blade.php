@@ -40,8 +40,6 @@
 @once
 <script>
 (function () {
-    function pad(n){ return String(n).padStart(2,'0'); }
-    function iso(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
     document.addEventListener('click', function (ev) {
         var btn = ev.target.closest('form.js-term [data-preset]');
         if (!btn) return;
@@ -58,7 +56,9 @@
         } else {
             end.setDate(start.getDate() + parseInt(p, 10));
         }
-        picker._flatpickr.setDate([iso(start), iso(end)], true);
+        // Pass Date objects (not strings) so Flatpickr doesn't mis-parse them
+        // against its d.m.Y display format.
+        picker._flatpickr.setDate([start, end], true);
     });
 })();
 </script>
