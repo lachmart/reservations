@@ -15,20 +15,20 @@
     <div class="mt-4 grid grid-cols-1 gap-10 lg:grid-cols-2">
         {{-- Gallery --}}
         <div>
-            <div class="overflow-hidden rounded-2xl border border-line" style="background:color-mix(in oklab, var(--ink) 4%, var(--surface))">
+            <div class="media-tile overflow-hidden rounded-2xl border border-line">
                 @if(!empty($mainUrl))
                     <div id="product-image-viewport" class="relative aspect-square overflow-hidden">
                         <img id="product-main-image" src="{{ $mainUrl }}" alt="{{ $product->name }}" class="absolute inset-0 size-full cursor-zoom-in object-contain p-8 transition-transform duration-300 ease-out">
                     </div>
                 @else
-                    <div class="grid aspect-square place-items-center text-line"><svg class="size-16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg></div>
+                    <div class="grid aspect-square place-items-center" style="color:var(--media-line)"><svg class="size-16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg></div>
                 @endif
             </div>
             @if($galleryItems && $galleryItems->count() > 0)
                 <div id="product-thumbnails" class="mt-3 flex gap-2 overflow-x-auto">
                     @foreach($galleryItems as $m)
-                        <button type="button" class="shrink-0 overflow-hidden rounded-lg border border-line p-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]" data-full-url="{{ $m->getUrl() }}">
-                            <img src="{{ $m->getUrl('preview') }}" alt="" class="size-16 rounded object-cover">
+                        <button type="button" class="media-tile shrink-0 overflow-hidden rounded-lg border border-line p-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]" data-full-url="{{ $m->getUrl() }}">
+                            <img src="{{ $m->getUrl('preview') }}" alt="" class="size-16 rounded object-contain">
                         </button>
                     @endforeach
                 </div>

@@ -45,7 +45,9 @@
                             <span class="text-xs text-faint">Připraveno na scénu</span>
                         </div>
                         @if($heroImg)
-                            <img src="{{ $heroImg }}" alt="{{ $heroProduct->name }}" class="mx-auto my-6 h-56 w-full object-contain transition-transform duration-300 ease-out-quart group-hover:scale-[1.03]">
+                            <div class="media-tile my-6 overflow-hidden rounded-xl border border-line">
+                                <img src="{{ $heroImg }}" alt="{{ $heroProduct->name }}" class="mx-auto h-56 w-full object-contain p-4 transition-transform duration-300 ease-out-quart group-hover:scale-[1.03]">
+                            </div>
                         @else
                             <div class="my-6 grid h-56 place-items-center text-faint">Katalog techniky</div>
                         @endif
@@ -70,7 +72,7 @@
             @foreach($categories as $cat)
                 <a href="{{ route('products.index', ['category' => $cat->id]) }}"
                    class="group relative flex flex-col overflow-hidden rounded-xl border border-line bg-surface transition-[box-shadow,transform] duration-200 ease-out-quart hover:-translate-y-0.5 hover:shadow-lift">
-                    <div class="relative aspect-[5/4] overflow-hidden" style="background:color-mix(in oklab, var(--ink) 4%, var(--surface))">
+                    <div class="media-tile relative aspect-[5/4] overflow-hidden border-b border-line">
                         @if($cat->sample_image)
                             <img src="{{ $cat->sample_image }}" alt="{{ $cat->name }}" loading="lazy" class="absolute inset-0 size-full object-contain p-6 transition-transform duration-300 ease-out-quart group-hover:scale-105">
                         @endif

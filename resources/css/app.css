@@ -14,6 +14,10 @@
   --accent: oklch(0.73 0.163 60);
   --accent-ink: oklch(0.26 0.04 55);
   --accent-soft: oklch(0.95 0.045 78);
+  /* Product-photo lightbox: near-white so on-white product shots blend in.
+     Kept light in BOTH themes so every image reads as an intentional catalog tile. */
+  --media: oklch(0.995 0.002 85);
+  --media-line: oklch(0.9 0.008 80);
 }
 
 .dark {
@@ -130,6 +134,9 @@
   .card-title { @apply font-display text-lg font-bold; color: var(--ink); }
 
   .rule { height: 1px; background: var(--line); }
+
+  /* White lightbox tile for product photos (they ship on a white background). */
+  .media-tile { background: var(--media); }
 }
 
 /* ---- Flatpickr range calendar, themed to the road-case palette ---- */

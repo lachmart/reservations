@@ -7,13 +7,13 @@
 @endphp
 <article data-product-card data-product-id="{{ $product->id }}"
          class="group flex flex-col overflow-hidden rounded-xl border border-line bg-surface transition-[box-shadow,transform] duration-200 ease-out-quart hover:-translate-y-0.5 hover:shadow-lift">
-    <a href="{{ route('products.show', $product) }}" class="relative block aspect-[4/3] overflow-hidden" style="background:color-mix(in oklab, var(--ink) 4%, var(--surface))">
+    <a href="{{ route('products.show', $product) }}" class="media-tile relative block aspect-[4/3] overflow-hidden border-b border-line">
         @if(!empty($media))
             <img src="{{ $media }}" alt="{{ $product->name }}" loading="lazy"
                  class="absolute inset-0 size-full object-contain p-5 transition-transform duration-300 ease-out-quart group-hover:scale-[1.04]">
         @else
-            <div class="absolute inset-0 flex items-center justify-center">
-                <svg class="size-10 text-line" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+            <div class="absolute inset-0 flex items-center justify-center" style="color:var(--media-line)">
+                <svg class="size-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
             </div>
         @endif
         @if($isBundle)
