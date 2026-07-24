@@ -145,7 +145,7 @@
                     </span>
                     <span>
                         <span class="block text-xs font-semibold uppercase tracking-wide" style="color:color-mix(in oklab, var(--paper) 60%, transparent)">Zavolejte</span>
-                        <span class="font-display text-lg font-bold" style="color:var(--paper)">{{ $phone }}</span>
+                        <span class="block whitespace-nowrap font-display text-lg font-bold" style="color:var(--paper)">{{ $phone }}</span>
                     </span>
                 </a>
                 <a href="mailto:{{ $email }}" class="group flex items-center gap-3 rounded-xl px-5 py-4 transition-colors" style="background:color-mix(in oklab, var(--paper) 10%, transparent)">
@@ -154,7 +154,7 @@
                     </span>
                     <span>
                         <span class="block text-xs font-semibold uppercase tracking-wide" style="color:color-mix(in oklab, var(--paper) 60%, transparent)">Napište</span>
-                        <span class="font-display text-lg font-bold" style="color:var(--paper)">{{ $email }}</span>
+                        <span class="block whitespace-nowrap font-display text-lg font-bold" style="color:var(--paper)">{{ $email }}</span>
                     </span>
                 </a>
             </div>
