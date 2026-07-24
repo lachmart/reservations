@@ -4,130 +4,117 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Maraka rental')</title>
+    <meta name="theme-color" content="#151310">
+    <title>@yield('title', 'Maraka rental — pronájem zvukové a světelné techniky')</title>
+    <meta name="description" content="@yield('meta_description', 'Půjčovna profesionální zvukové a světelné techniky pro akce až do 600 osob. Vyberte termín, sestavte si vybavení a rezervujte online.')">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css','resources/js/app.js'])
+
     <script>
-        // Initialize theme early to avoid FOUC
-        (function() {
+        (function () {
             const stored = localStorage.getItem('theme');
             const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            if ((stored === 'dark') || (!stored && prefersDark)) {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-            }
+            if (stored === 'dark' || (!stored && prefersDark)) document.documentElement.classList.add('dark');
         })();
-        function toggleTheme(){
-            const el = document.documentElement;
-            const isDark = el.classList.toggle('dark');
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.toggle('dark');
             localStorage.setItem('theme', isDark ? 'dark' : 'light');
         }
     </script>
     <script>
-        // Provide Axios fallback if Vite bundle didn't load yet
-        (function(){
-            if (!window.axios) {
-                try {
-                    var s = document.createElement('script');
-                    s.src = 'https://cdn.jsdelivr.net/npm/axios@1.7.7/dist/axios.min.js';
-                    s.async = true;
-                    s.onload = function(){
-                        try {
-                            const token = document.head.querySelector('meta[name="csrf-token"]');
-                            if (window.axios) {
-                                window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-                                if (token) window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
-                            }
-                        } catch(_) {}
-                    };
-                    document.head.appendChild(s);
-                } catch(_) {}
-            }
-        })();
-    </script>
-    <script>
-        // Global toast helper to unify notifications across pages
-        window.showToast = function(message, isError = false){
-            try {
-                let box = document.getElementById('toast-box');
-                if (!box) {
-                    box = document.createElement('div');
-                    box.id = 'toast-box';
-                    box.style.position = 'fixed';
-                    box.style.top = '1rem';
-                    box.style.right = '1rem';
-                    box.style.zIndex = '9999';
-                    document.body.appendChild(box);
+        (function () {
+            if (window.axios) return;
+            const s = document.createElement('script');
+            s.src = 'https://cdn.jsdelivr.net/npm/axios@1.7.7/dist/axios.min.js';
+            s.async = true;
+            s.onload = function () {
+                const token = document.head.querySelector('meta[name="csrf-token"]');
+                if (window.axios) {
+                    window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+                    if (token) window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
                 }
-                const toast = document.createElement('div');
-                toast.className = `mb-2 rounded border px-4 py-2 text-sm ${isError ? 'border-red-300 bg-red-50 text-red-800' : 'border-green-300 bg-green-50 text-green-800'} dark:${isError ? 'border-red-700/60 bg-red-900/30 text-red-200' : 'border-green-700/60 bg-green-900/30 text-green-200'}`;
-                toast.textContent = message;
-                box.appendChild(toast);
-                setTimeout(() => { toast.remove(); if (box.childElementCount === 0) box.remove(); }, 3000);
-            } catch (_) {}
+            };
+            document.head.appendChild(s);
+        })();
+        window.showToast = function (message, isError = false) {
+            let box = document.getElementById('toast-box');
+            if (!box) {
+                box = document.createElement('div');
+                box.id = 'toast-box';
+                box.style.cssText = 'position:fixed;top:1rem;right:1rem;z-index:9999;display:flex;flex-direction:column;gap:.5rem';
+                document.body.appendChild(box);
+            }
+            const t = document.createElement('div');
+            t.textContent = message;
+            t.style.cssText = 'border-radius:.6rem;padding:.7rem 1rem;font-size:.875rem;font-weight:600;box-shadow:0 10px 30px -12px rgba(0,0,0,.4);color:var(--accent-ink);' +
+                'background:' + (isError ? 'oklch(0.72 0.15 30)' : 'var(--accent)') + ';transform:translateY(-6px);opacity:0;transition:all .25s cubic-bezier(0.25,1,0.5,1)';
+            box.appendChild(t);
+            requestAnimationFrame(() => { t.style.transform = 'translateY(0)'; t.style.opacity = '1'; });
+            setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateY(-6px)'; setTimeout(() => t.remove(), 250); }, 2800);
         };
     </script>
 </head>
-<body class="h-full min-h-screen bg-slate-50 text-slate-900 dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 dark:text-slate-200">
-    <div class="relative min-h-screen">
-        <div aria-hidden="true" class="pointer-events-none fixed inset-0 opacity-30 dark:opacity-60">
-            <div class="absolute -top-24 -left-24 size-72 rounded-full bg-emerald-500 blur-3xl"></div>
-            <div class="absolute top-1/2 -right-24 size-72 rounded-full bg-fuchsia-500 blur-3xl"></div>
-        </div>
-
-        <header class="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-white/60 bg-white/80 dark:bg-slate-900/60 border-b border-slate-200/60 dark:border-slate-700/50">
-            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-                <a href="/" class="flex items-center gap-2 font-semibold text-slate-800 dark:text-slate-100">
-                    <span>Maraka rental</span>
+<body class="flex min-h-full flex-col">
+    <header class="sticky top-0 z-40 border-b border-line bg-paper/95 backdrop-blur" style="background:color-mix(in oklab, var(--paper) 88%, transparent)">
+        <div class="wrap flex h-16 items-center justify-between">
+            <a href="/" class="group flex items-baseline gap-2" aria-label="Maraka rental">
+                <span class="font-display text-xl font-extrabold tracking-tight text-ink">MARAKA</span>
+                <span class="rounded bg-accent px-1.5 py-0.5 font-display text-[0.7rem] font-bold uppercase tracking-widest text-accent-ink">rental</span>
+            </a>
+            <nav class="flex items-center gap-1">
+                <a href="/" class="nav-link hidden sm:inline-flex">Domů</a>
+                <a href="{{ route('products.index') }}" class="nav-link">Technika</a>
+                @php($__cart = session('cart', []))
+                @php($__cartCount = array_sum((array) ($__cart['items'] ?? [])))
+                <a href="{{ route('cart.index') }}" id="nav-cart-link" class="btn-secondary ml-1 py-2">
+                    <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                    <span class="hidden sm:inline">Košík</span>
+                    <span data-cart-count class="inline-flex min-w-5 items-center justify-center rounded-full bg-accent px-1.5 text-xs font-bold text-accent-ink {{ $__cartCount > 0 ? '' : 'hidden' }}">{{ $__cartCount }}</span>
                 </a>
-                <nav class="flex items-center gap-1 sm:gap-2">
-                    <a href="/" class="nav-link">Domů</a>
-                    <a href="{{ route('products.index') }}" class="nav-link">Produkty</a>
-                    @php($__cart = session('cart', []))
-                    @php($__cartCount = array_sum((array)($__cart['items'] ?? [])))
-                    <a href="{{ route('cart.index') }}" class="nav-link inline-flex items-center gap-2" id="nav-cart-link">
-                        <span>Košík</span>
-                        @if($__cartCount > 0)
-                            <span class="ml-1 inline-flex items-center justify-center rounded-full bg-emerald-600 px-2 py-0.5 text-xs font-semibold text-white" data-cart-count>
-                                {{ $__cartCount }}
-                            </span>
-                        @endif
-                    </a>
-                </nav>
-            </div>
-        </header>
+            </nav>
+        </div>
+    </header>
 
-        <main class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-            @if(session('success'))
-                <script>
-                    try { if (window.showToast) window.showToast(@json(session('success')), false); } catch(_) {}
-                </script>
-            @endif
-            @if($errors->any())
-                <div class="mb-4 rounded border border-red-300/60 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-700/60 dark:bg-red-900/30 dark:text-red-200">
-                    <ul class="list-disc list-inside">
-                        @foreach($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-            @yield('content')
-        </main>
-
-        <footer class="mt-8 border-t border-slate-200/60 dark:border-slate-700/50">
-            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 text-xs text-slate-600 dark:text-slate-400 flex items-center justify-between">
-                <span>&copy; {{ date('Y') }} Maraka rental</span>
-                <div class="flex items-center gap-2">
-                    <span class="hidden sm:block">Vytvořeno pomocí Laravelu a Tailwindu</span>
-                    <button type="button" onclick="toggleTheme()" class="ml-2 inline-flex items-center gap-2 rounded-md border border-slate-300/60 dark:border-slate-700/60 bg-white/60 dark:bg-slate-800/60 px-3 py-1.5 text-sm text-slate-700 dark:text-slate-200 hover:bg-white/90 hover:dark:bg-slate-800/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500">
-                        <svg class="size-4 hidden dark:block" viewBox="0 0 24 24" fill="currentColor"><path d="M21.64 13.65A9 9 0 1 1 10.35 2.36a7 7 0 1 0 11.29 11.29Z"/></svg>
-                        <svg class="size-4 dark:hidden" viewBox="0 0 24 24" fill="currentColor"><path d="M6.76 4.84 4.95 3.03 3.54 4.44l1.82 1.82 1.4-1.41Zm10.48 14.32 1.82 1.82 1.41-1.41-1.82-1.82-1.41 1.41ZM12 5a1 1 0 0 0 1-1V1h-2v3a1 1 0 0 0 1 1Zm0 14a1 1 0 0 0-1 1v3h2v-3a1 1 0 0 0-1-1Zm7-7a1 1 0 0 0 1-1h3V8h-3a1 1 0 0 0-1 1Zm-14 0a1 1 0 0 0-1-1H1v2h3a1 1 0 0 0 1-1Zm10.95-7.05 1.82-1.82-1.41-1.41-1.82 1.82 1.41 1.41ZM6.76 19.16l-1.82 1.82 1.41 1.41 1.82-1.82-1.41-1.41ZM18 12a6 6 0 1 1-12 0 6 6 0 0 1 12 0Z"/></svg>
-                        <span class="hidden sm:inline">Téma</span>
-                    </button>
-                </div>
+    <main class="flex-1">
+        @hasSection('full')
+            @yield('full')
+        @else
+            <div class="wrap py-8 sm:py-12">
+                @if($errors->any())
+                    <div class="mb-6 rounded-lg border border-line bg-surface p-4 text-sm" style="color:oklch(0.55 0.16 30)">
+                        <ul class="list-inside list-disc">
+                            @foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach
+                        </ul>
+                    </div>
+                @endif
+                @yield('content')
             </div>
-        </footer>
-    </div>
+        @endif
+    </main>
+
+    @if(session('success'))
+        <script>window.showToast && window.showToast(@json(session('success')), false);</script>
+    @endif
+
+    <footer class="mt-16 border-t border-line">
+        <div class="wrap flex flex-col gap-4 py-8 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <div class="font-display text-lg font-extrabold text-ink">MARAKA <span class="text-accent">rental</span></div>
+                <p class="mt-1 text-sm text-muted">Zvuk &amp; světlo pro akce až do 600 osob.</p>
+            </div>
+            <div class="flex items-center gap-4 text-sm text-muted">
+                <a href="{{ route('products.index') }}" class="hover:text-ink">Technika</a>
+                <a href="{{ route('cart.index') }}" class="hover:text-ink">Rezervace</a>
+                <button type="button" onclick="toggleTheme()" class="btn-secondary py-2" aria-label="Přepnout téma">
+                    <svg class="size-4 dark:hidden" viewBox="0 0 24 24" fill="currentColor"><path d="M21.64 13.65A9 9 0 1 1 10.35 2.36a7 7 0 1 0 11.29 11.29Z"/></svg>
+                    <svg class="hidden size-4 dark:block" viewBox="0 0 24 24" fill="currentColor"><path d="M12 5a1 1 0 0 0 1-1V1h-2v3a1 1 0 0 0 1 1Zm0 14a1 1 0 0 0-1 1v3h2v-3a1 1 0 0 0-1-1Zm7-7a1 1 0 0 0 1-1h3V8h-3a1 1 0 0 0-1 1Zm-14 0a1 1 0 0 0-1-1H1v2h3a1 1 0 0 0 1-1Zm10.95-7.05 1.82-1.82-1.41-1.41-1.82 1.82 1.41 1.41ZM6.76 19.16l-1.82 1.82 1.41 1.41 1.82-1.82-1.41-1.41ZM18 12a6 6 0 1 1-12 0 6 6 0 0 1 12 0Z"/></svg>
+                </button>
+            </div>
+        </div>
+        <div class="wrap pb-6 text-xs text-faint">&copy; {{ date('Y') }} Maraka rental</div>
+    </footer>
 </body>
 </html>

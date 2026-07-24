@@ -2,21 +2,131 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ---- Design tokens: warm "road-case" light theme + dark toggle ---- */
+:root {
+  --paper: oklch(0.985 0.006 80);
+  --surface: oklch(0.998 0.004 85);
+  --ink: oklch(0.23 0.02 60);
+  --muted: oklch(0.46 0.02 65);
+  --faint: oklch(0.6 0.016 70);
+  --line: oklch(0.9 0.012 75);
+  --accent: oklch(0.73 0.163 60);
+  --accent-ink: oklch(0.26 0.04 55);
+  --accent-soft: oklch(0.95 0.045 78);
+}
+
+.dark {
+  --paper: oklch(0.19 0.012 65);
+  --surface: oklch(0.235 0.014 66);
+  --ink: oklch(0.95 0.01 82);
+  --muted: oklch(0.74 0.02 78);
+  --faint: oklch(0.6 0.02 76);
+  --line: oklch(0.33 0.016 66);
+  --accent: oklch(0.77 0.155 66);
+  --accent-ink: oklch(0.2 0.04 55);
+  --accent-soft: oklch(0.3 0.05 62);
+}
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    background-color: var(--paper);
+    color: var(--ink);
+    font-feature-settings: "ss01", "cv01";
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4 { font-family: "Bricolage Grotesque", ui-sans-serif, sans-serif; }
+  ::selection { background: var(--accent); color: var(--accent-ink); }
+  input, select, textarea { color: var(--ink); }
+}
+
 @layer components {
-  .nav-link {
-    @apply inline-flex items-center rounded-md px-3 py-2 text-sm font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-100/70 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500;
+  .wrap { @apply mx-auto w-full max-w-7xl px-5 sm:px-8; }
+
+  /* Buttons ------------------------------------------------------- */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold
+           transition-[transform,background-color,border-color,filter] duration-150 ease-out-quart
+           focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2
+           focus-visible:ring-offset-[var(--paper)] disabled:opacity-50 active:translate-y-px;
   }
-  .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-emerald-500 active:bg-emerald-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:opacity-50;
-  }
+  .btn-primary { @apply btn; background: var(--accent); color: var(--accent-ink); }
+  .btn-primary:hover { filter: brightness(1.05); }
+  .btn-ink { @apply btn; background: var(--ink); color: var(--paper); }
+  .btn-ink:hover { filter: brightness(1.15); }
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-800 shadow-sm hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700;
+    @apply btn;
+    background: var(--surface);
+    color: var(--ink);
+    border: 1px solid var(--line);
   }
+  .btn-secondary:hover { border-color: var(--accent); }
+  .btn-ghost { @apply btn; color: var(--ink); }
+  .btn-ghost:hover { background: color-mix(in oklab, var(--ink) 7%, transparent); }
+  .btn-danger { @apply btn; background: transparent; border: 1px solid var(--line); color: oklch(0.56 0.17 28); }
+  .btn-danger:hover { border-color: oklch(0.62 0.18 28); background: color-mix(in oklab, oklch(0.62 0.18 28) 8%, transparent); }
+
+  .nav-link {
+    @apply inline-flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors;
+    color: var(--muted);
+  }
+  .nav-link:hover { color: var(--ink); }
+
+  /* Surfaces ------------------------------------------------------ */
   .card {
-    @apply overflow-hidden rounded-xl border border-slate-200/60 bg-white/80 shadow-sm backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/50;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    @apply rounded-xl;
   }
-  .card-body { @apply p-5 sm:p-6; }
-  .card-title { @apply text-lg font-semibold text-slate-900 dark:text-slate-100; }
-  .badge { @apply inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-700 dark:bg-slate-800 dark:text-slate-300; }
-  .input { @apply w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder-slate-400 shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus:border-emerald-500 disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:placeholder-slate-500; }
+  .card-body { @apply p-5; }
+
+  /* Tags / labels ------------------------------------------------- */
+  .kicker {
+    @apply inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.14em];
+    color: var(--accent-ink);
+  }
+  .dark .kicker { color: var(--accent); }
+  .badge {
+    @apply inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium;
+    background: color-mix(in oklab, var(--ink) 6%, transparent);
+    color: var(--muted);
+  }
+  .badge-accent {
+    @apply inline-flex items-center rounded-md px-2 py-0.5 text-xs font-semibold;
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+  .chip {
+    @apply inline-flex cursor-pointer select-none items-center gap-1.5 rounded-full px-3 py-1.5 text-sm
+           font-medium transition-colors;
+    border: 1px solid var(--line);
+    color: var(--muted);
+  }
+  .chip:hover { border-color: color-mix(in oklab, var(--accent) 60%, var(--line)); color: var(--ink); }
+  .chip-on { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+
+  /* Inputs -------------------------------------------------------- */
+  .field {
+    @apply w-full rounded-lg px-3.5 py-2.5 text-sm shadow-sm transition-colors
+           focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)];
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: var(--ink);
+  }
+  .field::placeholder { color: var(--faint); }
+  .field:focus { border-color: var(--accent); }
+  .label { @apply mb-1 block text-xs font-semibold uppercase tracking-wide; color: var(--faint); }
+  /* legacy aliases so existing views keep working */
+  .input {
+    @apply w-full rounded-lg px-3.5 py-2.5 text-sm shadow-sm transition-colors
+           focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)];
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: var(--ink);
+  }
+  .input::placeholder { color: var(--faint); }
+  .input:focus { border-color: var(--accent); }
+  .card-title { @apply font-display text-lg font-bold; color: var(--ink); }
+
+  .rule { height: 1px; background: var(--line); }
 }
