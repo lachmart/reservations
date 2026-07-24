@@ -100,21 +100,45 @@
     @endif
 
     <footer class="mt-16 border-t border-line">
-        <div class="wrap flex flex-col gap-4 py-8 sm:flex-row sm:items-center sm:justify-between">
-            <div>
+        @php($phone = config('contact.phone'))
+        @php($phoneHref = preg_replace('/[^0-9+]/', '', $phone))
+        @php($email = config('contact.email'))
+        <div class="wrap grid gap-8 py-10 sm:grid-cols-2 lg:grid-cols-4">
+            <div class="sm:col-span-2 lg:col-span-1">
                 <div class="font-display text-lg font-extrabold text-ink">MARAKA <span class="text-accent">rental</span></div>
-                <p class="mt-1 text-sm text-muted">Zvuk &amp; světlo pro akce až do 600 osob.</p>
+                <p class="mt-2 max-w-xs text-sm text-muted">Pronájem profesionální zvukové a světelné techniky pro akce až do 600 osob.</p>
             </div>
-            <div class="flex items-center gap-4 text-sm text-muted">
-                <a href="{{ route('products.index') }}" class="hover:text-ink">Technika</a>
-                <a href="{{ route('cart.index') }}" class="hover:text-ink">Rezervace</a>
-                <button type="button" onclick="toggleTheme()" class="btn-secondary py-2" aria-label="Přepnout téma">
-                    <svg class="size-4 dark:hidden" viewBox="0 0 24 24" fill="currentColor"><path d="M21.64 13.65A9 9 0 1 1 10.35 2.36a7 7 0 1 0 11.29 11.29Z"/></svg>
-                    <svg class="hidden size-4 dark:block" viewBox="0 0 24 24" fill="currentColor"><path d="M12 5a1 1 0 0 0 1-1V1h-2v3a1 1 0 0 0 1 1Zm0 14a1 1 0 0 0-1 1v3h2v-3a1 1 0 0 0-1-1Zm7-7a1 1 0 0 0 1-1h3V8h-3a1 1 0 0 0-1 1Zm-14 0a1 1 0 0 0-1-1H1v2h3a1 1 0 0 0 1-1Zm10.95-7.05 1.82-1.82-1.41-1.41-1.82 1.82 1.41 1.41ZM6.76 19.16l-1.82 1.82 1.41 1.41 1.82-1.82-1.41-1.41ZM18 12a6 6 0 1 1-12 0 6 6 0 0 1 12 0Z"/></svg>
-                </button>
+            <div>
+                <div class="text-xs font-semibold uppercase tracking-wide text-faint">Kontakt</div>
+                <ul class="mt-3 space-y-2 text-sm">
+                    <li><a href="tel:{{ $phoneHref }}" class="font-semibold text-ink hover:text-accent-ink">{{ $phone }}</a></li>
+                    <li><a href="mailto:{{ $email }}" class="text-muted hover:text-ink">{{ $email }}</a></li>
+                </ul>
+            </div>
+            <div>
+                <div class="text-xs font-semibold uppercase tracking-wide text-faint">Sídlo</div>
+                <address class="mt-3 space-y-1 text-sm not-italic text-muted">
+                    <div class="text-ink">{{ config('contact.name') }}</div>
+                    <div>{{ config('contact.address') }}</div>
+                    <div>IČO: {{ config('contact.ico') }}</div>
+                </address>
+            </div>
+            <div>
+                <div class="text-xs font-semibold uppercase tracking-wide text-faint">Web</div>
+                <ul class="mt-3 space-y-2 text-sm text-muted">
+                    <li><a href="{{ route('products.index') }}" class="hover:text-ink">Technika</a></li>
+                    <li><a href="{{ route('cart.index') }}" class="hover:text-ink">Rezervace</a></li>
+                    <li>
+                        <button type="button" onclick="toggleTheme()" class="inline-flex items-center gap-2 hover:text-ink" aria-label="Přepnout téma">
+                            <svg class="size-4 dark:hidden" viewBox="0 0 24 24" fill="currentColor"><path d="M21.64 13.65A9 9 0 1 1 10.35 2.36a7 7 0 1 0 11.29 11.29Z"/></svg>
+                            <svg class="hidden size-4 dark:block" viewBox="0 0 24 24" fill="currentColor"><path d="M12 5a1 1 0 0 0 1-1V1h-2v3a1 1 0 0 0 1 1Zm0 14a1 1 0 0 0-1 1v3h2v-3a1 1 0 0 0-1-1Zm7-7a1 1 0 0 0 1-1h3V8h-3a1 1 0 0 0-1 1Zm-14 0a1 1 0 0 0-1-1H1v2h3a1 1 0 0 0 1-1Zm10.95-7.05 1.82-1.82-1.41-1.41-1.82 1.82 1.41 1.41ZM6.76 19.16l-1.82 1.82 1.41 1.41 1.82-1.82-1.41-1.41ZM18 12a6 6 0 1 1-12 0 6 6 0 0 1 12 0Z"/></svg>
+                            <span>Přepnout téma</span>
+                        </button>
+                    </li>
+                </ul>
             </div>
         </div>
-        <div class="wrap pb-6 text-xs text-faint">&copy; {{ date('Y') }} Maraka rental</div>
+        <div class="wrap pb-6 text-xs text-faint">&copy; {{ date('Y') }} {{ config('contact.name') }} · Maraka rental</div>
     </footer>
 </body>
 </html>

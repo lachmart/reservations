@@ -2,7 +2,7 @@
     $__cart = session('cart', []);
     $isBundle = method_exists($product, 'isBundle') && $product->isBundle();
     $initialCount = (int) ($isBundle ? ($__cart['bundles'][$product->id] ?? 0) : ($__cart['items'][$product->id] ?? 0));
-    $media = method_exists($product, 'getFirstMediaUrl') ? $product->getFirstMediaUrl() : null;
+    $media = method_exists($product, 'mainImageUrl') ? $product->mainImageUrl() : null;
     $price = number_format((float) ($product->price_per_day ?? 0), 0, ',', ' ');
 @endphp
 <article data-product-card data-product-id="{{ $product->id }}"

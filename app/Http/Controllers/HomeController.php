@@ -34,9 +34,7 @@ class HomeController extends Controller
                     ->orderByDesc('price_per_day')
                     ->first();
 
-                $c->sample_image = $sample && method_exists($sample, 'getFirstMediaUrl')
-                    ? ($sample->getFirstMediaUrl() ?: null)
-                    : null;
+                $c->sample_image = $sample ? $sample->mainImageUrl() : null;
 
                 return $c;
             });

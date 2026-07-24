@@ -110,6 +110,23 @@ class Product extends Model implements HasMedia
         $available = $stock - $reserved;
         return $available > 0 ? $available : 0;
     }
+    /**
+     * URL of the product's main image, with fallback across collections.
+     * Photos are stored in the "avatar" collection (Filament + MCP), with an
+     * optional "product-images" gallery. Returns null when there is no image.
+     */
+    public function mainImageUrl(): ?string
+    {
+        foreach (['avatar', 'product-images', 'default'] as $collection) {
+            $url = $this->getFirstMediaUrl($collection);
+            if (! empty($url)) {
+                return $url;
+            }
+        }
+
+        return null;
+    }
+
     public function registerMediaConversions(?Media $media = null): void
     {
         $this

@@ -37,7 +37,7 @@
 
             <div class="lg:col-span-5">
                 @php($heroProduct = $featured->first())
-                @php($heroImg = $heroProduct ? $heroProduct->getFirstMediaUrl() : null)
+                @php($heroImg = $heroProduct ? $heroProduct->mainImageUrl() : null)
                 @if($heroProduct)
                     <a href="{{ route('products.show', $heroProduct) }}" class="group relative mx-auto block max-w-md rounded-2xl border border-line bg-surface p-6 shadow-card transition-[transform,box-shadow] duration-200 ease-out-quart hover:-translate-y-0.5 hover:shadow-lift lg:ml-auto">
                         <div class="flex items-center justify-between">
@@ -125,14 +125,37 @@
         </div>
     </section>
 
-    {{-- CTA --}}
+    {{-- Contact CTA --}}
+    @php($phone = config('contact.phone'))
+    @php($phoneHref = preg_replace('/[^0-9+]/', '', $phone))
+    @php($email = config('contact.email'))
     <section class="wrap pb-20">
-        <div class="flex flex-col items-start justify-between gap-6 rounded-2xl px-8 py-10 sm:flex-row sm:items-center" style="background:var(--ink)">
+        <div class="grid gap-8 rounded-2xl px-8 py-10 sm:px-10 lg:grid-cols-2 lg:items-center" style="background:var(--ink)">
             <div>
-                <h2 class="font-display text-2xl font-extrabold" style="color:var(--paper)">Nevíte, co na akci potřebujete?</h2>
-                <p class="mt-2 max-w-lg" style="color:color-mix(in oklab, var(--paper) 70%, transparent)">Poradíme se sestavením ozvučení i osvětlení na míru vaší akci a prostoru.</p>
+                <div class="kicker" style="color:var(--accent)">Poradíme vám</div>
+                <h2 class="mt-3 font-display text-display-md font-extrabold" style="color:var(--paper)">Nevíte, co na akci potřebujete?</h2>
+                <p class="mt-3 max-w-md leading-relaxed" style="color:color-mix(in oklab, var(--paper) 72%, transparent)">Zavolejte nebo napište — pomůžeme se sestavením ozvučení i osvětlení na míru vaší akci a prostoru.</p>
             </div>
-            <a href="{{ route('products.index') }}" class="btn-primary px-6 py-3 text-base">Prohlédnout techniku</a>
+            <div class="flex flex-col gap-3 sm:flex-row lg:justify-end">
+                <a href="tel:{{ $phoneHref }}" class="group flex items-center gap-3 rounded-xl px-5 py-4 transition-colors" style="background:color-mix(in oklab, var(--paper) 10%, transparent)">
+                    <span class="grid size-11 shrink-0 place-items-center rounded-full" style="background:var(--accent);color:var(--accent-ink)">
+                        <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92Z"/></svg>
+                    </span>
+                    <span>
+                        <span class="block text-xs font-semibold uppercase tracking-wide" style="color:color-mix(in oklab, var(--paper) 60%, transparent)">Zavolejte</span>
+                        <span class="font-display text-lg font-bold" style="color:var(--paper)">{{ $phone }}</span>
+                    </span>
+                </a>
+                <a href="mailto:{{ $email }}" class="group flex items-center gap-3 rounded-xl px-5 py-4 transition-colors" style="background:color-mix(in oklab, var(--paper) 10%, transparent)">
+                    <span class="grid size-11 shrink-0 place-items-center rounded-full" style="background:var(--accent);color:var(--accent-ink)">
+                        <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>
+                    </span>
+                    <span>
+                        <span class="block text-xs font-semibold uppercase tracking-wide" style="color:color-mix(in oklab, var(--paper) 60%, transparent)">Napište</span>
+                        <span class="font-display text-lg font-bold" style="color:var(--paper)">{{ $email }}</span>
+                    </span>
+                </a>
+            </div>
         </div>
     </section>
 @endsection
