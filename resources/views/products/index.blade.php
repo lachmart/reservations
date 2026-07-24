@@ -1,6 +1,14 @@
 @extends('layouts.app')
 
-@section('title', 'Technika — Maraka rental')
+@php
+    $seoCat = $selectedCategory ? $categories->firstWhere('slug', $selectedCategory) : null;
+    $seoCanonical = $seoCat ? route('products.index', ['category' => $seoCat->slug]) : route('products.index');
+@endphp
+@section('title', $seoCat ? ('Pronájem ' . $seoCat->name . ' — Maraka rental') : 'Pronájem zvukové a světelné techniky — Maraka rental')
+@section('meta_description', $seoCat
+    ? ('Pronájem ' . $seoCat->name . ' pro akce v Olomouci a okolí. Vyberte termín a rezervujte online z ' . $seoCat->products()->count() . ' položek.')
+    : 'Kompletní katalog zvukové a světelné techniky k zapůjčení — reproboxy, mikrofony, mixpulty, světla i kabeláž. Olomouc a okolí.')
+@section('canonical', $seoCanonical)
 
 @section('content')
     <div class="flex flex-wrap items-end justify-between gap-4">
@@ -48,8 +56,10 @@
         <div class="mt-4 flex flex-wrap items-center gap-2">
             <span class="mr-1 text-xs font-semibold uppercase tracking-wide text-faint">Štítky</span>
             @foreach($allTags as $tag)
-                <input id="tag-{{ $tag->id }}" type="checkbox" name="tags[]" value="{{ $tag->id }}" @checked(in_array($tag->id, $selectedTags ?? [])) class="peer sr-only">
-                <label for="tag-{{ $tag->id }}" class="chip peer-checked:border-ink peer-checked:bg-ink peer-checked:text-paper">{{ $tag->name }}</label>
+                <div>
+                    <input id="tag-{{ $tag->id }}" type="checkbox" name="tags[]" value="{{ $tag->id }}" @checked(in_array($tag->id, $selectedTags ?? [])) class="peer sr-only">
+                    <label for="tag-{{ $tag->id }}" class="chip peer-checked:border-ink peer-checked:bg-ink peer-checked:text-paper">{{ $tag->name }}</label>
+                </div>
             @endforeach
         </div>
         <noscript><button type="submit" class="btn-primary mt-4">Filtrovat</button></noscript>

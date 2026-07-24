@@ -1,6 +1,49 @@
 @extends('layouts.app')
 
-@section('title', $product->name . ' — Maraka rental')
+@section('title', $product->name . ' — pronájem | Maraka rental')
+@section('meta_description', 'Pronájem ' . $product->name . ' za ' . number_format((float) $product->price_per_day, 0, ',', ' ') . ' Kč/den' . ($product->category ? ' — ' . $product->category->name : '') . '. Zkontrolujte dostupnost na váš termín a rezervujte online. Olomouc a okolí.')
+@section('og_type', 'product')
+@if($product->mainImageUrl())@section('og_image', $product->mainImageUrl())@endif
+
+@php($seoPrice = number_format((float) $product->price_per_day, 2, '.', ''))
+@push('schema')
+<script type="application/ld+json">
+{!! json_encode(array_filter([
+    '@context' => 'https://schema.org',
+    '@type' => 'Product',
+    'name' => $product->name,
+    'description' => $product->description ? strip_tags($product->description) : ('Pronájem ' . $product->name . ' pro vaši akci.'),
+    'image' => $product->mainImageUrl(),
+    'category' => optional($product->category)->name,
+    'offers' => [
+        '@type' => 'Offer',
+        'priceCurrency' => 'CZK',
+        'price' => $seoPrice,
+        'availability' => ((int) $product->stock > 0) ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+        'url' => route('products.show', $product),
+        'priceSpecification' => [
+            '@type' => 'UnitPriceSpecification',
+            'price' => $seoPrice,
+            'priceCurrency' => 'CZK',
+            'unitCode' => 'DAY',
+            'referenceQuantity' => ['@type' => 'QuantitativeValue', 'value' => 1, 'unitCode' => 'DAY'],
+        ],
+    ],
+]), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+</script>
+<script type="application/ld+json">
+{!! json_encode([
+    '@context' => 'https://schema.org',
+    '@type' => 'BreadcrumbList',
+    'itemListElement' => array_values(array_filter([
+        ['@type' => 'ListItem', 'position' => 1, 'name' => 'Domů', 'item' => url('/')],
+        ['@type' => 'ListItem', 'position' => 2, 'name' => 'Technika', 'item' => route('products.index')],
+        $product->category ? ['@type' => 'ListItem', 'position' => 3, 'name' => $product->category->name, 'item' => route('products.index', ['category' => $product->category->slug])] : null,
+        ['@type' => 'ListItem', 'position' => $product->category ? 4 : 3, 'name' => $product->name, 'item' => route('products.show', $product)],
+    ])),
+], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+</script>
+@endpush
 
 @section('content')
     @php($galleryItems = method_exists($product,'getMedia') ? $product->getMedia('product-images') : collect())

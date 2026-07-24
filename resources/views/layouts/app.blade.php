@@ -5,8 +5,63 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="theme-color" content="#151310">
-    <title>@yield('title', 'Maraka rental — pronájem zvukové a světelné techniky')</title>
-    <meta name="description" content="@yield('meta_description', 'Půjčovna profesionální zvukové a světelné techniky pro akce až do 600 osob. Vyberte termín, sestavte si vybavení a rezervujte online.')">
+    @php
+        $seoTitle = trim($__env->yieldContent('title')) ?: 'Maraka rental — pronájem zvukové a světelné techniky';
+        $seoDesc = trim($__env->yieldContent('meta_description')) ?: 'Půjčovna profesionální zvukové a světelné techniky pro akce až do 600 osob v Olomouci a okolí. Vyberte termín, sestavte si vybavení a rezervujte online.';
+        $seoCanonical = trim($__env->yieldContent('canonical')) ?: request()->url();
+        $seoImage = trim($__env->yieldContent('og_image'));
+        $seoType = trim($__env->yieldContent('og_type')) ?: 'website';
+    @endphp
+    <title>{{ $seoTitle }}</title>
+    <meta name="description" content="{{ $seoDesc }}">
+    <link rel="canonical" href="{{ $seoCanonical }}">
+
+    {{-- Open Graph / social sharing --}}
+    <meta property="og:site_name" content="Maraka rental">
+    <meta property="og:locale" content="cs_CZ">
+    <meta property="og:type" content="{{ $seoType }}">
+    <meta property="og:title" content="{{ $seoTitle }}">
+    <meta property="og:description" content="{{ $seoDesc }}">
+    <meta property="og:url" content="{{ $seoCanonical }}">
+    @if($seoImage)
+        <meta property="og:image" content="{{ $seoImage }}">
+        <meta name="twitter:card" content="summary_large_image">
+    @else
+        <meta name="twitter:card" content="summary">
+    @endif
+    <meta name="twitter:title" content="{{ $seoTitle }}">
+    <meta name="twitter:description" content="{{ $seoDesc }}">
+    @if($seoImage)<meta name="twitter:image" content="{{ $seoImage }}">@endif
+    @hasSection('gsc_verification')<meta name="google-site-verification" content="@yield('gsc_verification')">@endif
+
+    {{-- LocalBusiness structured data (sitewide) --}}
+    @php
+        $bizPhone = preg_replace('/[^0-9+]/', '', config('contact.phone'));
+    @endphp
+    <script type="application/ld+json">
+    {!! json_encode([
+        '@context' => 'https://schema.org',
+        '@type' => 'LocalBusiness',
+        '@id' => config('app.url').'/#business',
+        'name' => 'Maraka rental',
+        'description' => 'Půjčovna profesionální zvukové a světelné techniky pro akce až do 600 osob.',
+        'url' => config('app.url'),
+        'telephone' => $bizPhone,
+        'email' => config('contact.email'),
+        'priceRange' => '$$',
+        'founder' => ['@type' => 'Person', 'name' => config('contact.name')],
+        'identifier' => ['@type' => 'PropertyValue', 'name' => 'IČO', 'value' => config('contact.ico')],
+        'address' => [
+            '@type' => 'PostalAddress',
+            'streetAddress' => 'Černá cesta 96/31',
+            'addressLocality' => 'Olomouc',
+            'postalCode' => '779 00',
+            'addressCountry' => 'CZ',
+        ],
+        'areaServed' => ['@type' => 'City', 'name' => 'Olomouc'],
+    ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+    </script>
+    @stack('schema')
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -131,6 +186,7 @@
                 <ul class="mt-3 space-y-2 text-sm text-muted">
                     <li><a href="{{ route('products.index') }}" class="hover:text-ink">Technika</a></li>
                     <li><a href="{{ route('cart.index') }}" class="hover:text-ink">Rezervace</a></li>
+                    <li><a href="{{ route('ai.index') }}" class="hover:text-ink">Rezervace přes AI</a></li>
                     <li>
                         <button type="button" onclick="toggleTheme()" class="inline-flex items-center gap-2 hover:text-ink" aria-label="Přepnout téma">
                             <svg class="size-4 dark:hidden" viewBox="0 0 24 24" fill="currentColor"><path d="M21.64 13.65A9 9 0 1 1 10.35 2.36a7 7 0 1 0 11.29 11.29Z"/></svg>

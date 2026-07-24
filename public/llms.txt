@@ -1,0 +1,31 @@
+# Maraka rental
+
+> Půjčovna profesionální zvukové a světelné techniky pro akce až do 600 osob v Olomouci a okolí. Katalog lze procházet a rezervovat programově přes MCP.
+
+Maraka rental (provozovatel Martin Lach, IČO 07402767, Černá cesta 96/31, 779 00 Olomouc)
+pronajímá reprosoustavy, mikrofony, mixpulty, světelnou techniku, stativy a kabeláž pro
+koncerty, svatby a firemní akce.
+
+## Rezervace přes MCP
+
+Veřejný Model Context Protocol server (HTTP, bez autentizace) umožňuje AI asistentům
+procházet techniku, ověřit dostupnost na konkrétní termín a založit rezervaci:
+
+- Endpoint: https://api.marakarental.cz/mcp/reservations (POST, JSON-RPC 2.0)
+- Nástroje:
+  - `list-products` — výpis dostupné techniky (název, kategorie, cena za den, sklad)
+  - `check-product-availability` — dostupnost kusů na termín (start_date, end_date)
+  - `create-reservation` — vytvoření rezervace (jméno, e-mail, termín)
+- Dokumentace: https://api.marakarental.cz/ai
+
+## Klíčové stránky
+
+- Katalog techniky: https://api.marakarental.cz/products
+- Rezervace přes AI: https://api.marakarental.cz/ai
+- Sitemap: https://api.marakarental.cz/sitemap.xml
+
+## Kontakt
+
+- Telefon: +420 734 530 330
+- E-mail: info@marakarental.cz
+- Sídlo: Černá cesta 96/31, 779 00 Olomouc
