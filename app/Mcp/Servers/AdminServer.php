@@ -13,7 +13,10 @@ use App\Mcp\Tools\CreatePort;
 use App\Mcp\Tools\CreateProduct;
 use App\Mcp\Tools\CreateReservation;
 use App\Mcp\Tools\CreateTag;
+use App\Mcp\Tools\DeleteCategory;
+use App\Mcp\Tools\DeleteProduct;
 use App\Mcp\Tools\DeleteReservation;
+use App\Mcp\Tools\DeleteTag;
 use App\Mcp\Tools\GetReservation;
 use App\Mcp\Tools\ListCategories;
 use App\Mcp\Tools\ListPorts;
@@ -73,6 +76,7 @@ class AdminServer extends Server
         ListProducts::class,
         CreateProduct::class,
         UpdateProduct::class,
+        DeleteProduct::class,
         CheckProductAvailability::class,
         AttachProductPhoto::class,
         UploadProductPhoto::class,
@@ -80,8 +84,10 @@ class AdminServer extends Server
         // Linked entities
         ListCategories::class,
         CreateCategory::class,
+        DeleteCategory::class,
         ListTags::class,
         CreateTag::class,
+        DeleteTag::class,
         ListPorts::class,
         CreatePort::class,
         SyncProductTags::class,
