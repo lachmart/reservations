@@ -6,5 +6,5 @@ return [
     'phone' => env('CONTACT_PHONE', '+420 734 530 330'),
     'email' => env('CONTACT_EMAIL', 'info@marakarental.cz'),
     'ico' => env('CONTACT_ICO', '07402767'),
-    'address' => env('CONTACT_ADDRESS', 'Černá cesta 96/31, Klášterní Hradisko, 779 00 Olomouc'),
+    'address' => env('CONTACT_ADDRESS', 'Černá cesta 96/31, 779 00 Olomouc'),
 ];
