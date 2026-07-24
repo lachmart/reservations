@@ -16,7 +16,14 @@ class ProductController extends Controller
     public function index(): View
     {
         $request = request();
-        $categoryId = $request->integer('category');
+        // Category filter accepts a slug (nice URL) or a numeric id.
+        $categoryParam = trim((string) $request->input('category', ''));
+        $category = $categoryParam === ''
+            ? null
+            : (ctype_digit($categoryParam)
+                ? Category::find($categoryParam)
+                : Category::where('slug', $categoryParam)->first());
+        $categoryId = $category?->id;
         $tagIds = array_filter((array) $request->input('tags', []), fn($v) => is_numeric($v));
         $sort = $request->input('sort', 'featured');
         $q = trim((string) $request->input('q', ''));
@@ -94,7 +101,7 @@ class ProductController extends Controller
             'products' => $products,
             'categories' => $categories,
             'allTags' => $allTags,
-            'selectedCategory' => $categoryId,
+            'selectedCategory' => $category?->slug,
             'selectedTags' => $tagIds,
             'sort' => $sort,
             'q' => $q,

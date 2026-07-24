@@ -33,7 +33,7 @@
             <select name="category" class="field sm:w-52" aria-label="Kategorie">
                 <option value="">Všechny kategorie</option>
                 @foreach($categories as $category)
-                    <option value="{{ $category->id }}" @selected((int) $selectedCategory === (int) $category->id)>{{ $category->name }}</option>
+                    <option value="{{ $category->slug }}" @selected($selectedCategory === $category->slug)>{{ $category->name }}</option>
                 @endforeach
             </select>
             <select name="sort" class="field sm:w-48" aria-label="Řazení">

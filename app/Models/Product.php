@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -16,6 +17,33 @@ class Product extends Model implements HasMedia
 {
     use HasFactory;
     use InteractsWithMedia;
+
+    /**
+     * Auto-generate a unique slug from the name when one isn't set (kept stable
+     * afterwards so shared URLs don't break).
+     */
+    protected static function booted(): void
+    {
+        static::saving(function (self $product) {
+            if (empty($product->slug) && ! empty($product->name)) {
+                $product->slug = self::uniqueSlug($product->name, $product->getKey());
+            }
+        });
+    }
+
+    public static function uniqueSlug(string $name, $ignoreId = null): string
+    {
+        $base = Str::slug($name) ?: 'produkt';
+        $slug = $base;
+        $i = 2;
+        while (self::where('slug', $slug)
+            ->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))
+            ->exists()) {
+            $slug = $base.'-'.$i++;
+        }
+
+        return $slug;
+    }
 
     /**
      * Scope: only products with positive price and stock.
@@ -48,6 +76,7 @@ class Product extends Model implements HasMedia
      */
     protected $fillable = [
         'name',
+        'slug',
         'description',
         'status',
         'category_id',

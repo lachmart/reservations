@@ -12,7 +12,7 @@
                     Ozvučíme a&nbsp;nasvítíme<br class="hidden sm:block"> vaši <span class="text-accent">akci</span>.
                 </h1>
                 <p class="mt-5 max-w-xl text-lg leading-relaxed text-muted">
-                    Profesionální aparatura a světla k zapůjčení pro koncerty, svatby i firemní eventy až do 600&nbsp;osob. Vyberte termín, sestavte si set a rezervujte online.
+                    Půjčujeme profesionální aparaturu a světla pro koncerty, svatby i firemní eventy. Vyberte termín, sestavte si set a rezervujte online.
                 </p>
 
                 <div class="mt-8 max-w-2xl">
@@ -70,7 +70,7 @@
         </div>
         <div class="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
             @foreach($categories as $cat)
-                <a href="{{ route('products.index', ['category' => $cat->id]) }}"
+                <a href="{{ route('products.index', ['category' => $cat->slug]) }}"
                    class="group relative flex flex-col overflow-hidden rounded-xl border border-line bg-surface transition-[box-shadow,transform] duration-200 ease-out-quart hover:-translate-y-0.5 hover:shadow-lift">
                     <div class="media-tile relative aspect-[5/4] overflow-hidden border-b border-line">
                         @if($cat->sample_image)
