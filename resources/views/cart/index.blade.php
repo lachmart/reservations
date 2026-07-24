@@ -25,21 +25,16 @@
                     <h2 class="card-title">Termín rezervace</h2>
                     <form id="cart-dates-form" method="post" action="{{ route('cart.setDates') }}" class="mt-3">
                         @csrf
+                        <input id="start_date" type="hidden" name="start_date" value="{{ $start ? \Carbon\Carbon::parse($start)->format('Y-m-d') : '' }}">
+                        <input id="end_date" type="hidden" name="end_date" value="{{ $end ? \Carbon\Carbon::parse($end)->format('Y-m-d') : '' }}">
                         <div class="flex flex-col gap-2 rounded-2xl border border-line p-2 sm:flex-row sm:items-stretch" style="background:color-mix(in oklab, var(--ink) 3%, var(--surface))">
-                            <div class="flex flex-1 items-center gap-2 px-3 py-2">
+                            <label class="flex flex-1 cursor-pointer items-center gap-3 px-3 py-2">
                                 <svg class="size-5 shrink-0 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-                                <div class="min-w-0 flex-1">
-                                    <div class="text-[0.65rem] font-semibold uppercase tracking-wide text-faint">Od</div>
-                                    <input id="start_date" type="date" name="start_date" value="{{ $start ? \Carbon\Carbon::parse($start)->format('Y-m-d') : '' }}" class="w-full bg-transparent text-sm font-semibold text-ink focus:outline-none">
-                                </div>
-                            </div>
-                            <div class="hidden items-center text-faint sm:flex"><svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
-                            <div class="flex flex-1 items-center gap-2 px-3 py-2">
-                                <div class="min-w-0 flex-1">
-                                    <div class="text-[0.65rem] font-semibold uppercase tracking-wide text-faint">Do</div>
-                                    <input id="end_date" type="date" name="end_date" value="{{ $end ? \Carbon\Carbon::parse($end)->format('Y-m-d') : '' }}" class="w-full bg-transparent text-sm font-semibold text-ink focus:outline-none">
-                                </div>
-                            </div>
+                                <span class="min-w-0 flex-1">
+                                    <span class="block text-[0.65rem] font-semibold uppercase tracking-wide text-faint">Termín pronájmu</span>
+                                    <input type="text" data-rangepicker readonly placeholder="Vyberte termín v kalendáři" class="w-full cursor-pointer bg-transparent text-sm font-semibold text-ink placeholder:font-medium placeholder:text-faint focus:outline-none">
+                                </span>
+                            </label>
                             <button class="btn-primary shrink-0" type="submit">Nastavit termín</button>
                         </div>
                     </form>
@@ -79,7 +74,7 @@
                                 const res = await fetch(window.location.href, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
                                 const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
                                 const newRoot = doc.getElementById('cart-root');
-                                if (newRoot) { cartRoot.innerHTML = newRoot.innerHTML; bindAutoSubmit(cartRoot); bindDateChange(); }
+                                if (newRoot) { cartRoot.innerHTML = newRoot.innerHTML; bindAutoSubmit(cartRoot); bindDateChange(); window.initRangePickers && window.initRangePickers(); }
                             }
                             function bindAutoSubmit(root){
                                 root.querySelectorAll('form.auto-submit-on-change').forEach(form => {

@@ -61,15 +61,12 @@
                 </div>
 
                 <form id="product-availability-form" method="get" action="{{ route('products.show', $product) }}" class="mt-3">
+                    <input id="start_date" type="hidden" name="start_date" value="{{ $start ? \Carbon\Carbon::parse($start)->format('Y-m-d') : '' }}">
+                    <input id="end_date" type="hidden" name="end_date" value="{{ $end ? \Carbon\Carbon::parse($end)->format('Y-m-d') : '' }}">
                     <div class="flex flex-col gap-2 rounded-xl border border-line bg-surface p-1.5 sm:flex-row sm:items-center">
-                        <label class="flex flex-1 items-center gap-2 px-2 py-1">
-                            <span class="text-[0.65rem] font-semibold uppercase tracking-wide text-faint">Od</span>
-                            <input id="start_date" type="date" name="start_date" value="{{ $start ? \Carbon\Carbon::parse($start)->format('Y-m-d') : '' }}" class="w-full bg-transparent text-sm font-semibold text-ink focus:outline-none">
-                        </label>
-                        <span class="hidden text-faint sm:inline">→</span>
-                        <label class="flex flex-1 items-center gap-2 px-2 py-1">
-                            <span class="text-[0.65rem] font-semibold uppercase tracking-wide text-faint">Do</span>
-                            <input id="end_date" type="date" name="end_date" value="{{ $end ? \Carbon\Carbon::parse($end)->format('Y-m-d') : '' }}" class="w-full bg-transparent text-sm font-semibold text-ink focus:outline-none">
+                        <label class="flex flex-1 cursor-pointer items-center gap-2 px-2.5 py-1.5">
+                            <svg class="size-4 shrink-0 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                            <input type="text" data-rangepicker readonly placeholder="Vyberte termín v kalendáři" class="w-full cursor-pointer bg-transparent text-sm font-semibold text-ink placeholder:font-medium placeholder:text-faint focus:outline-none">
                         </label>
                         <button class="btn-secondary shrink-0" type="submit">Zobrazit</button>
                     </div>

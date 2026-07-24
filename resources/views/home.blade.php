@@ -38,19 +38,24 @@
             <div class="lg:col-span-5">
                 @php($heroProduct = $featured->first())
                 @php($heroImg = $heroProduct ? $heroProduct->getFirstMediaUrl() : null)
-                <div class="relative mx-auto max-w-md rounded-2xl border border-line bg-surface p-6 shadow-card lg:ml-auto">
-                    <div class="flex items-center justify-between">
-                        <span class="badge-accent">Doporučujeme</span>
-                        <span class="text-xs text-faint">Připraveno na scénu</span>
-                    </div>
-                    @if($heroImg)
-                        <img src="{{ $heroImg }}" alt="{{ $heroProduct->name }}" class="mx-auto my-6 h-56 w-full object-contain">
+                @if($heroProduct)
+                    <a href="{{ route('products.show', $heroProduct) }}" class="group relative mx-auto block max-w-md rounded-2xl border border-line bg-surface p-6 shadow-card transition-[transform,box-shadow] duration-200 ease-out-quart hover:-translate-y-0.5 hover:shadow-lift lg:ml-auto">
+                        <div class="flex items-center justify-between">
+                            <span class="badge-accent">Doporučujeme</span>
+                            <span class="text-xs text-faint">Připraveno na scénu</span>
+                        </div>
+                        @if($heroImg)
+                            <img src="{{ $heroImg }}" alt="{{ $heroProduct->name }}" class="mx-auto my-6 h-56 w-full object-contain transition-transform duration-300 ease-out-quart group-hover:scale-[1.03]">
+                        @else
+                            <div class="my-6 grid h-56 place-items-center text-faint">Katalog techniky</div>
+                        @endif
                         <div class="text-sm font-semibold uppercase tracking-wide text-faint">{{ optional($heroProduct->category)->name }}</div>
-                        <div class="font-display text-lg font-bold text-ink">{{ $heroProduct->name }}</div>
-                    @else
-                        <div class="my-6 grid h-56 place-items-center text-faint">Katalog techniky</div>
-                    @endif
-                </div>
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="font-display text-lg font-bold text-ink group-hover:text-accent-ink">{{ $heroProduct->name }}</div>
+                            <span class="text-muted transition-transform group-hover:translate-x-0.5">→</span>
+                        </div>
+                    </a>
+                @endif
             </div>
         </div>
     </section>
