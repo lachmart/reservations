@@ -26,6 +26,8 @@ class ProductFactory extends Factory
             'description' => fake()->text(),
             'status' => fake()->word(),
             'category_id' => Category::factory(),
+            'price_per_day' => fake()->numberBetween(1, 30) * 50,
+            'stock' => fake()->numberBetween(1, 20),
         ];
     }
 }
