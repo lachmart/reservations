@@ -25,7 +25,7 @@
                         <dd class="font-display text-2xl font-extrabold text-ink">{{ $productCount }}+</dd>
                     </div>
                     <div>
-                        <dt class="text-xs font-semibold uppercase tracking-wide text-faint">Akce až do</dt>
+                        <dt class="text-xs font-semibold uppercase tracking-wide text-faint">Akce až pro</dt>
                         <dd class="font-display text-2xl font-extrabold text-ink">600 osob</dd>
                     </div>
                     <div>

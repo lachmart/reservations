@@ -12,9 +12,15 @@ function initRangePickers() {
         const startHidden = scope.querySelector('input[name="start_date"]');
         const endHidden = scope.querySelector('input[name="end_date"]');
 
+        // Hidden inputs store Y-m-d; build real Date objects so Flatpickr (which
+        // displays d.m.Y) reflects an already-selected term instead of the placeholder.
+        const toDate = (s) => {
+            const p = String(s).split('-').map(Number);
+            return p.length === 3 ? new Date(p[0], p[1] - 1, p[2]) : null;
+        };
         const initial = [];
-        if (startHidden && startHidden.value) initial.push(startHidden.value);
-        if (endHidden && endHidden.value) initial.push(endHidden.value);
+        if (startHidden && startHidden.value) { const d = toDate(startHidden.value); if (d) initial.push(d); }
+        if (endHidden && endHidden.value) { const d = toDate(endHidden.value); if (d) initial.push(d); }
 
         flatpickr(el, {
             mode: 'range',
