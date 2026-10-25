@@ -22,3 +22,5 @@ yarn-error.log
 /.vscode
 /.zed
 .deploy.env
+# local secrets and data, never commit
+*.log
