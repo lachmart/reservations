@@ -75,6 +75,12 @@
                     <div class="media-tile relative aspect-[5/4] overflow-hidden border-b border-line">
                         @if($cat->sample_image)
                             <img src="{{ $cat->sample_image }}" alt="{{ $cat->name }}" loading="lazy" class="absolute inset-0 size-full object-contain p-6 transition-transform duration-300 ease-out-quart group-hover:scale-105">
+                        @else
+                            @include('partials.product-placeholder', [
+                                'kind' => match ($cat->slug) { 'zvuk' => 'speaker', 'svetla' => 'light', 'stage' => 'stand', 'distro' => 'power', default => 'generic' },
+                                'size' => 'size-16',
+                                'label' => $cat->name,
+                            ])
                         @endif
                     </div>
                     <div class="flex items-center justify-between p-4">

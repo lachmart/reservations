@@ -64,7 +64,9 @@
                         <img id="product-main-image" src="{{ $mainUrl }}" alt="{{ $product->name }}" class="absolute inset-0 size-full cursor-zoom-in object-contain p-8 transition-transform duration-300 ease-out">
                     </div>
                 @else
-                    <div class="grid aspect-square place-items-center" style="color:var(--media-line)"><svg class="size-16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg></div>
+                    <div class="relative aspect-square">
+                        @include('partials.product-placeholder', ['kind' => $product->placeholderKind(), 'size' => 'size-28', 'label' => 'Fotka bude doplněna'])
+                    </div>
                 @endif
             </div>
             @if($galleryItems && $galleryItems->count() > 0)

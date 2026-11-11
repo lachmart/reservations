@@ -156,6 +156,43 @@ class Product extends Model implements HasMedia
         return null;
     }
 
+    /**
+     * Which icon to show when the product has no photo yet.
+     * Matched on the product name first, then falls back to the category.
+     */
+    public function placeholderKind(): string
+    {
+        $name = Str::slug((string) $this->name, ' ');
+
+        $rules = [
+            'package' => ['balicek'],
+            'stagebox' => ['stagebox', 'stage box'],
+            'reel' => ['buben', 'bubnu'],
+            'power' => ['rozvadec', 'pdb', 'amprack', 'amp rack', 'powerbox', 'h07rn', 'sez 32a', 'sez 16a'],
+            'cable' => ['kabel', 'xlr', 'speakon', 'cat 5', 'cat5', 'tf34', 'neutrik', 'klotz'],
+            'mic' => ['mikrofon', 'shure', 'sennheiser', 'audix', 'akg', 'dji', 'rode'],
+            'stand' => ['stojan', 'konigmeyer', 'konig', 'adam hall s', 'gravity'],
+            'haze' => ['haze', 'hazer', 'mlh'],
+            'light' => ['svetlo', 'elation', 'chauvet', 'cameo', 'fractal', 'varytec', 'spot', 'wash', 'par '],
+        ];
+
+        foreach ($rules as $kind => $needles) {
+            foreach ($needles as $needle) {
+                if (str_contains($name.' ', $needle)) {
+                    return $kind;
+                }
+            }
+        }
+
+        return match ($this->category?->slug) {
+            'zvuk' => 'speaker',
+            'svetla' => 'light',
+            'stage' => 'stand',
+            'distro' => 'power',
+            default => 'generic',
+        };
+    }
+
     public function registerMediaConversions(?Media $media = null): void
     {
         $this
