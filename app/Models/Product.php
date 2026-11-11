@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -16,6 +17,33 @@ class Product extends Model implements HasMedia
 {
     use HasFactory;
     use InteractsWithMedia;
+
+    /**
+     * Auto-generate a unique slug from the name when one isn't set (kept stable
+     * afterwards so shared URLs don't break).
+     */
+    protected static function booted(): void
+    {
+        static::saving(function (self $product) {
+            if (empty($product->slug) && ! empty($product->name)) {
+                $product->slug = self::uniqueSlug($product->name, $product->getKey());
+            }
+        });
+    }
+
+    public static function uniqueSlug(string $name, $ignoreId = null): string
+    {
+        $base = Str::slug($name) ?: 'produkt';
+        $slug = $base;
+        $i = 2;
+        while (self::where('slug', $slug)
+            ->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))
+            ->exists()) {
+            $slug = $base.'-'.$i++;
+        }
+
+        return $slug;
+    }
 
     /**
      * Scope: only products with positive price and stock.
@@ -48,6 +76,7 @@ class Product extends Model implements HasMedia
      */
     protected $fillable = [
         'name',
+        'slug',
         'description',
         'status',
         'category_id',
@@ -110,6 +139,60 @@ class Product extends Model implements HasMedia
         $available = $stock - $reserved;
         return $available > 0 ? $available : 0;
     }
+    /**
+     * URL of the product's main image, with fallback across collections.
+     * Photos are stored in the "avatar" collection (Filament + MCP), with an
+     * optional "product-images" gallery. Returns null when there is no image.
+     */
+    public function mainImageUrl(): ?string
+    {
+        foreach (['avatar', 'product-images', 'default'] as $collection) {
+            $url = $this->getFirstMediaUrl($collection);
+            if (! empty($url)) {
+                return $url;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Which icon to show when the product has no photo yet.
+     * Matched on the product name first, then falls back to the category.
+     */
+    public function placeholderKind(): string
+    {
+        $name = Str::slug((string) $this->name, ' ');
+
+        $rules = [
+            'package' => ['balicek'],
+            'stagebox' => ['stagebox', 'stage box'],
+            'reel' => ['buben', 'bubnu'],
+            'power' => ['rozvadec', 'pdb', 'amprack', 'amp rack', 'powerbox', 'h07rn', 'sez 32a', 'sez 16a'],
+            'cable' => ['kabel', 'xlr', 'speakon', 'cat 5', 'cat5', 'tf34', 'neutrik', 'klotz'],
+            'mic' => ['mikrofon', 'shure', 'sennheiser', 'audix', 'akg', 'dji', 'rode'],
+            'stand' => ['stojan', 'konigmeyer', 'konig', 'adam hall s', 'gravity'],
+            'haze' => ['haze', 'hazer', 'mlh'],
+            'light' => ['svetlo', 'elation', 'chauvet', 'cameo', 'fractal', 'varytec', 'spot', 'wash', 'par '],
+        ];
+
+        foreach ($rules as $kind => $needles) {
+            foreach ($needles as $needle) {
+                if (str_contains($name.' ', $needle)) {
+                    return $kind;
+                }
+            }
+        }
+
+        return match ($this->category?->slug) {
+            'zvuk' => 'speaker',
+            'svetla' => 'light',
+            'stage' => 'stand',
+            'distro' => 'power',
+            default => 'generic',
+        };
+    }
+
     public function registerMediaConversions(?Media $media = null): void
     {
         $this

@@ -3,11 +3,16 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\SitemapController;
 
-Route::view('/', 'home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
+Route::view('/ai', 'ai')->name('ai.index');
+Route::get('/sitemap.xml', [SitemapController::class, 'index']);
 
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
+Route::get('/products/{product:slug}', [ProductController::class, 'show'])->name('products.show');
 
 // Cart routes
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');

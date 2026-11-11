@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ReservationCreated;
 use App\Models\Product;
 use App\Models\Reservation;
 use App\Models\ReservationItem;
+use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\ReservationCreated;
 
 class CartController extends Controller
 {
@@ -26,6 +28,7 @@ class CartController extends Controller
         // Ensure keys exist after older sessions
         $cart['items'] = $cart['items'] ?? [];
         $cart['bundles'] = $cart['bundles'] ?? [];
+
         return $cart;
     }
 
@@ -42,13 +45,16 @@ class CartController extends Controller
         $bundles = Product::whereIn('id', $bundleIds)->get();
         foreach ($bundles as $bundle) {
             $bundleQty = (int) ($cart['bundles'][$bundle->id] ?? 0);
-            if ($bundleQty <= 0) continue;
+            if ($bundleQty <= 0) {
+                continue;
+            }
             foreach ($bundle->bundleItems as $child) {
                 if ((int) $child->id === (int) $product->id) {
                     $contrib += ((int) $child->pivot->amount) * $bundleQty;
                 }
             }
         }
+
         return $contrib;
     }
 
@@ -69,10 +75,10 @@ class CartController extends Controller
         $products = Product::whereIn('id', $allIds)->get()->keyBy('id');
 
         $days = null;
-        if (!empty($cart['start_date']) && !empty($cart['end_date'])) {
+        if (! empty($cart['start_date']) && ! empty($cart['end_date'])) {
             try {
-                $start = \Carbon\Carbon::parse($cart['start_date']);
-                $end = \Carbon\Carbon::parse($cart['end_date']);
+                $start = Carbon::parse($cart['start_date']);
+                $end = Carbon::parse($cart['end_date']);
                 $minutes = $start->diffInMinutes($end);
                 $days = max(1, (int) ceil($minutes / (60 * 24)));
             } catch (\Throwable $e) {
@@ -84,9 +90,11 @@ class CartController extends Controller
         $bundleContrib = [];
         foreach ($cart['bundles'] as $bundleId => $bundleQty) {
             $bundle = $products[$bundleId] ?? null;
-            if (!$bundle) continue;
+            if (! $bundle) {
+                continue;
+            }
             foreach ($bundle->bundleItems as $child) {
-                $bundleContrib[$child->id] = ($bundleContrib[$child->id] ?? 0) + ($child->pivot->amount * (int)$bundleQty);
+                $bundleContrib[$child->id] = ($bundleContrib[$child->id] ?? 0) + ($child->pivot->amount * (int) $bundleQty);
             }
         }
 
@@ -95,14 +103,16 @@ class CartController extends Controller
         // First add bundle rows
         foreach ($cart['bundles'] as $bundleId => $bundleQty) {
             $bundle = $products[$bundleId] ?? null;
-            if (!$bundle) continue;
+            if (! $bundle) {
+                continue;
+            }
 
             // Use bundle's own price per day (can differ from sum of components)
             $bundlePricePerDay = (float) ($bundle->price_per_day ?? 0);
 
             // Compute available bundles in the selected range if dates are set
             $availableBundles = null;
-            if (!is_null($days)) {
+            if (! is_null($days)) {
                 $possibleCounts = [];
                 foreach ($bundle->bundleItems as $child) {
                     $availableChild = $child->availableForRange($cart['start_date'], $cart['end_date']);
@@ -112,11 +122,13 @@ class CartController extends Controller
                     $remainingForNewBundles = intdiv(max(0, $availableChild), $perBundle);
                     $possibleCounts[] = $remainingForNewBundles;
                 }
-                $availableBundles = !empty($possibleCounts) ? min($possibleCounts) : 0;
+                $availableBundles = ! empty($possibleCounts) ? min($possibleCounts) : 0;
             }
 
-            $subtotal = !is_null($days) ? $bundlePricePerDay * (int) $bundleQty * $days : null;
-            if (!is_null($subtotal)) $total += $subtotal;
+            $subtotal = ! is_null($days) ? $bundlePricePerDay * (int) $bundleQty * $days : null;
+            if (! is_null($subtotal)) {
+                $total += $subtotal;
+            }
 
             $displayRows[] = [
                 'type' => 'bundle',
@@ -132,15 +144,21 @@ class CartController extends Controller
         // Then add standalone product rows (excluding quantities contributed by bundles)
         foreach ($cart['items'] as $productId => $amount) {
             $product = $products[$productId] ?? null;
-            if (!$product) continue;
+            if (! $product) {
+                continue;
+            }
             $contrib = (int) ($bundleContrib[$productId] ?? 0);
             $standaloneAmount = (int) $amount - $contrib;
-            if ($standaloneAmount <= 0) continue; // fully covered by bundles
+            if ($standaloneAmount <= 0) {
+                continue;
+            } // fully covered by bundles
 
-            $available = (!is_null($days)) ? $product->availableForRange($cart['start_date'], $cart['end_date']) : null;
+            $available = (! is_null($days)) ? $product->availableForRange($cart['start_date'], $cart['end_date']) : null;
             $pricePerDay = (float) ($product->price_per_day ?? 0);
-            $subtotal = (!is_null($days)) ? $pricePerDay * $standaloneAmount * $days : null;
-            if (!is_null($subtotal)) $total += $subtotal;
+            $subtotal = (! is_null($days)) ? $pricePerDay * $standaloneAmount * $days : null;
+            if (! is_null($subtotal)) {
+                $total += $subtotal;
+            }
 
             $displayRows[] = [
                 'type' => 'product',
@@ -152,7 +170,7 @@ class CartController extends Controller
             ];
         }
 
-        $total = (!is_null($days)) ? $total : null;
+        $total = (! is_null($days)) ? $total : null;
 
         return view('cart.index', [
             'items' => $displayRows,
@@ -163,7 +181,7 @@ class CartController extends Controller
         ]);
     }
 
-    public function setDates(Request $request): RedirectResponse|\Illuminate\Http\JsonResponse
+    public function setDates(Request $request): RedirectResponse|JsonResponse
     {
         $data = $request->validate([
             'start_date' => ['required', 'date'],
@@ -177,10 +195,11 @@ class CartController extends Controller
         if ($request->expectsJson()) {
             return response()->json(['status' => 'ok', 'start_date' => $cart['start_date'], 'end_date' => $cart['end_date']]);
         }
+
         return back()->with('success', 'Term updated.');
     }
 
-    public function add(Request $request): RedirectResponse|\Illuminate\Http\JsonResponse
+    public function add(Request $request): RedirectResponse|JsonResponse
     {
         $data = $request->validate([
             'product_id' => ['required', 'integer', 'exists:products,id'],
@@ -193,21 +212,22 @@ class CartController extends Controller
         $amount = (int) $data['amount'];
 
         $isBundle = method_exists($product, 'isBundle') && $product->isBundle();
-        $currentQty = $isBundle ? (int) Arr::get($cart, 'bundles.' . $product->id, 0) : (int) Arr::get($cart, 'items.' . $product->id, 0);
+        $currentQty = $isBundle ? (int) Arr::get($cart, 'bundles.'.$product->id, 0) : (int) Arr::get($cart, 'items.'.$product->id, 0);
         $available = $product->available_quantity ?? $product->stock;
 
         // If it's a bundle, we skip basic validation because stock on bundle might not be used correctly
-        if (!$isBundle && $available !== null && ($currentQty + $amount) > $available) {
+        if (! $isBundle && $available !== null && ($currentQty + $amount) > $available) {
             $message = "Cannot add – available quantity is {$available} pcs, you already have {$currentQty} pcs in cart.";
             if ($request->expectsJson()) {
                 return response()->json(['message' => $message], 422);
             }
+
             return back()->withErrors(['amount' => $message])->withInput();
         }
 
         if ($isBundle) {
             // Adding a bundle: validate each component against availability and expand items
-            if (!empty($cart['start_date']) && !empty($cart['end_date'])) {
+            if (! empty($cart['start_date']) && ! empty($cart['end_date'])) {
                 foreach ($product->bundleItems as $child) {
                     $available = $child->availableForRange($cart['start_date'], $cart['end_date']);
                     $existing = (int) Arr::get($cart['items'], $child->id, 0);
@@ -216,6 +236,7 @@ class CartController extends Controller
                         if ($request->expectsJson()) {
                             return response()->json(['status' => 'error', 'message' => 'Requested bundle quantity is not available for the selected term.'], 422);
                         }
+
                         return back()->withErrors(['amount' => 'Requested bundle quantity is not available for the selected term.'])->withInput();
                     }
                 }
@@ -228,13 +249,14 @@ class CartController extends Controller
             }
         } else {
             // Simple product
-            if (!empty($cart['start_date']) && !empty($cart['end_date'])) {
+            if (! empty($cart['start_date']) && ! empty($cart['end_date'])) {
                 $available = $product->availableForRange($cart['start_date'], $cart['end_date']);
                 $existing = (int) Arr::get($cart['items'], $product->id, 0);
                 if (($existing + $amount) > $available) {
                     if ($request->expectsJson()) {
                         return response()->json(['status' => 'error', 'message' => 'Requested quantity is not available for the selected term.'], 422);
                     }
+
                     return back()->withErrors(['amount' => 'Requested quantity is not available for the selected term.'])->withInput();
                 }
             }
@@ -247,8 +269,9 @@ class CartController extends Controller
         if ($request->expectsJson()) {
             $totalCount = (int) array_sum((array) ($cart['items'] ?? []));
             $perProductCount = (method_exists($product, 'isBundle') && $product->isBundle())
-                ? (int) Arr::get($cart, 'bundles.' . $product->id, 0)
-                : (int) Arr::get($cart, 'items.' . $product->id, 0);
+                ? (int) Arr::get($cart, 'bundles.'.$product->id, 0)
+                : (int) Arr::get($cart, 'items.'.$product->id, 0);
+
             return response()->json([
                 'status' => 'ok',
                 'message' => 'Item was added to cart.',
@@ -263,7 +286,7 @@ class CartController extends Controller
         return redirect()->back()->with('success', 'Item was added to cart.');
     }
 
-    public function update(Request $request, Product $product): RedirectResponse|\Illuminate\Http\JsonResponse
+    public function update(Request $request, Product $product): RedirectResponse|JsonResponse
     {
         $data = $request->validate([
             'amount' => ['required', 'integer', 'min:1'],
@@ -274,18 +297,20 @@ class CartController extends Controller
         $isBundle = method_exists($product, 'isBundle') && $product->isBundle();
         $available = $product->available_quantity ?? $product->stock;
 
-        if (!$isBundle && $available !== null && $amount > $available) {
+        if (! $isBundle && $available !== null && $amount > $available) {
             $message = "Maximum quantity is {$available} pcs.";
             if ($request->expectsJson()) {
                 return response()->json(['message' => $message], 422);
             }
+
             return back()->withErrors(['amount' => $message])->withInput();
         }
 
-        if (!isset($cart['items'][$product->id]) && !$isBundle && !isset($cart['bundles'][$product->id])) {
+        if (! isset($cart['items'][$product->id]) && ! $isBundle && ! isset($cart['bundles'][$product->id])) {
             if ($request->expectsJson()) {
                 return response()->json(['status' => 'error', 'message' => 'Item is not in cart.'], 404);
             }
+
             return back()->withErrors(['item' => 'Item is not in cart.']);
         }
         // The provided amount is intended to update only the standalone quantity (excluding bundle contributions)
@@ -294,7 +319,7 @@ class CartController extends Controller
         $desiredTotal = $bundleContrib + $newStandalone;
 
         $message = 'Quantity was updated.';
-        if (!empty($cart['start_date']) && !empty($cart['end_date'])) {
+        if (! empty($cart['start_date']) && ! empty($cart['end_date'])) {
             $available = $product->availableForRange($cart['start_date'], $cart['end_date']);
             if ($desiredTotal > $available) {
                 // clamp to maximum available standalone amount
@@ -313,6 +338,7 @@ class CartController extends Controller
 
         if ($request->expectsJson()) {
             $totalCount = (int) array_sum((array) ($cart['items'] ?? []));
+
             return response()->json([
                 'status' => 'ok',
                 'message' => $message,
@@ -328,17 +354,18 @@ class CartController extends Controller
         return back()->with('success', $message);
     }
 
-    public function updateBundle(Request $request, Product $product): RedirectResponse|\Illuminate\Http\JsonResponse
+    public function updateBundle(Request $request, Product $product): RedirectResponse|JsonResponse
     {
         // $product is the bundle product
         $data = $request->validate([
             'amount' => ['required', 'integer', 'min:1'],
         ]);
         $cart = $this->getCart($request);
-        if (!isset($cart['bundles'][$product->id])) {
+        if (! isset($cart['bundles'][$product->id])) {
             if ($request->expectsJson()) {
                 return response()->json(['status' => 'error', 'message' => 'Bundle is not in cart.'], 404);
             }
+
             return back()->withErrors(['item' => 'Bundle is not in cart.']);
         }
         $current = (int) $cart['bundles'][$product->id];
@@ -347,7 +374,7 @@ class CartController extends Controller
 
         // Clamp to max available bundles when dates are set
         $newAmount = $requestedAmount;
-        if (!empty($cart['start_date']) && !empty($cart['end_date'])) {
+        if (! empty($cart['start_date']) && ! empty($cart['end_date'])) {
             $maxNew = PHP_INT_MAX;
             foreach ($product->bundleItems as $child) {
                 $available = $child->availableForRange($cart['start_date'], $cart['end_date']);
@@ -357,7 +384,9 @@ class CartController extends Controller
                 $maxForChild = $current + intdiv(max(0, $available - $existing), $perBundle);
                 $maxNew = min($maxNew, $maxForChild);
             }
-            if (is_infinite($maxNew)) { $maxNew = $current; }
+            if (is_infinite($maxNew)) {
+                $maxNew = $current;
+            }
             if ($newAmount > $maxNew) {
                 $newAmount = (int) $maxNew;
                 $message = 'Requested bundle quantity was not available, so it was adjusted to maximum available.';
@@ -384,6 +413,7 @@ class CartController extends Controller
 
         if ($request->expectsJson()) {
             $totalCount = (int) array_sum((array) ($cart['items'] ?? []));
+
             return response()->json([
                 'status' => 'ok',
                 'message' => $message,
@@ -408,6 +438,7 @@ class CartController extends Controller
             unset($cart['items'][$product->id]);
         }
         $this->putCart($request, $cart);
+
         return back()->with('success', 'Item was removed from cart.');
     }
 
@@ -415,7 +446,7 @@ class CartController extends Controller
     {
         // $product is the bundle product
         $cart = $this->getCart($request);
-        if (!isset($cart['bundles'][$product->id])) {
+        if (! isset($cart['bundles'][$product->id])) {
             return back()->withErrors(['item' => 'Bundle is not in cart.']);
         }
         $bundleQty = (int) $cart['bundles'][$product->id];
@@ -433,12 +464,14 @@ class CartController extends Controller
         // Remove bundle entry
         unset($cart['bundles'][$product->id]);
         $this->putCart($request, $cart);
+
         return back()->with('success', 'Bundle was removed from cart.');
     }
 
     public function clear(Request $request): RedirectResponse
     {
         $request->session()->forget('cart');
+
         return back()->with('success', 'Cart was cleared.');
     }
 
@@ -465,8 +498,8 @@ class CartController extends Controller
 
         // Validate dates order (end must be after start)
         try {
-            $start = \Carbon\Carbon::parse($cart['start_date']);
-            $end = \Carbon\Carbon::parse($cart['end_date']);
+            $start = Carbon::parse($cart['start_date']);
+            $end = Carbon::parse($cart['end_date']);
             if ($end->lessThanOrEqualTo($start)) {
                 return back()->withErrors(['dates' => 'End date must be after start date.'])->withInput();
             }
@@ -484,6 +517,7 @@ class CartController extends Controller
                 $available = $product->availableForRange($cart['start_date'], $cart['end_date']);
                 if ($amount > $available) {
                     DB::rollBack();
+
                     return back()->withErrors(['cart' => 'Some items are not available in requested quantity.'])->withInput();
                 }
             }
@@ -494,6 +528,7 @@ class CartController extends Controller
                 $days = max(1, (int) ceil($minutes / (60 * 24)));
             } catch (\Throwable $e) {
                 DB::rollBack();
+
                 return back()->withErrors(['dates' => 'Invalid reservation term.'])->withInput();
             }
 
@@ -509,7 +544,9 @@ class CartController extends Controller
             // Sum bundle prices
             foreach ($cart['bundles'] as $bundleId => $bundleQty) {
                 $bundle = $products[$bundleId] ?? null;
-                if (!$bundle) continue;
+                if (! $bundle) {
+                    continue;
+                }
                 $bundlePricePerDay = (float) ($bundle->price_per_day ?? 0);
                 $totalPrice += $bundlePricePerDay * (int) $bundleQty * $days;
             }
@@ -518,7 +555,9 @@ class CartController extends Controller
             $bundleContrib = [];
             foreach ($cart['bundles'] as $bundleId => $bundleQty) {
                 $bundle = $products[$bundleId] ?? null;
-                if (!$bundle) continue;
+                if (! $bundle) {
+                    continue;
+                }
                 foreach ($bundle->bundleItems as $child) {
                     $bundleContrib[$child->id] = ($bundleContrib[$child->id] ?? 0) + ((int) $child->pivot->amount * (int) $bundleQty);
                 }
@@ -527,9 +566,13 @@ class CartController extends Controller
             // Add standalone items (excluding quantities covered by bundles)
             foreach ($cart['items'] as $productId => $amount) {
                 $product = $products[$productId] ?? null;
-                if (!$product) continue;
+                if (! $product) {
+                    continue;
+                }
                 $standaloneAmount = (int) $amount - (int) ($bundleContrib[$productId] ?? 0);
-                if ($standaloneAmount <= 0) continue;
+                if ($standaloneAmount <= 0) {
+                    continue;
+                }
                 $totalPrice += ((float) ($product->price_per_day ?? 0)) * $standaloneAmount * $days;
             }
 
@@ -556,18 +599,23 @@ class CartController extends Controller
             DB::commit();
         } catch (\Throwable $e) {
             DB::rollBack();
+
             return back()->withErrors(['server' => 'An error occurred while creating the reservation.'])->withInput();
         }
 
         // Clear cart
         $request->session()->forget('cart');
 
-        // Send confirmation email (non-blocking try/catch to avoid breaking UX)
+        // Send confirmation to the customer and a copy to the business owner so
+        // new reservations are noticed. Non-blocking so email issues never break UX.
         try {
-            Mail::to($reservation->email)->send(new ReservationCreated($reservation));
+            $mail = Mail::to($reservation->email);
+            if ($owner = config('contact.email')) {
+                $mail->bcc($owner);
+            }
+            $mail->send(new ReservationCreated($reservation));
         } catch (\Throwable $e) {
-            // Optionally log error; keeping silent to not disrupt the flow
-            \Log::warning('Reservation confirmation email failed: ' . $e->getMessage(), [
+            \Log::warning('Reservation confirmation email failed: '.$e->getMessage(), [
                 'reservation_id' => $reservation->id ?? null,
             ]);
         }

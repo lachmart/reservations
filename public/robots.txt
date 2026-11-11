@@ -1,2 +1,7 @@
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /admin
+Disallow: /cart
+Disallow: /thank-you
+
+Sitemap: https://www.marakarental.cz/sitemap.xml

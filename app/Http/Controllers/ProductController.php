@@ -16,12 +16,32 @@ class ProductController extends Controller
     public function index(): View
     {
         $request = request();
-        $categoryId = $request->integer('category');
+        // Category filter accepts a slug (nice URL) or a numeric id.
+        $categoryParam = trim((string) $request->input('category', ''));
+        $category = $categoryParam === ''
+            ? null
+            : (ctype_digit($categoryParam)
+                ? Category::find($categoryParam)
+                : Category::where('slug', $categoryParam)->first());
+        $categoryId = $category?->id;
         $tagIds = array_filter((array) $request->input('tags', []), fn($v) => is_numeric($v));
-        $sort = $request->input('sort', 'newest');
+        $sort = $request->input('sort', 'featured');
         $q = trim((string) $request->input('q', ''));
 
-        $query = Product::query()->available()->with(['category', 'tags']);
+        // Rental term: if provided (from the term widget) remember it site-wide.
+        $start = $request->input('start_date');
+        $end = $request->input('end_date');
+        if ($start && $end && strtotime($start) !== false && strtotime($end) !== false && strtotime($end) > strtotime($start)) {
+            $cart = $request->session()->get('cart', []);
+            $cart['start_date'] = $start;
+            $cart['end_date'] = $end;
+            $request->session()->put('cart', $cart);
+        }
+        $cart = $request->session()->get('cart', []);
+        $termStart = $cart['start_date'] ?? $start;
+        $termEnd = $cart['end_date'] ?? $end;
+
+        $query = Product::query()->available()->with(['category', 'tags'])->withCount('media');
 
         if ($categoryId) {
             $query->where('category_id', $categoryId);
@@ -56,8 +76,12 @@ class ProductController extends Controller
                 $query->orderBy('name', 'desc');
                 break;
             case 'newest':
-            default:
                 $query->latest('id');
+                break;
+            case 'featured':
+            default:
+                // Flagship-first: gear with a photo, then most valuable.
+                $query->orderByDesc('media_count')->orderByDesc('price_per_day')->orderBy('id', 'desc');
                 break;
         }
 
@@ -77,10 +101,12 @@ class ProductController extends Controller
             'products' => $products,
             'categories' => $categories,
             'allTags' => $allTags,
-            'selectedCategory' => $categoryId,
+            'selectedCategory' => $category?->slug,
             'selectedTags' => $tagIds,
             'sort' => $sort,
             'q' => $q,
+            'termStart' => $termStart,
+            'termEnd' => $termEnd,
         ]);
     }
 
