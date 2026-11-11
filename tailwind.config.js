@@ -34,8 +34,8 @@ export default {
                 'display-md': ['clamp(1.5rem, 1.2rem + 1.4vw, 2.1rem)', { lineHeight: '1.08', letterSpacing: '-0.01em' }],
             },
             boxShadow: {
-                card: '0 1px 2px oklch(0.2 0.03 60 / 0.05), 0 8px 24px -12px oklch(0.2 0.03 60 / 0.18)',
-                lift: '0 2px 4px oklch(0.2 0.03 60 / 0.06), 0 18px 40px -18px oklch(0.2 0.03 60 / 0.28)',
+                card: '0 1px 2px oklch(0.2 0.03 175 / 0.05), 0 8px 24px -12px oklch(0.2 0.03 175 / 0.18)',
+                lift: '0 2px 4px oklch(0.2 0.03 175 / 0.06), 0 18px 40px -18px oklch(0.2 0.03 175 / 0.28)',
             },
             transitionTimingFunction: {
                 'out-quart': 'cubic-bezier(0.25, 1, 0.5, 1)',

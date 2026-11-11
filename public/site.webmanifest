@@ -1,0 +1,11 @@
+{
+  "name": "Maraka rental",
+  "short_name": "Maraka",
+  "icons": [
+    { "src": "/images/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/images/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ],
+  "theme_color": "#0e1715",
+  "background_color": "#f8fbfa",
+  "display": "browser"
+}

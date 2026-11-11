@@ -3,33 +3,33 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ---- Design tokens: warm "road-case" light theme + dark toggle ---- */
+/* ---- Design tokens: palette drawn from the Maraka logo (lime → green → teal) ---- */
 :root {
-  --paper: oklch(0.985 0.006 80);
-  --surface: oklch(0.998 0.004 85);
-  --ink: oklch(0.23 0.02 60);
-  --muted: oklch(0.46 0.02 65);
-  --faint: oklch(0.6 0.016 70);
-  --line: oklch(0.9 0.012 75);
-  --accent: oklch(0.73 0.163 60);
-  --accent-ink: oklch(0.26 0.04 55);
-  --accent-soft: oklch(0.95 0.045 78);
+  --paper: oklch(0.985 0.005 165);
+  --surface: oklch(0.998 0.003 165);
+  --ink: oklch(0.22 0.02 175);
+  --muted: oklch(0.45 0.02 175);
+  --faint: oklch(0.6 0.016 175);
+  --line: oklch(0.9 0.012 170);
+  --accent: oklch(0.8 0.19 150);
+  --accent-ink: oklch(0.27 0.06 170);
+  --accent-soft: oklch(0.95 0.055 150);
   /* Product-photo lightbox: near-white so on-white product shots blend in.
      Kept light in BOTH themes so every image reads as an intentional catalog tile. */
-  --media: oklch(0.995 0.002 85);
-  --media-line: oklch(0.9 0.008 80);
+  --media: oklch(0.995 0.002 165);
+  --media-line: oklch(0.9 0.008 170);
 }
 
 .dark {
-  --paper: oklch(0.19 0.012 65);
-  --surface: oklch(0.235 0.014 66);
-  --ink: oklch(0.95 0.01 82);
-  --muted: oklch(0.74 0.02 78);
-  --faint: oklch(0.6 0.02 76);
-  --line: oklch(0.33 0.016 66);
-  --accent: oklch(0.77 0.155 66);
-  --accent-ink: oklch(0.2 0.04 55);
-  --accent-soft: oklch(0.3 0.05 62);
+  --paper: oklch(0.18 0.012 180);
+  --surface: oklch(0.225 0.015 180);
+  --ink: oklch(0.95 0.008 160);
+  --muted: oklch(0.74 0.02 165);
+  --faint: oklch(0.6 0.02 170);
+  --line: oklch(0.33 0.018 178);
+  --accent: oklch(0.84 0.2 145);
+  --accent-ink: oklch(0.2 0.05 170);
+  --accent-soft: oklch(0.3 0.06 165);
 }
 
 @layer base {
@@ -144,7 +144,7 @@
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 0.9rem;
-  box-shadow: 0 18px 40px -18px oklch(0.2 0.03 60 / 0.35);
+  box-shadow: 0 18px 40px -18px oklch(0.2 0.03 175 / 0.35);
   color: var(--ink);
   font-family: inherit;
 }
@@ -177,3 +177,15 @@
 .dark .flatpickr-day.startRange, .dark .flatpickr-day.endRange { text-shadow: none; }
 .flatpickr-monthDropdown-months .flatpickr-monthDropdown-month { background: var(--surface); color: var(--ink); }
 span.flatpickr-weekday, .flatpickr-current-month .numInputWrapper span { color: var(--faint); }
+
+/* Logo-bar gradient for display text (lime → green → teal). Darker stops in
+   light mode so the word keeps contrast on white paper. */
+.text-brand {
+  background: linear-gradient(180deg, oklch(0.74 0.2 140), oklch(0.66 0.17 155) 55%, oklch(0.55 0.11 180));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.dark .text-brand {
+  background-image: linear-gradient(180deg, oklch(0.93 0.21 125), oklch(0.82 0.2 150) 55%, oklch(0.72 0.13 180));
+}
