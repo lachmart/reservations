@@ -73,8 +73,20 @@
                 <a href="{{ route('products.index', ['category' => $cat->slug]) }}"
                    class="group relative flex flex-col overflow-hidden rounded-xl border border-line bg-surface transition-[box-shadow,transform] duration-200 ease-out-quart hover:-translate-y-0.5 hover:shadow-lift">
                     <div class="media-tile relative aspect-[5/4] overflow-hidden border-b border-line">
-                        @if($cat->sample_image)
-                            <img src="{{ $cat->sample_image }}" alt="{{ $cat->name }}" loading="lazy" class="absolute inset-0 size-full object-contain p-6 transition-transform duration-300 ease-out-quart group-hover:scale-105">
+                        @php($imgs = $cat->sample_images ?? [])
+                        @if(count($imgs) >= 3)
+                            <div class="absolute inset-0 grid grid-cols-[3fr_2fr] grid-rows-2 gap-1 p-3 transition-transform duration-300 ease-out-quart group-hover:scale-[1.03]">
+                                <img src="{{ $imgs[0] }}" alt="{{ $cat->name }}" loading="lazy" class="row-span-2 size-full min-h-0 object-contain p-1">
+                                <img src="{{ $imgs[1] }}" alt="" loading="lazy" class="size-full min-h-0 object-contain p-1">
+                                <img src="{{ $imgs[2] }}" alt="" loading="lazy" class="size-full min-h-0 object-contain p-1">
+                            </div>
+                        @elseif(count($imgs) === 2)
+                            <div class="absolute inset-0 grid grid-cols-2 gap-1 p-4 transition-transform duration-300 ease-out-quart group-hover:scale-[1.03]">
+                                <img src="{{ $imgs[0] }}" alt="{{ $cat->name }}" loading="lazy" class="size-full min-h-0 object-contain p-1">
+                                <img src="{{ $imgs[1] }}" alt="" loading="lazy" class="size-full min-h-0 object-contain p-1">
+                            </div>
+                        @elseif(count($imgs) === 1)
+                            <img src="{{ $imgs[0] }}" alt="{{ $cat->name }}" loading="lazy" class="absolute inset-0 size-full object-contain p-6 transition-transform duration-300 ease-out-quart group-hover:scale-105">
                         @else
                             @include('partials.product-placeholder', [
                                 'kind' => match ($cat->slug) { 'zvuk' => 'speaker', 'svetla' => 'light', 'stage' => 'stand', 'distro' => 'power', default => 'generic' },
