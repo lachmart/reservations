@@ -24,7 +24,7 @@ class EnquiryAndSeoTest extends TestCase
             'message' => 'Svatba pro 120 hostů.',
         ])->assertRedirect(route('home'))->assertSessionHas('enquiry_sent');
 
-        Mail::assertSent(EnquiryReceived::class, fn ($m) => $m->hasTo(config('contact.email'))
+        Mail::assertSent(EnquiryReceived::class, fn ($m) => $m->hasTo(config('contact.owner_notify')[0])
             && $m->enquiry['name'] === 'Jana Nováková');
     }
 

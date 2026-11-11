@@ -619,7 +619,7 @@ class CartController extends Controller
         // Owner copy as its own message (not BCC), so it lands in the inbox and a
         // problem with the customer's address can't stop it.
         try {
-            if ($owners = config('contact.reservation_notify')) {
+            if ($owners = config('contact.owner_notify')) {
                 Mail::to($owners)->send(new ReservationCreated($reservation));
             }
         } catch (\Throwable $e) {

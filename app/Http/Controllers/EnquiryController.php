@@ -43,7 +43,7 @@ class EnquiryController extends Controller
         Log::info('Enquiry received', $data);
 
         try {
-            Mail::to(config('contact.email'))->send(new EnquiryReceived($data));
+            Mail::to(config('contact.owner_notify'))->send(new EnquiryReceived($data));
         } catch (\Throwable $e) {
             Log::error('Enquiry email failed: '.$e->getMessage(), ['enquiry' => $data]);
         }

@@ -179,7 +179,7 @@ class CartTest extends TestCase
 
     public function test_checkout_sends_owner_a_separate_copy(): void
     {
-        config(['contact.reservation_notify' => ['owner@example.com', 'second@example.com']]);
+        config(['contact.owner_notify' => ['owner@example.com', 'second@example.com']]);
         $product = Product::factory()->create(['stock' => 5, 'price_per_day' => 100]);
         $this->withSession(['cart' => [
             'start_date' => '2025-09-01 10:00:00',
