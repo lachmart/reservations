@@ -82,7 +82,9 @@ fi
 # the ancient macOS system rsync). If unavailable, don't stamp the local UID —
 # leave files root-owned; the server-side chown at the end fixes ownership anyway.
 OWNERSHIP_ARGS=(--no-owner --no-group)
-RSYNC_VER="$(rsync --version 2>/dev/null | sed -n '1s/.*version \([0-9.]*\).*/\1/p')"
+# openrsync (macOS) prints "protocol version 29" first — that's not a release version.
+RSYNC_VER="$(rsync --version 2>/dev/null | grep -v openrsync | sed -n 's/.*rsync  *version \([0-9.]*\).*/\1/p' | head -1)"
+rsync --version 2>/dev/null | grep -q openrsync && RSYNC_VER=""
 # Use --chown only when rsync >= 3.1.0 (sequence [3.1.0, VER] is ascending).
 if [[ -n "$RSYNC_VER" ]] && printf '3.1.0\n%s\n' "$RSYNC_VER" | sort -V -C 2>/dev/null; then
   OWNERSHIP_ARGS=(--chown="${WEB_USER}:${WEB_GROUP}")
@@ -96,6 +98,7 @@ RSYNC_ARGS=(-az --delete --human-readable
   --exclude '.DS_Store'                     # macOS junk
   --exclude '.claude'                       # local AI/editor config
   --exclude '*.log'                         # stray logs (e.g. app/Http/*.log)
+  --exclude '/*.xlsx'                       # server-only price lists — never delete
   --exclude 'node_modules'
   --exclude 'vendor'                        # rebuilt on the server by Composer
   --exclude '.ddev'
