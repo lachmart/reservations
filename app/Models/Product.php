@@ -162,6 +162,11 @@ class Product extends Model implements HasMedia
      */
     public function placeholderKind(): string
     {
+        // Stage gear (stands, truss) — brand names like "Elation" would otherwise match lights.
+        if ($this->category?->slug === 'stage') {
+            return 'stand';
+        }
+
         $name = Str::slug((string) $this->name, ' ');
 
         $rules = [
