@@ -4,7 +4,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="theme-color" content="#151310">
+    <meta name="theme-color" content="#f8fbfa" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0e1715" media="(prefers-color-scheme: dark)">
+    <link rel="icon" href="/favicon.ico" sizes="48x48">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+    <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
     @php
         $seoTitle = trim($__env->yieldContent('title')) ?: 'Maraka rental — pronájem zvukové a světelné techniky';
         $seoDesc = trim($__env->yieldContent('meta_description')) ?: 'Půjčovna profesionální zvukové a světelné techniky pro akce až do 600 osob v Olomouci a okolí. Vyberte termín, sestavte si vybavení a rezervujte online.';
@@ -58,7 +64,11 @@
             'postalCode' => '779 00',
             'addressCountry' => 'CZ',
         ],
-        'areaServed' => ['@type' => 'City', 'name' => 'Olomouc'],
+        'areaServed' => collect(config('seo.area_served'))->map(fn ($place) => [
+            '@type' => str_contains($place, 'kraj') ? 'AdministrativeArea' : 'City',
+            'name' => $place,
+        ])->all(),
+        'knowsAbout' => ['pronájem ozvučení', 'pronájem osvětlení', 'pronájem světel', 'ozvučení svateb', 'ozvučení koncertů', 'pódiová technika'],
     ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
     </script>
     @stack('schema')
@@ -115,13 +125,19 @@
 <body class="flex min-h-full flex-col">
     <header class="sticky top-0 z-40 border-b border-line bg-paper/95 backdrop-blur" style="background:color-mix(in oklab, var(--paper) 88%, transparent)">
         <div class="wrap flex h-16 items-center justify-between">
-            <a href="/" class="group flex items-baseline gap-2" aria-label="Maraka rental">
-                <span class="font-display text-xl font-extrabold tracking-tight text-ink">MARAKA</span>
-                <span class="rounded bg-accent px-1.5 py-0.5 font-display text-[0.7rem] font-bold uppercase tracking-widest text-accent-ink">rental</span>
+            <a href="/" class="flex items-center" aria-label="Maraka rental – domů">
+                <img src="/images/logo.png" alt="Maraka rental" width="569" height="128" class="h-9 w-auto dark:hidden">
+                <img src="/images/logo-dark.png" alt="Maraka rental" width="569" height="128" class="hidden h-9 w-auto dark:block">
             </a>
             <nav class="flex items-center gap-1">
                 <a href="/" class="nav-link hidden sm:inline-flex">Domů</a>
                 <a href="{{ route('products.index') }}" class="nav-link">Technika</a>
+                <a href="{{ route('home') }}#poptavka" class="nav-link hidden sm:inline-flex">Poptávka</a>
+                <a href="tel:{{ preg_replace('/[^0-9+]/', '', config('contact.phone')) }}" class="btn-primary ml-1 py-2" aria-label="Zavolat {{ config('contact.phone') }}">
+                    <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92Z"/></svg>
+                    <span class="hidden lg:inline">{{ config('contact.phone') }}</span>
+                    <span class="lg:hidden">Zavolat</span>
+                </a>
                 @php($__cart = session('cart', []))
                 @php($__cartCount = array_sum((array) ($__cart['items'] ?? [])))
                 <a href="{{ route('cart.index') }}" id="nav-cart-link" class="btn-secondary ml-1 py-2">
@@ -160,7 +176,8 @@
         @php($email = config('contact.email'))
         <div class="wrap grid gap-8 py-10 sm:grid-cols-2 lg:grid-cols-4">
             <div class="sm:col-span-2 lg:col-span-1">
-                <div class="font-display text-lg font-extrabold text-ink">MARAKA <span class="text-accent">rental</span></div>
+                <img src="/images/logo.png" alt="Maraka rental" width="569" height="128" loading="lazy" class="h-10 w-auto dark:hidden">
+                <img src="/images/logo-dark.png" alt="Maraka rental" width="569" height="128" loading="lazy" class="hidden h-10 w-auto dark:block">
                 <p class="mt-2 max-w-xs text-sm text-muted">Pronájem profesionální zvukové a světelné techniky pro akce až do 600 osob.</p>
             </div>
             <div>

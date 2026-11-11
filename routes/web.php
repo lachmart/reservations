@@ -5,11 +5,16 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\EnquiryController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::view('/ai', 'ai')->name('ai.index');
 Route::get('/sitemap.xml', [SitemapController::class, 'index']);
+
+Route::post('/poptavka', [EnquiryController::class, 'store'])
+    ->middleware('throttle:5,10')
+    ->name('enquiry.store');
 
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products/{product:slug}', [ProductController::class, 'show'])->name('products.show');

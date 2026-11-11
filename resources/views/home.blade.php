@@ -1,18 +1,32 @@
 @extends('layouts.app')
 
-@section('title', 'Maraka rental — pronájem zvukové a světelné techniky')
+@section('title', config('seo.home.title'))
+@section('meta_description', config('seo.home.meta_description'))
+@push('schema')
+<script type="application/ld+json">
+{!! json_encode([
+    '@context' => 'https://schema.org',
+    '@type' => 'FAQPage',
+    'mainEntity' => collect(config('seo.faq'))->map(fn ($f) => [
+        '@type' => 'Question',
+        'name' => $f['q'],
+        'acceptedAnswer' => ['@type' => 'Answer', 'text' => $f['a']],
+    ])->all(),
+], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+</script>
+@endpush
 
 @section('full')
     {{-- Hero --}}
     <section class="relative overflow-hidden border-b border-line">
         <div class="wrap grid gap-10 py-14 sm:py-20 lg:grid-cols-12 lg:items-center">
             <div class="lg:col-span-7">
-                <div class="kicker">Zvuk · Světlo · Stage</div>
+                <div class="kicker">Půjčovna zvuku a světel · Olomouc</div>
                 <h1 class="mt-4 max-w-2xl text-display-xl font-extrabold text-ink">
-                    Ozvučíme a&nbsp;nasvítíme<br class="hidden sm:block"> vaši <span class="text-accent">akci</span>.
+                    Pronájem ozvučení a&nbsp;světel<br class="hidden sm:block"> pro vaši <span class="text-brand">akci</span>.
                 </h1>
                 <p class="mt-5 max-w-xl text-lg leading-relaxed text-muted">
-                    Půjčujeme profesionální aparaturu a světla pro koncerty, svatby i firemní eventy. Vyberte termín, sestavte si set a rezervujte online.
+                    Půjčujeme profesionální ozvučení, světla a pódiovou techniku na svatby, koncerty, plesy i firemní akce v Olomouci a okolí. Vyberte termín a rezervujte online, nebo nám pošlete poptávku a set sestavíme za vás.
                 </p>
 
                 <div class="mt-8 max-w-2xl">
@@ -137,13 +151,51 @@
                 ['03', 'Odešlete rezervaci', 'Vyplňte kontakt a my se vám ozveme s potvrzením a cenou.'],
             ] as [$n, $t, $d])
                 <div>
-                    <div class="font-display text-4xl font-extrabold text-accent">{{ $n }}</div>
+                    <div class="font-display text-4xl font-extrabold text-brand">{{ $n }}</div>
                     <h3 class="mt-3 font-display text-xl font-bold text-ink">{{ $t }}</h3>
                     <p class="mt-2 max-w-xs leading-relaxed text-muted">{{ $d }}</p>
                 </div>
             @endforeach
         </div>
     </section>
+
+    {{-- Events + area served: plain text that matches how people search --}}
+    <section class="border-t border-line">
+        <div class="wrap grid gap-10 py-16 lg:grid-cols-2">
+            <div>
+                <h2 class="text-display-md font-extrabold text-ink">Ozvučení a&nbsp;osvětlení na každou akci</h2>
+                <p class="mt-4 max-w-xl leading-relaxed text-muted">
+                    Ať chystáte svatbu, narozeninovou oslavu, ples, firemní večírek, koncert nebo festival, půjčíme vám techniku, která na akci opravdu stačí. Reproboxy, mixpulty, mikrofony, světla, výrobníky mlhy, truss i elektro rozvody máme skladem v Olomouci.
+                </p>
+                <ul class="mt-6 flex flex-wrap gap-2">
+                    @foreach(['Svatby', 'Oslavy a narozeniny', 'Plesy', 'Firemní akce', 'Koncerty', 'Festivaly', 'Divadlo', 'Konference'] as $event)
+                        <li class="chip">{{ $event }}</li>
+                    @endforeach
+                </ul>
+                <p class="mt-6 text-sm text-muted">
+                    Působíme v Olomouci a okolí: {{ implode(', ', array_slice(config('seo.area_served'), 1, -1)) }} a celý Olomoucký kraj.
+                </p>
+            </div>
+            <div>
+                <h2 class="text-display-md font-extrabold text-ink">Časté otázky</h2>
+                <div class="mt-4 divide-y divide-line border-y border-line">
+                    @foreach(config('seo.faq') as $faq)
+                        <details class="group py-4">
+                            <summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-display font-bold text-ink">
+                                {{ $faq['q'] }}
+                                <span class="text-muted transition-transform group-open:rotate-45">+</span>
+                            </summary>
+                            <p class="mt-2 leading-relaxed text-muted">{{ $faq['a'] }}</p>
+                        </details>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="wrap pb-16">
+        @include('partials.enquiry-form')
+    </div>
 
     {{-- Contact CTA --}}
     @php($phone = config('contact.phone'))

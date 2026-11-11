@@ -4,17 +4,24 @@
     $seoCat = $selectedCategory ? $categories->firstWhere('slug', $selectedCategory) : null;
     $seoCanonical = $seoCat ? route('products.index', ['category' => $seoCat->slug]) : route('products.index');
 @endphp
-@section('title', $seoCat ? ('Pronájem ' . $seoCat->name . ' — Maraka rental') : 'Pronájem zvukové a světelné techniky — Maraka rental')
-@section('meta_description', $seoCat
-    ? ('Pronájem ' . $seoCat->name . ' pro akce v Olomouci a okolí. Vyberte termín a rezervujte online z ' . $seoCat->products()->count() . ' položek.')
-    : 'Kompletní katalog zvukové a světelné techniky k zapůjčení — reproboxy, mikrofony, mixpulty, světla i kabeláž. Olomouc a okolí.')
+@php
+    $seoCopy = $seoCat ? config('seo.categories.'.$seoCat->slug) : null;
+    $seoH1 = $seoCopy['h1'] ?? ($seoCat ? 'Pronájem: '.$seoCat->name : 'Pronájem zvukové a světelné techniky');
+@endphp
+@section('title', $seoCopy['title'] ?? ($seoCat ? ('Pronájem: ' . $seoCat->name . ' — Maraka rental Olomouc') : 'Pronájem zvukové a světelné techniky Olomouc — katalog | Maraka rental'))
+@section('meta_description', $seoCopy['meta_description'] ?? ($seoCat
+    ? ('Pronájem: ' . $seoCat->name . ' pro akce v Olomouci a okolí. Vyberte termín a rezervujte online z ' . $seoCat->products()->count() . ' položek.')
+    : 'Kompletní katalog zvukové a světelné techniky k zapůjčení — reproboxy, mikrofony, mixpulty, světla i kabeláž. Olomouc a okolí.'))
 @section('canonical', $seoCanonical)
 
 @section('content')
     <div class="flex flex-wrap items-end justify-between gap-4">
         <div>
             <div class="kicker">Katalog</div>
-            <h1 class="mt-2 text-display-md font-extrabold text-ink">Technika k zapůjčení</h1>
+            <h1 class="mt-2 text-display-md font-extrabold text-ink">{{ $seoH1 }}</h1>
+            @if(!empty($seoCopy['intro']))
+                <p class="mt-3 max-w-2xl leading-relaxed text-muted">{{ $seoCopy['intro'] }}</p>
+            @endif
         </div>
         <p class="text-sm text-muted">
             {{ $products->total() }} položek
@@ -70,6 +77,8 @@
     <div id="products-list" class="mt-8">
         @include('products._list', ['products' => $products])
     </div>
+
+    @include('partials.enquiry-form', ['class' => 'mt-16'])
 
     <script>
         (function () {
