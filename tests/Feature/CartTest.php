@@ -176,4 +176,27 @@ class CartTest extends TestCase
             return $mail->hasTo('john@example.com');
         });
     }
+
+    public function test_checkout_sends_owner_a_separate_copy(): void
+    {
+        config(['contact.reservation_notify' => ['owner@example.com', 'second@example.com']]);
+        $product = Product::factory()->create(['stock' => 5, 'price_per_day' => 100]);
+        $this->withSession(['cart' => [
+            'start_date' => '2025-09-01 10:00:00',
+            'end_date' => '2025-09-03 09:00:00',
+            'items' => [$product->id => 1],
+            'bundles' => [],
+        ]]);
+        Mail::fake();
+
+        $this->post(route('cart.checkout'), [
+            'name' => 'John Doe', 'email' => 'john@example.com', 'phone' => '123',
+        ])->assertRedirect(route('cart.thankyou'));
+
+        // Customer copy carries no hidden owner address…
+        Mail::assertSent(ReservationCreated::class, fn ($m) => $m->hasTo('john@example.com') && ! $m->hasBcc('owner@example.com'));
+        // …the owner gets their own message.
+        Mail::assertSent(ReservationCreated::class, fn ($m) => $m->hasTo('owner@example.com') && $m->hasTo('second@example.com') && ! $m->hasTo('john@example.com'));
+        Mail::assertSent(ReservationCreated::class, 2);
+    }
 }

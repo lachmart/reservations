@@ -609,13 +609,21 @@ class CartController extends Controller
         // Send confirmation to the customer and a copy to the business owner so
         // new reservations are noticed. Non-blocking so email issues never break UX.
         try {
-            $mail = Mail::to($reservation->email);
-            if ($owner = config('contact.email')) {
-                $mail->bcc($owner);
-            }
-            $mail->send(new ReservationCreated($reservation));
+            Mail::to($reservation->email)->send(new ReservationCreated($reservation));
         } catch (\Throwable $e) {
             \Log::warning('Reservation confirmation email failed: '.$e->getMessage(), [
+                'reservation_id' => $reservation->id ?? null,
+            ]);
+        }
+
+        // Owner copy as its own message (not BCC), so it lands in the inbox and a
+        // problem with the customer's address can't stop it.
+        try {
+            if ($owners = config('contact.reservation_notify')) {
+                Mail::to($owners)->send(new ReservationCreated($reservation));
+            }
+        } catch (\Throwable $e) {
+            \Log::warning('Reservation owner notification failed: '.$e->getMessage(), [
                 'reservation_id' => $reservation->id ?? null,
             ]);
         }
