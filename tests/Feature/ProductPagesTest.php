@@ -73,4 +73,23 @@ class ProductPagesTest extends TestCase
         $this->get(route('products.index').'?tags[]='.$empty->id)
             ->assertSee('tag-'.$empty->id.'"', false);
     }
+
+    public function test_tag_chips_are_scoped_to_the_selected_category(): void
+    {
+        $sound = Category::factory()->create(['slug' => 'zvuk']);
+        $lights = Category::factory()->create(['slug' => 'svetla']);
+        $mic = Tag::create(['name' => 'Mikrofon']);
+        $stand = Tag::create(['name' => 'Svetelny stativ']);
+
+        Product::factory()->create(['category_id' => $sound->id, 'price_per_day' => 10, 'stock' => 1])->tags()->attach($mic);
+        Product::factory()->create(['category_id' => $lights->id, 'price_per_day' => 10, 'stock' => 1])->tags()->attach($stand);
+
+        $html = $this->get(route('products.index').'?category=zvuk')->assertOk()->getContent();
+
+        $this->assertMatchesRegularExpression('/<div data-tag-categories="zvuk" class="">\s*<input id="tag-'.$mic->id.'"/', $html);
+        $this->assertMatchesRegularExpression('/<div data-tag-categories="svetla" class="hidden">\s*<input id="tag-'.$stand->id.'"/', $html);
+
+        // Without a category every tag is offered.
+        $this->get(route('products.index'))->assertDontSee('class="hidden">', false);
+    }
 }

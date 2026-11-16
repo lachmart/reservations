@@ -45,7 +45,7 @@
                 <svg class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-faint" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
                 <input type="text" name="q" value="{{ $q ?? '' }}" placeholder="Hledat techniku…" class="field pl-9" autocomplete="off">
             </div>
-            <select name="category" class="field sm:w-52" aria-label="Kategorie">
+            <select name="category" @class(['field sm:w-52', 'field-on' => $selectedCategory]) aria-label="Kategorie">
                 <option value="">Všechny kategorie</option>
                 @foreach($categories as $category)
                     <option value="{{ $category->slug }}" @selected($selectedCategory === $category->slug)>{{ $category->name }}</option>
@@ -63,7 +63,8 @@
         <div class="mt-4 flex flex-wrap items-center gap-2">
             <span class="mr-1 text-xs font-semibold uppercase tracking-wide text-faint">Štítky</span>
             @foreach($allTags as $tag)
-                <div>
+                @php($tagHidden = $selectedCategory && ! in_array($selectedCategory, $tag->category_slugs) && ! in_array($tag->id, $selectedTags ?? []))
+                <div data-tag-categories="{{ implode(' ', $tag->category_slugs) }}" @class(['hidden' => $tagHidden])>
                     <input id="tag-{{ $tag->id }}" type="checkbox" name="tags[]" value="{{ $tag->id }}" @checked(in_array($tag->id, $selectedTags ?? [])) class="peer sr-only">
                     <label for="tag-{{ $tag->id }}" class="chip peer-checked:border-ink peer-checked:bg-ink peer-checked:text-paper">{{ $tag->name }}</label>
                 </div>
@@ -100,6 +101,19 @@
                 loading.classList.add('hidden');
                 list.style.opacity = '1';
             }
+
+            // Only offer tags that have products in the chosen category; untick the rest.
+            const categorySelect = form.querySelector('select[name="category"]');
+            function syncTagsToCategory() {
+                const cat = categorySelect ? categorySelect.value : '';
+                if (categorySelect) categorySelect.classList.toggle('field-on', !!cat);
+                form.querySelectorAll('[data-tag-categories]').forEach(function (chip) {
+                    const fits = !cat || chip.dataset.tagCategories.split(' ').includes(cat);
+                    chip.classList.toggle('hidden', !fits);
+                    if (!fits) chip.querySelector('input').checked = false;
+                });
+            }
+            if (categorySelect) categorySelect.addEventListener('change', syncTagsToCategory);
 
             function update() {
                 const params = new URLSearchParams(new FormData(form));

@@ -94,8 +94,15 @@ class ProductController extends Controller
                 $q->whereHas('products', fn (Builder $p) => $p->available())
                     ->orWhereIn('id', $tagIds);
             })
+            ->with(['products' => fn ($p) => $p->available()->select('products.id', 'products.category_id')->with('category:id,slug')])
             ->orderBy('name')
-            ->get();
+            ->get()
+            ->each(function (Tag $tag) {
+                // Category slugs this tag has rentable products in; the view hides
+                // chips that would lead to an empty list for the chosen category.
+                $tag->category_slugs = $tag->products->pluck('category.slug')->filter()->unique()->values()->all();
+                $tag->unsetRelation('products');
+            });
 
         // Return only the list for AJAX requests
         if ($request->ajax()) {

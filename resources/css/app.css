@@ -120,6 +120,9 @@
   }
   .field::placeholder { color: var(--faint); }
   .field:focus { border-color: var(--accent); }
+  /* A filter select with a value chosen, styled like a ticked chip. */
+  .field-on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
+  .field-on option { background: var(--surface); color: var(--ink); font-weight: 400; }
   .label { @apply mb-1 block text-xs font-semibold uppercase tracking-wide; color: var(--faint); }
   /* legacy aliases so existing views keep working */
   .input {
