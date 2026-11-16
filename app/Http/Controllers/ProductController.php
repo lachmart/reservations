@@ -88,7 +88,14 @@ class ProductController extends Controller
         $products = $query->paginate(12)->withQueryString();
 
         $categories = Category::orderBy('name')->get();
-        $allTags = Tag::orderBy('name')->get();
+        // Only offer tags that actually lead to something; keep any selected ones visible.
+        $allTags = Tag::query()
+            ->where(function (Builder $q) use ($tagIds) {
+                $q->whereHas('products', fn (Builder $p) => $p->available())
+                    ->orWhereIn('id', $tagIds);
+            })
+            ->orderBy('name')
+            ->get();
 
         // Return only the list for AJAX requests
         if ($request->ajax()) {

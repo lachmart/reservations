@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Tag;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -51,5 +52,25 @@ class ProductPagesTest extends TestCase
         $resp->assertOk();
         // View should contain product name and availability number (may be rendered as text)
         $resp->assertSee($product->name);
+    }
+
+    public function test_tag_filter_hides_tags_without_available_products(): void
+    {
+        $used = Tag::create(['name' => 'Mixpult']);
+        $empty = Tag::create(['name' => 'Beamtag']);
+        $onlyUnavailable = Tag::create(['name' => 'Zerostock']);
+
+        Product::factory()->create(['price_per_day' => 10, 'stock' => 1])->tags()->attach($used);
+        Product::factory()->create(['price_per_day' => 10, 'stock' => 0])->tags()->attach($onlyUnavailable);
+
+        $this->get(route('products.index'))
+            ->assertOk()
+            ->assertSee('tag-'.$used->id, false)
+            ->assertDontSee('tag-'.$empty->id.'"', false)
+            ->assertDontSee('tag-'.$onlyUnavailable->id.'"', false);
+
+        // A tag that is already selected stays visible so it can be unticked.
+        $this->get(route('products.index').'?tags[]='.$empty->id)
+            ->assertSee('tag-'.$empty->id.'"', false);
     }
 }
