@@ -24,5 +24,3 @@ Níže je, co zbývá. Většinou jde o obsah nebo rozhodnutí, ne o kód.
 - [ ] JSON-RPC `id` jako řetězec balíček v0.1 odmítá (spec ho povoluje).
 - [ ] Testy pod DDEV běží proti lokální MariaDB (DDEV přebíjí `DB_CONNECTION` z
       phpunit.xml), takže `RefreshDatabase` maže lokální dev data.
-- [ ] Smazat testovací rezervaci **#22** (notifikační e-mail z ní dorazil, OK) („TEST Claude (smazat)“, 30. 12. 2027) v adminu.
-- [ ] Admin MCP token v Claude Code (`.mcp.json` / `MCP_TOKEN`) neodpovídá produkci (401).
