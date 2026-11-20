@@ -62,7 +62,15 @@ class CreateReservation extends BaseTool
             ])->required(! $this->isAdmin())
             ->string('event_place')->description('Where the event takes place (town, venue). Needed to price delivery.')
             ->string('event_type')->description('Kind of event: '.implode(', ', ReservationBooking::EVENT_TYPES).'.')
-            ->boolean('delivery')->description('Customer wants delivery and set-up (priced by place, confirmed later). Defaults to false.')
+            ->raw('delivery_zone', [
+                'type' => 'string',
+                'enum' => array_keys(ReservationBooking::deliveryZones()),
+                'description' => 'Delivery and set-up zone; its price is added to the total. '
+                    .collect(ReservationBooking::deliveryZones())
+                        ->map(fn ($z, $k) => "{$k}: {$z['label']} (".(is_null($z['price']) ? 'quoted later' : "{$z['price']} CZK").')')
+                        ->implode('; ').'.',
+            ])
+            ->boolean('delivery')->description('Use delivery_zone instead. true without a zone = delivery wanted, priced later.')
             ->string('note')->description('Free-form note for the rental company.');
 
         if ($this->isAdmin()) {
@@ -162,10 +170,15 @@ class CreateReservation extends BaseTool
             'end_date' => optional($reservation->end_date)->toIso8601String(),
             'days' => ReservationBooking::days((string) $reservation->start_date, (string) $reservation->end_date),
             'price' => (float) $reservation->price,
+            'rental_price' => (float) $reservation->price - (float) ($reservation->delivery_price ?? 0),
+            'delivery_price' => is_null($reservation->delivery_price) ? null : (float) $reservation->delivery_price,
             'currency' => 'CZK',
-            'price_note' => $reservation->delivery
-                ? 'Rental price only. Delivery and set-up are priced by place and confirmed by the rental company.'
-                : 'Rental price only, customer picks up the gear.',
+            'price_note' => match (true) {
+                ! $reservation->delivery => 'Rental price; the customer picks up the gear in Olomouc.',
+                is_null($reservation->delivery_price) => 'Rental price only. Delivery and set-up are quoted by place and confirmed by the rental company.',
+                default => 'Rental plus estimated delivery and set-up. The rental company confirms the final price.',
+            },
+            'delivery_zone' => $reservation->delivery_zone,
             'event_place' => $reservation->event_place,
             'event_type' => $reservation->event_type,
             'delivery' => (bool) $reservation->delivery,

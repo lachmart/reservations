@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\Rule;
 use InvalidArgumentException;
 
 /**
@@ -50,7 +51,44 @@ class ReservationBooking
             'event_place' => ['nullable', 'string', 'max:255'],
             'event_type' => ['nullable', 'string', 'max:100'],
             'delivery' => ['nullable', 'boolean'],
+            'delivery_zone' => ['nullable', 'string', Rule::in(array_keys(self::deliveryZones()))],
             'note' => ['nullable', 'string', 'max:1000'],
+        ];
+    }
+
+    /**
+     * @return array<string, array{label:string, price:?int}>
+     */
+    public static function deliveryZones(): array
+    {
+        return config('contact.delivery_zones', []);
+    }
+
+    /**
+     * Resolve the delivery fields from a zone (preferred) or the plain flag.
+     *
+     * @return array{delivery:bool, delivery_zone:?string, delivery_price:?float}
+     */
+    public static function delivery(array $details): array
+    {
+        $zone = $details['delivery_zone'] ?? null;
+        $zones = self::deliveryZones();
+
+        if ($zone && isset($zones[$zone])) {
+            $price = $zones[$zone]['price'];
+
+            return [
+                'delivery' => $zone !== 'pickup',
+                'delivery_zone' => $zone,
+                'delivery_price' => is_null($price) ? null : (float) $price,
+            ];
+        }
+
+        // No zone chosen: delivery wanted but not priced yet.
+        return [
+            'delivery' => (bool) ($details['delivery'] ?? false),
+            'delivery_zone' => null,
+            'delivery_price' => null,
         ];
     }
 
@@ -189,6 +227,8 @@ class ReservationBooking
                 throw new ItemsUnavailable($shortages);
             }
 
+            $delivery = self::delivery($details);
+
             $reservation = Reservation::create([
                 'name' => $details['name'],
                 // The live columns are NOT NULL, so store empty strings, not null.
@@ -197,11 +237,14 @@ class ReservationBooking
                 'note' => $details['note'] ?? '',
                 'event_place' => $details['event_place'] ?? null,
                 'event_type' => $details['event_type'] ?? null,
-                'delivery' => (bool) ($details['delivery'] ?? false),
+                'delivery' => $delivery['delivery'],
+                'delivery_zone' => $delivery['delivery_zone'],
+                'delivery_price' => $delivery['delivery_price'],
                 'source' => $source,
                 'start_date' => $start,
                 'end_date' => $end,
-                'price' => self::price($items, $bundles, self::days($start, $end)),
+                // Rental plus the estimated delivery (when the zone has a price).
+                'price' => self::price($items, $bundles, self::days($start, $end)) + ($delivery['delivery_price'] ?? 0),
                 'is_active' => true,
                 'is_paid' => false,
             ]);

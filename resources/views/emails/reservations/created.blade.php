@@ -11,8 +11,13 @@
 <ul>
     <li>Začátek: {{ optional($reservation->start_date)->format('d.m.Y H:i') }}</li>
     <li>Konec: {{ optional($reservation->end_date)->format('d.m.Y H:i') }}</li>
-    <li>Cena za techniku: {{ number_format((float) $reservation->price, 2, ',', ' ') }} Kč</li>
-    @if($reservation->delivery)
+    @php($__zone = config('contact.delivery_zones.'.$reservation->delivery_zone))
+    @php($__delivery = (float) ($reservation->delivery_price ?? 0))
+    <li>Cena za techniku: {{ number_format((float) $reservation->price - $__delivery, 2, ',', ' ') }} Kč</li>
+    @if($reservation->delivery && ! is_null($reservation->delivery_price))
+        <li>{{ $__zone['label'] ?? 'Dovoz a zapojení' }}: {{ number_format($__delivery, 2, ',', ' ') }} Kč (orientačně)</li>
+        <li><strong>Celkem: {{ number_format((float) $reservation->price, 2, ',', ' ') }} Kč</strong></li>
+    @elseif($reservation->delivery)
         <li>Dovoz a zapojení: ano (cenu podle místa potvrdíme)</li>
     @else
         <li>Dovoz a zapojení: ne, vyzvednutí osobně</li>

@@ -1,6 +1,6 @@
 # TODO (z testu webu 20. 11. 2026)
 
-Hotovo v kódu: A1–A3, B1–B3, C1 (aria-label), C5 (Olomouc v title/H1), část D1 a D3.
+Hotovo v kódu: A1–A3, B1–B3, C1 (aria-label), C3 (sety), C4 (FAQ s cenami), C5, D2 (3 vstupní stránky), část D1 a D3, pásma dopravy.
 Níže je, co zbývá. Většinou jde o obsah nebo rozhodnutí, ne o kód.
 
 ## C. UX a obsah
@@ -10,22 +10,17 @@ Níže je, co zbývá. Většinou jde o obsah nebo rozhodnutí, ne o kód.
       dá přepsat ručně, ale není to vidět. Při `showMonths: 2` flatpickr nepodporuje
       `monthSelectorType: 'dropdown'`. Varianty: vlastní select „měsíc + rok“ nad
       kalendářem, nebo zapnout `allowInput` s parsováním „06.07.2027 do 07.07.2027“.
-- [ ] **C3 sety a subwoofery**: založit v adminu sety (produkty s položkami v `bundle_items`),
-      např. „Obřad“ (bedna + bezdrátový mikrofon), „Svatba s kapelou“ (2× top + 2× sub),
-      „DJ párty“. Doporučené na titulní stránce přepnout na sety. Kód sety umí
-      (košík i MCP je rozbalují a počítají cenou setu).
-- [ ] **C4 FAQ s cenami**: doplnit do `config/seo.php` (otázka „Kolik stojí…“) konkrétní
-      rozpětí a odkaz na sety. Potřebuje reálná čísla od Martina. FAQ odpovědi jsou
-      v HTML (`<details>`), bez JS je vidět.
-- [ ] **B2 orientační cena dovozu**: košík teď ukazuje „dovoz a zapojení: dle místa,
-      potvrdíme“. Až bude ceník (např. Olomouc zdarma / X Kč za km), dopočítat ho
-      v `ReservationBooking`.
+- [ ] **C3 zkontrolovat sety** (`database/migrations/2026_11_21_000000_create_event_sets.php`):
+      složení a ceny navrhl Claude. Hlavně: potřebují topy Nexo PS15R2 a subwoofery MT18
+      opravdu „Amprack FP“? Úpravy pak v adminu.
+- [ ] **C4/B2 ceny dopravy** (`config/contact.php`, `delivery_zones`): 600 / 1 000 / 1 600 Kč,
+      dál dohodou. Navrženo bez ceníku, potvrdit. Texty FAQ (`config/seo.php`, `config/landing.php`)
+      ceny opakují, při změně upravit i tam.
 
 ## D. SEO
 - [ ] **D1** doplnit `openingHours` do LocalBusiness (`layouts/app.blade.php`), chybí údaje.
-- [ ] **D2 vstupní stránky**: Ozvučení svatby Olomouc, Ozvučení kapely, Pronájem
-      reproduktorů Olomouc, případně Prostějov, Přerov, Šternberk. Potřebují vlastní
-      texty a sety (C3), jinak hrozí tenký/duplicitní obsah.
+- [ ] **D2 další vstupní stránky**: stránky pro Prostějov, Přerov, Šternberk, až budou mít
+      vlastní obsah (reference, fotky z akcí). Stávající: `config/landing.php`.
 - [ ] **D3 `/.well-known/`**: Laravel routy existují, ale hosting vrací 403 dřív, než
       request dojde do PHP. Požádat Váš Hosting o povolení `/.well-known/mcp*`
       (nebo celého `/.well-known/`). Do té doby funguje `/mcp/server-card.json`.
@@ -36,3 +31,5 @@ Níže je, co zbývá. Většinou jde o obsah nebo rozhodnutí, ne o kód.
 - [ ] JSON-RPC `id` jako řetězec balíček v0.1 odmítá (spec ho povoluje).
 - [ ] Testy pod DDEV běží proti lokální MariaDB (DDEV přebíjí `DB_CONNECTION` z
       phpunit.xml), takže `RefreshDatabase` maže lokální dev data.
+- [ ] Smazat testovací rezervaci **#22** („TEST Claude (smazat)“, 30. 12. 2027) v adminu.
+- [ ] Admin MCP token v Claude Code (`.mcp.json` / `MCP_TOKEN`) neodpovídá produkci (401).

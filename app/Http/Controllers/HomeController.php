@@ -10,11 +10,13 @@ class HomeController extends Controller
 {
     public function index(): View
     {
-        // Flagship gear first: products that have a photo, then most valuable.
+        // Ready-made sets first (they cover the typical events), then flagship
+        // gear: products that have a photo, then most valuable.
         $featured = Product::query()
             ->available()
             ->with(['category', 'media'])
-            ->withCount('media')
+            ->withCount(['media', 'bundleItems'])
+            ->orderByDesc('bundle_items_count')
             ->orderByDesc('media_count')
             ->orderByDesc('price_per_day')
             ->limit(8)

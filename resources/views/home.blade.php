@@ -168,8 +168,12 @@
                     Ať chystáte svatbu, narozeninovou oslavu, ples, firemní večírek, koncert nebo festival, půjčíme vám techniku, která na akci opravdu stačí. Reproboxy, mixpulty, mikrofony, světla, výrobníky mlhy, truss i elektro rozvody máme skladem v Olomouci.
                 </p>
                 <ul class="mt-6 flex flex-wrap gap-2">
-                    @foreach(['Svatby', 'Oslavy a narozeniny', 'Plesy', 'Firemní akce', 'Koncerty', 'Festivaly', 'Divadlo', 'Konference'] as $event)
-                        <li class="chip">{{ $event }}</li>
+                    @foreach(['Svatby' => 'ozvuceni-svatby-olomouc', 'Oslavy a narozeniny' => null, 'Plesy' => null, 'Firemní akce' => null, 'Koncerty' => 'ozvuceni-kapely', 'Festivaly' => null, 'Divadlo' => null, 'Konference' => null] as $event => $__link)
+                        @if($__link)
+                            <li><a href="{{ url($__link) }}" class="chip hover:text-ink">{{ $event }} →</a></li>
+                        @else
+                            <li class="chip">{{ $event }}</li>
+                        @endif
                     @endforeach
                 </ul>
                 <p class="mt-6 text-sm text-muted">
@@ -186,6 +190,9 @@
                                 <span class="text-muted transition-transform group-open:rotate-45">+</span>
                             </summary>
                             <p class="mt-2 leading-relaxed text-muted">{{ $faq['a'] }}</p>
+                            @isset($faq['link'])
+                                <a href="{{ url($faq['link']['url']) }}" class="mt-2 inline-block text-sm font-semibold text-accent-ink hover:underline dark:text-accent">{{ $faq['link']['label'] }} →</a>
+                            @endisset
                         </details>
                     @endforeach
                 </div>

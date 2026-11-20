@@ -46,6 +46,13 @@ class ReservationResource extends Resource
                     ->options(array_combine(\App\Services\ReservationBooking::EVENT_TYPES, \App\Services\ReservationBooking::EVENT_TYPES)),
                 Forms\Components\Toggle::make('delivery')
                     ->label('Delivery & set-up'),
+                Forms\Components\Select::make('delivery_zone')
+                    ->label('Delivery zone')
+                    ->options(collect(config('contact.delivery_zones'))->map(fn ($z) => $z['label'])->all()),
+                Forms\Components\TextInput::make('delivery_price')
+                    ->label('Delivery price (included in price)')
+                    ->numeric()
+                    ->suffix('CZK'),
                 Forms\Components\DateTimePicker::make('start_date')
                     ->required()
                     ->rule('before:end_date'),
@@ -93,6 +100,9 @@ class ReservationResource extends Resource
                     ->toggleable(),
                 Tables\Columns\IconColumn::make('delivery')
                     ->boolean(),
+                Tables\Columns\TextColumn::make('delivery_zone')
+                    ->label('Zone')
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('source')
                     ->badge()
                     ->toggleable(),

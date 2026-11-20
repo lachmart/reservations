@@ -16,6 +16,10 @@ class SitemapController extends Controller
         $urls[] = ['loc' => route('products.index'), 'priority' => '0.9', 'changefreq' => 'daily'];
         $urls[] = ['loc' => route('ai.index'), 'priority' => '0.5', 'changefreq' => 'monthly'];
 
+        foreach (array_keys(config('landing.pages', [])) as $slug) {
+            $urls[] = ['loc' => url($slug), 'priority' => '0.9', 'changefreq' => 'monthly'];
+        }
+
         Category::query()
             ->whereHas('products', fn ($q) => $q->available())
             ->get()

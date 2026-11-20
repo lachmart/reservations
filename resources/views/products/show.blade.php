@@ -133,6 +133,25 @@
             </form>
             <div data-in-cart-row class="mt-2 text-sm font-medium text-accent-ink {{ $initialCount > 0 ? '' : 'hidden' }}">V košíku: <span id="product-count-{{ $product->id }}">{{ $initialCount }}</span> ks</div>
 
+            @if($isBundle)
+                <div class="mt-8">
+                    <div class="rule"></div>
+                    <h2 class="mt-6 font-display text-lg font-bold text-ink">Co je v setu</h2>
+                    <ul class="mt-3 divide-y divide-line rounded-xl border border-line">
+                        @foreach($product->bundleItems as $child)
+                            <li class="flex items-center justify-between gap-3 px-4 py-2.5 text-sm">
+                                <a href="{{ route('products.show', $child) }}" class="font-semibold text-ink hover:text-accent-ink">{{ $child->name }}</a>
+                                <span class="shrink-0 text-muted">{{ (int) $child->pivot->amount }}×</span>
+                            </li>
+                        @endforeach
+                    </ul>
+                    @php($__sum = $product->bundleItems->sum(fn ($c) => (float) $c->price_per_day * (int) $c->pivot->amount))
+                    @if($__sum > (float) $product->price_per_day)
+                        <p class="mt-2 text-sm text-muted">Jednotlivě by vyšlo na {{ number_format($__sum, 0, ',', ' ') }} Kč/den, v setu ušetříte {{ number_format($__sum - (float) $product->price_per_day, 0, ',', ' ') }} Kč/den.</p>
+                    @endif
+                </div>
+            @endif
+
             @if(!empty($product->description))
                 <div class="mt-8">
                     <div class="rule"></div>

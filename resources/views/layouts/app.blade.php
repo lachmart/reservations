@@ -207,6 +207,9 @@
                     <li><a href="{{ route('products.index') }}" class="hover:text-ink">Technika</a></li>
                     <li><a href="{{ route('cart.index') }}" class="hover:text-ink">Rezervace</a></li>
                     <li><a href="{{ route('ai.index') }}" class="hover:text-ink">Rezervace přes AI</a></li>
+                    @foreach(config('landing.pages', []) as $__slug => $__page)
+                        <li><a href="{{ url($__slug) }}" class="hover:text-ink">{{ $__page['nav_label'] }}</a></li>
+                    @endforeach
                     <li>
                         <button type="button" onclick="toggleTheme()" class="inline-flex items-center gap-2 hover:text-ink" aria-label="Přepnout téma">
                             <svg class="size-4 dark:hidden" viewBox="0 0 24 24" fill="currentColor"><path d="M21.64 13.65A9 9 0 1 1 10.35 2.36a7 7 0 1 0 11.29 11.29Z"/></svg>

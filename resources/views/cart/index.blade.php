@@ -177,8 +177,29 @@
                             <div class="flex items-center justify-between text-muted"><span>Položek</span><span class="font-semibold text-ink">{{ array_sum(array_map(fn($r) => (int) $r['amount'], $items)) }}</span></div>
                             <div class="rule my-3"></div>
                             <div class="flex items-baseline justify-between"><span class="font-semibold text-ink">Technika celkem</span><span class="font-display text-2xl font-extrabold text-ink">{{ number_format((float) $total, 0, ',', ' ') }} Kč</span></div>
-                            <div class="flex items-center justify-between text-muted"><span>Dovoz a zapojení</span><span class="font-semibold text-ink">dle místa, potvrdíme</span></div>
+                            <div class="flex items-center justify-between text-muted"><span>Doprava</span><span class="font-semibold text-ink" data-delivery-summary>dle volby níže</span></div>
+                            <div class="flex items-baseline justify-between"><span class="font-semibold text-ink">Celkem s dopravou</span><span class="font-display text-xl font-extrabold text-ink" data-grand-total data-rental-total="{{ (float) $total }}">{{ number_format((float) $total, 0, ',', ' ') }} Kč</span></div>
                         </div>
+                        <script>
+                            (function () {
+                                const fmt = (n) => Math.round(n).toLocaleString('cs-CZ') + ' Kč';
+                                function update() {
+                                    const sel = document.querySelector('input[name="delivery_zone"]:checked');
+                                    const out = document.querySelector('[data-delivery-summary]');
+                                    const grand = document.querySelector('[data-grand-total]');
+                                    if (!sel || !out || !grand) return;
+                                    const rental = parseFloat(grand.dataset.rentalTotal) || 0;
+                                    const raw = sel.dataset.deliveryPrice;
+                                    if (raw === '') { out.textContent = 'dohodou'; grand.textContent = fmt(rental) + ' + doprava'; return; }
+                                    const d = parseFloat(raw) || 0;
+                                    out.textContent = d > 0 ? fmt(d) : 'zdarma';
+                                    grand.textContent = fmt(rental + d);
+                                }
+                                document.addEventListener('change', (e) => { if (e.target.name === 'delivery_zone') update(); });
+                                document.addEventListener('DOMContentLoaded', update);
+                                update();
+                            })();
+                        </script>
                     @else
                         <p class="mt-2 text-sm text-muted">Pro zobrazení ceny nastavte termín výše.</p>
                     @endif
@@ -190,7 +211,7 @@
                     <h2 class="card-title">Dokončit rezervaci</h2>
                     <form method="post" action="{{ route('cart.checkout') }}" class="mt-3 space-y-3">
                         @csrf
-                        @if($errors->hasAny(['name', 'phone', 'email', 'event_place', 'event_type', 'note']))
+                        @if($errors->hasAny(['name', 'phone', 'email', 'event_place', 'event_type', 'delivery_zone', 'note']))
                             <ul class="list-inside list-disc text-sm" style="color:oklch(0.55 0.17 28)">
                                 @foreach(array_unique(array_merge($errors->get('name'), $errors->get('phone'), $errors->get('email'), $errors->get('event_place'), $errors->get('event_type'), $errors->get('note'))) as $message)
                                     <li>{{ $message }}</li>
@@ -211,11 +232,21 @@
                             </select>
                         </div>
                         <div><label class="label" for="checkout-event-place">Místo akce</label><input id="checkout-event-place" type="text" name="event_place" value="{{ old('event_place') }}" class="field" maxlength="255" placeholder="Obec, případně název sálu"></div>
-                        <label class="flex items-start gap-2 text-sm text-ink">
-                            <input type="hidden" name="delivery" value="0">
-                            <input type="checkbox" name="delivery" value="1" class="mt-1" @checked(old('delivery', '1') === '1')>
-                            <span><span class="font-semibold">Dovoz a zapojení</span><br><span class="text-muted">Olomouc a okolí, cenu podle místa potvrdíme.</span></span>
-                        </label>
+                        @php($__zones = \App\Services\ReservationBooking::deliveryZones())
+                        @php($__zoneSel = old('delivery_zone', array_key_first($__zones)))
+                        <fieldset>
+                            <legend class="label">Doprava</legend>
+                            <div class="space-y-1.5">
+                                @foreach($__zones as $key => $zone)
+                                    <label class="flex items-start gap-2 text-sm text-ink">
+                                        <input type="radio" name="delivery_zone" value="{{ $key }}" data-delivery-price="{{ $zone['price'] ?? '' }}" class="mt-1" @checked($__zoneSel === $key)>
+                                        <span class="flex-1">{{ $zone['label'] }}</span>
+                                        <span class="shrink-0 font-semibold">{{ is_null($zone['price']) ? 'dohodou' : ($zone['price'] > 0 ? number_format($zone['price'], 0, ',', ' ').' Kč' : 'zdarma') }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
+                            <p class="mt-1 text-xs text-faint">Orientační cena za dovoz, zapojení i odvoz. Konečnou potvrdíme.</p>
+                        </fieldset>
                         <div><label class="label" for="checkout-note">Poznámka</label><textarea id="checkout-note" name="note" class="field" rows="3" maxlength="1000">{{ old('note') }}</textarea></div>
                         <button class="btn-primary w-full py-3" type="submit" {{ count($items) === 0 ? 'disabled' : '' }}>Odeslat rezervaci</button>
                         <p class="text-center text-xs text-faint">Ozveme se vám s potvrzením a konečnou cenou včetně dovozu.</p>

@@ -282,7 +282,7 @@ class CartTest extends TestCase
             ->assertOk()
             ->assertSee('name="event_place"', false)
             ->assertSee('name="event_type"', false)
-            ->assertSee('name="delivery"', false)
+            ->assertSee('name="delivery_zone"', false)
             ->assertSee('Dovoz a zapojení')
             ->assertDontSee('type="email" name="email" value="" class="field" required', false);
     }

@@ -14,4 +14,15 @@ return [
     'owner_notify' => array_values(array_filter(array_map('trim', explode(',',
         (string) env('RESERVATION_NOTIFY_EMAIL', env('CONTACT_EMAIL', 'info@marakarental.cz'))
     )))),
+
+    // Delivery and set-up, priced per zone around Olomouc (CZK per event: delivery,
+    // set-up and pick-up). price null = priced individually and confirmed later.
+    // The first zone is the default in the cart.
+    'delivery_zones' => [
+        'olomouc' => ['label' => 'Dovoz a zapojení: Olomouc', 'price' => 600],
+        'okoli' => ['label' => 'Dovoz a zapojení: do 25 km (Šternberk, Prostějov, Přerov, Litovel…)', 'price' => 1000],
+        'region' => ['label' => 'Dovoz a zapojení: 25–50 km (Uničov, Hranice, Kroměříž…)', 'price' => 1600],
+        'dal' => ['label' => 'Dovoz a zapojení: dál, cenu potvrdíme', 'price' => null],
+        'pickup' => ['label' => 'Vyzvednu si osobně v Olomouci', 'price' => 0],
+    ],
 ];

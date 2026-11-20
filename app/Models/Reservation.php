@@ -28,6 +28,8 @@ class Reservation extends Model
         'event_place',
         'event_type',
         'delivery',
+        'delivery_zone',
+        'delivery_price',
         'source',
     ];
 
@@ -44,6 +46,7 @@ class Reservation extends Model
         'is_active' => 'boolean',
         'is_paid' => 'boolean',
         'delivery' => 'boolean',
+        'delivery_price' => 'decimal:2',
     ];
 
     public function reservationItems(): HasMany

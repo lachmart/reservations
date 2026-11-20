@@ -37,7 +37,9 @@ endpoint needs no token.
 
 Public `create-reservation` takes all items at once (`items: [{product_id, quantity}]`,
 bundles are expanded) plus contact (phone or e-mail), term, `event_place`, `event_type`,
-`delivery` and `note`. It goes through `App\Services\ReservationBooking`, the same code
+`delivery_zone` (zones and prices in `config/contact.php`; the zone price is added to the
+total, `dal` is quoted later) and `note`. `list-products` returns each product's `url` and,
+for sets, their `components`. It goes through `App\Services\ReservationBooking`, the same code
 as the web cart: availability is checked and the reservation and items are saved in one
 transaction, the price is computed on the server, the reservation starts active and
 unpaid, and the customer and owner are e-mailed. `price`, `is_paid` and `is_active` are

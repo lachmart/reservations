@@ -7,6 +7,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\EnquiryController;
 use App\Http\Controllers\McpDiscoveryController;
+use App\Http\Controllers\LandingController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -40,3 +41,9 @@ Route::post('/cart/checkout', [CartController::class, 'checkout'])
     ->middleware('throttle:10,10')
     ->name('cart.checkout');
 Route::get('/thank-you', [CartController::class, 'thankyou'])->name('cart.thankyou');
+
+// Landing pages for common searches (config/landing.php). Constrained to the
+// configured slugs so they can't shadow other routes.
+Route::get('/{landing}', [LandingController::class, 'show'])
+    ->whereIn('landing', array_keys(config('landing.pages', [])))
+    ->name('landing.show');

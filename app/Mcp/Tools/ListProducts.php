@@ -31,7 +31,7 @@ class ListProducts extends BaseTool
 
     protected function run(array $arguments): ToolResult
     {
-        $query = Product::query()->with('category');
+        $query = Product::query()->with(['category', 'bundleItems']);
 
         if (! empty($arguments['search'])) {
             $query->where('name', 'like', '%'.$arguments['search'].'%');
@@ -58,7 +58,15 @@ class ListProducts extends BaseTool
                 'category' => optional($p->category)->name,
                 'price_per_day' => $p->price_per_day,
                 'stock' => $p->stock,
-                'is_bundle' => $p->isBundle(),
+                'is_bundle' => $p->bundleItems->isNotEmpty(),
+                'url' => $p->slug ? route('products.show', $p) : null,
+                'components' => $p->bundleItems->isNotEmpty()
+                    ? $p->bundleItems->map(fn (Product $c) => [
+                        'product_id' => $c->id,
+                        'name' => $c->name,
+                        'quantity' => (int) $c->pivot->amount,
+                    ])->values()->all()
+                    : null,
             ])->all(),
         ]);
     }
