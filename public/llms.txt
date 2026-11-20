@@ -36,8 +36,26 @@ Nová rezervace je nepotvrzená a nezaplacená, dokud ji nepotvrdíme. Cena zahr
 a dopravu podle pásma (`delivery_zone`: olomouc 600 Kč, okoli 1 000 Kč, region 1 600 Kč,
 dal dohodou, pickup 0 Kč). Instalaci, zapojení nebo obsluhu (`service: true`) naceníme zvlášť.
 
+## Hotové sety (cena za den)
+
+- Set Svatební obřad (2× JBL na baterii, stativy, bezdrátové mikrofony): 1 190 Kč — https://www.marakarental.cz/products/set-svatebni-obrad
+- Set Proslovy a hudba (bedna, stativ, bezdrátový mikrofon, mixpult): 950 Kč — https://www.marakarental.cz/products/set-proslovy-a-hudba
+- Set DJ párty (2 aktivní bedny, 2 LED světla, stativy, kabely): 1 290 Kč — https://www.marakarental.cz/products/set-dj-party
+- Set Svatba s kapelou (2 topy Nexo PS10 + 2 subwoofery, zesilovač, stojny): 4 290 Kč — https://www.marakarental.cz/products/set-svatba-s-kapelou
+
+Každý započatý den (24 h) se počítá jako jeden den.
+
+## Doprava
+
+Dovoz a odvoz: Olomouc 600 Kč, do 25 km (Šternberk, Prostějov, Přerov, Litovel) 1 000 Kč,
+25–50 km 1 600 Kč, dál dohodou, vyzvednutí v Olomouci zdarma. Instalaci, zapojení nebo
+obsluhu technikem naceníme zvlášť.
+
 ## Klíčové stránky
 
+- Ozvučení svatby Olomouc: https://www.marakarental.cz/ozvuceni-svatby-olomouc
+- Ozvučení kapely: https://www.marakarental.cz/ozvuceni-kapely
+- Pronájem reproduktorů Olomouc: https://www.marakarental.cz/pronajem-reproduktoru-olomouc
 - Katalog techniky: https://www.marakarental.cz/products
 - Rezervace přes AI: https://www.marakarental.cz/ai
 - Sitemap: https://www.marakarental.cz/sitemap.xml

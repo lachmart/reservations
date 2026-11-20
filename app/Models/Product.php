@@ -61,6 +61,15 @@ class Product extends Model implements HasMedia
     }
 
     /**
+     * Sets (bundles) that contain this product.
+     */
+    public function bundles(): BelongsToMany
+    {
+        return $this->belongsToMany(Product::class, 'bundle_items', 'product_id', 'bundle_product_id')
+            ->withPivot('amount');
+    }
+
+    /**
      * Whether this product is a bundle (has bundle item relations).
      */
     public function isBundle(): bool

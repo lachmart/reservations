@@ -41,7 +41,7 @@ class ProductController extends Controller
         $termStart = $cart['start_date'] ?? $start;
         $termEnd = $cart['end_date'] ?? $end;
 
-        $query = Product::query()->available()->with(['category', 'tags'])->withCount('media');
+        $query = Product::query()->available()->with(['category', 'tags', 'bundleItems.media'])->withCount(['media', 'bundleItems']);
 
         if ($categoryId) {
             $query->where('category_id', $categoryId);
@@ -81,7 +81,8 @@ class ProductController extends Controller
             case 'featured':
             default:
                 // Flagship-first: gear with a photo, then most valuable.
-                $query->orderByDesc('media_count')->orderByDesc('price_per_day')->orderBy('id', 'desc');
+                // Ready-made sets first: they're what a first-time renter needs.
+                $query->orderByDesc('bundle_items_count')->orderByDesc('media_count')->orderByDesc('price_per_day')->orderBy('id', 'desc');
                 break;
         }
 

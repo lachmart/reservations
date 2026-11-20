@@ -133,6 +133,22 @@
             </form>
             <div data-in-cart-row class="mt-2 text-sm font-medium text-accent-ink {{ $initialCount > 0 ? '' : 'hidden' }}">V košíku: <span id="product-count-{{ $product->id }}">{{ $initialCount }}</span> ks</div>
 
+            @php($__inSets = $isBundle ? collect() : $product->bundles()->available()->get())
+            @if($__inSets->isNotEmpty())
+                <div class="mt-6 rounded-2xl border border-line p-4">
+                    <div class="text-sm font-semibold text-ink">Je součástí {{ $__inSets->count() > 1 ? 'setů' : 'setu' }}</div>
+                    <ul class="mt-2 space-y-1.5 text-sm">
+                        @foreach($__inSets as $__set)
+                            <li class="flex items-baseline justify-between gap-3">
+                                <a href="{{ route('products.show', $__set) }}" class="font-semibold text-accent-ink hover:underline dark:text-accent">{{ $__set->name }}</a>
+                                <span class="shrink-0 text-muted">{{ number_format((float) $__set->price_per_day, 0, ',', ' ') }} Kč / den</span>
+                            </li>
+                        @endforeach
+                    </ul>
+                    <p class="mt-2 text-xs text-faint">V setu je vše potřebné pro akci včetně stativů a kabelů, za nižší cenu než jednotlivě.</p>
+                </div>
+            @endif
+
             @if($isBundle)
                 <div class="mt-8">
                     <div class="rule"></div>

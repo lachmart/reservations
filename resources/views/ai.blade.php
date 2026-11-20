@@ -46,6 +46,15 @@
             <li><code class="text-ink">create-reservation</code> — založení rezervace včetně položek; cenu spočítá server</li>
         </ul>
 
+        <h2 class="mt-10 font-display text-xl font-bold text-ink">Hotové sety</h2>
+        <p class="mt-2 text-muted">Pro typické akce doporučte set: v <code>list-products</code> mají <code>is_bundle: true</code> a v <code>components</code> vidíte, co obsahují. Do rezervace se zadávají jako jedna položka.</p>
+        <ul class="mt-3 space-y-1 text-muted">
+            <li><a href="{{ url('/products/set-svatebni-obrad') }}" class="font-semibold text-ink hover:underline">Svatební obřad</a> — 1 190 Kč / den</li>
+            <li><a href="{{ url('/products/set-proslovy-a-hudba') }}" class="font-semibold text-ink hover:underline">Proslovy a hudba</a> — 950 Kč / den</li>
+            <li><a href="{{ url('/products/set-dj-party') }}" class="font-semibold text-ink hover:underline">DJ párty</a> — 1 290 Kč / den</li>
+            <li><a href="{{ url('/products/set-svatba-s-kapelou') }}" class="font-semibold text-ink hover:underline">Svatba s kapelou</a> — 4 290 Kč / den</li>
+        </ul>
+
         <h2 class="mt-10 font-display text-xl font-bold text-ink">Ukázka kompletní rezervace</h2>
         <p class="mt-2 text-muted">Každý krok je samostatný <code>POST {{ url('/mcp/reservations') }}</code> s JSON-RPC 2.0. Rezervace se uloží jen tehdy, když jsou dostupné všechny položky. Je nepotvrzená a nezaplacená, dokud ji nepotvrdíme.</p>
         <pre class="mt-3 overflow-x-auto rounded-xl border border-line bg-surface p-4 text-xs leading-relaxed text-ink"><code>// 1. initialize
