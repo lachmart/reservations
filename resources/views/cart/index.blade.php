@@ -74,7 +74,7 @@
                                 const res = await fetch(window.location.href, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
                                 const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
                                 const newRoot = doc.getElementById('cart-root');
-                                if (newRoot) { cartRoot.innerHTML = newRoot.innerHTML; bindAutoSubmit(cartRoot); bindDateChange(); window.initRangePickers && window.initRangePickers(); }
+                                if (newRoot) { cartRoot.innerHTML = newRoot.innerHTML; bindAutoSubmit(cartRoot); bindDateChange(); window.initRangePickers && window.initRangePickers(); window.updateDeliveryTotal && window.updateDeliveryTotal(); }
                             }
                             function bindAutoSubmit(root){
                                 root.querySelectorAll('form.auto-submit-on-change').forEach(form => {
@@ -180,26 +180,6 @@
                             <div class="flex items-center justify-between text-muted"><span>Doprava</span><span class="font-semibold text-ink" data-delivery-summary>dle volby níže</span></div>
                             <div class="flex items-baseline justify-between"><span class="font-semibold text-ink">Celkem s dopravou</span><span class="font-display text-xl font-extrabold text-ink" data-grand-total data-rental-total="{{ (float) $total }}">{{ number_format((float) $total, 0, ',', ' ') }} Kč</span></div>
                         </div>
-                        <script>
-                            (function () {
-                                const fmt = (n) => Math.round(n).toLocaleString('cs-CZ') + ' Kč';
-                                function update() {
-                                    const sel = document.querySelector('input[name="delivery_zone"]:checked');
-                                    const out = document.querySelector('[data-delivery-summary]');
-                                    const grand = document.querySelector('[data-grand-total]');
-                                    if (!sel || !out || !grand) return;
-                                    const rental = parseFloat(grand.dataset.rentalTotal) || 0;
-                                    const raw = sel.dataset.deliveryPrice;
-                                    if (raw === '') { out.textContent = 'dohodou'; grand.textContent = fmt(rental) + ' + doprava'; return; }
-                                    const d = parseFloat(raw) || 0;
-                                    out.textContent = d > 0 ? fmt(d) : 'zdarma';
-                                    grand.textContent = fmt(rental + d);
-                                }
-                                document.addEventListener('change', (e) => { if (e.target.name === 'delivery_zone') update(); });
-                                document.addEventListener('DOMContentLoaded', update);
-                                update();
-                            })();
-                        </script>
                     @else
                         <p class="mt-2 text-sm text-muted">Pro zobrazení ceny nastavte termín výše.</p>
                     @endif
@@ -263,4 +243,31 @@
             </section>
         </div>
     </div>
+    {{-- Delivery estimate in the summary; outside the AJAX-refreshed part so it always runs. --}}
+    <script>
+        (function () {
+            const fmt = (n) => Math.round(n).toLocaleString('cs-CZ') + ' Kč';
+            function update() {
+                const sel = document.querySelector('input[name="delivery_zone"]:checked');
+                const out = document.querySelector('[data-delivery-summary]');
+                const grand = document.querySelector('[data-grand-total]');
+                if (!sel || !out || !grand) return;
+                const rental = parseFloat(grand.dataset.rentalTotal) || 0;
+                const raw = sel.dataset.deliveryPrice;
+                if (raw === '') { out.textContent = 'dohodou'; grand.textContent = fmt(rental) + ' + doprava'; return; }
+                const d = parseFloat(raw) || 0;
+                out.textContent = d > 0 ? fmt(d) : 'zdarma';
+                grand.textContent = fmt(rental + d);
+            }
+            // The cart re-renders via innerHTML (scripts don't re-run), so
+            // expose update() and bind the listener only once.
+            window.updateDeliveryTotal = update;
+            if (!window.__deliveryBound) {
+                window.__deliveryBound = true;
+                document.addEventListener('change', (e) => { if (e.target.name === 'delivery_zone') window.updateDeliveryTotal(); });
+                document.addEventListener('DOMContentLoaded', () => window.updateDeliveryTotal());
+            }
+            update();
+        })();
+    </script>
 @endsection
