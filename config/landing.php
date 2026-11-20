@@ -16,7 +16,7 @@ return [
             'h1' => 'Ozvučení svatby v Olomouci a okolí',
             'intro' => 'Půjčíme a zapojíme zvuk na celý svatební den: obřad s mikrofonem pro oddávajícího, hudbu a proslovy na hostině a pořádný zvuk pro kapelu nebo DJ večer. Ceny vidíte předem, termín si ověříte a rezervujete online.',
             'sets_heading' => 'Hotové sety pro svatbu',
-            'sets' => ['svatebni-balicek-obrad', 'set-proslovy-a-hudba', 'set-dj-party', 'set-svatba-s-kapelou'],
+            'sets' => ['svatebmi-balicek-obrad', 'set-proslovy-a-hudba', 'set-dj-party', 'set-svatba-s-kapelou'],
             'sections' => [
                 ['Obřad', 'Na obřad stačí jedna až dvě bedny a bezdrátový mikrofon pro oddávajícího a svědky. Hudbu na nástup pustíte z mobilu nebo notebooku. Venku na zahradě i v obřadní síni.'],
                 ['Hostina a proslovy', 'Na přípitek, proslovy a hudbu k jídlu stačí menší set s bezdrátovým mikrofonem. Pokud je obřad i hostina na jednom místě, vystačíte si s jedním setem po celý den.'],
