@@ -1,12 +1,10 @@
 # TODO (z testu webu 20. 11. 2026)
 
-Hotovo v kódu (C2 výběr měsíce v kalendáři; ceny dopravy 600/1 000/1 600 Kč potvrzené, instalace a obsluha za příplatek):
+Hotovo v kódu (C1: hláška už nepřekrývá ikonu košíku; C2 výběr měsíce v kalendáři; ceny dopravy 600/1 000/1 600 Kč potvrzené, instalace a obsluha za příplatek):
  A1–A3, B1–B3, C1 (aria-label), C3 (sety), C4 (FAQ s cenami), C5, D2 (3 vstupní stránky), část D1 a D3, pásma dopravy.
 Níže je, co zbývá. Většinou jde o obsah nebo rozhodnutí, ne o kód.
 
 ## C. UX a obsah
-- [ ] **C1 ověřit ručně**: klik na ikonu košíku v hlavičce. Je to obyčejný `<a href="/cart">`
-      bez JS, takže automat nejspíš klikl mimo. Ověřit na mobilu i desktopu.
 - [ ] **Nexo rack**: PS15R2 potřebují Nexo rack, který v katalogu není. Set Svatba s kapelou
       proto jede s PS10R2. Až bude rack v katalogu, jde případně udělat i větší set s PS15.
 
