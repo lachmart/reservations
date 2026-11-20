@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ReservationResource\RelationManagers;
 
+use Filament\Schemas\Schema;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -15,10 +16,10 @@ class ReservationItemsRelationManager extends RelationManager
 
     protected static ?string $title = 'Reservation Items';
 
-    public function form(Forms\Form $form): Forms\Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Select::make('product_id')
                     ->relationship('product', 'name')
                     ->searchable()
@@ -38,15 +39,15 @@ class ReservationItemsRelationManager extends RelationManager
                 TextColumn::make('amount')->label('Amount'),
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                \Filament\Actions\CreateAction::make(),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+            ->recordActions([
+                \Filament\Actions\EditAction::make(),
+                \Filament\Actions\DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                \Filament\Actions\BulkActionGroup::make([
+                    \Filament\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

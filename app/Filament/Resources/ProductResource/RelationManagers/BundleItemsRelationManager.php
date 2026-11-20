@@ -2,23 +2,24 @@
 
 namespace App\Filament\Resources\ProductResource\RelationManagers;
 
+use Filament\Schemas\Schema;
 use App\Models\Product;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\AttachAction;
+use Filament\Actions\Action;
+use Filament\Actions\AttachAction;
 use Filament\Tables\Columns\TextColumn;
 
 class BundleItemsRelationManager extends RelationManager
 {
     protected static string $relationship = 'bundleItems';
 
-    public function form(Forms\Form $form): Forms\Form
+    public function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->components([
             TextInput::make('pivot.amount')
                 ->numeric()
                 ->label('Amount per bundle')
@@ -70,7 +71,7 @@ class BundleItemsRelationManager extends RelationManager
                         }
                     }),
             ])
-            ->actions([
+            ->recordActions([
                 Action::make('edit')
                     ->label('Edit amount')
                     ->form(function (Product $record) {
@@ -86,7 +87,7 @@ class BundleItemsRelationManager extends RelationManager
                     ->action(function (Product $record, array $data) {
                         $record->pivot->update(['amount' => (int) $data['amount']]);
                     }),
-                Tables\Actions\DetachAction::make(),
+                \Filament\Actions\DetachAction::make(),
             ]);
     }
 }

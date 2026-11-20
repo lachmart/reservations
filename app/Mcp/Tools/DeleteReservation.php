@@ -6,9 +6,9 @@ namespace App\Mcp\Tools;
 
 use App\Models\Reservation;
 use Laravel\Mcp\Server\Tools\Annotations\IsDestructive;
-use Laravel\Mcp\Server\Tools\Annotations\Title;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
+use Laravel\Mcp\Server\Attributes\Title;
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Response;
 
 #[Title('Delete reservation')]
 #[IsDestructive]
@@ -19,24 +19,27 @@ class DeleteReservation extends BaseTool
         return 'Permanently delete a reservation and all of its line items. This cannot be undone.';
     }
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->integer('id')->description('The reservation id to delete.')->required();
+        return [
+            'id' => $schema->integer()
+                ->description('The reservation id to delete.')
+                ->required(),
+        ];
     }
 
-    protected function run(array $arguments): ToolResult
+    protected function run(array $arguments): Response
     {
         $reservation = Reservation::find($arguments['id'] ?? null);
 
         if (! $reservation) {
-            return ToolResult::error('No reservation found with id '.($arguments['id'] ?? 'null').'.');
+            return Response::error('No reservation found with id '.($arguments['id'] ?? 'null').'.');
         }
 
         $reservation->reservationItems()->delete();
         $reservation->delete();
 
-        return ToolResult::json([
+        return Response::json([
             'deleted' => true,
             'id' => $arguments['id'],
         ]);

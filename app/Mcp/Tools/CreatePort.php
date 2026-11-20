@@ -8,9 +8,9 @@ use App\Enum\Gender;
 use App\Models\Port;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Enum;
-use Laravel\Mcp\Server\Tools\Annotations\Title;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
+use Laravel\Mcp\Server\Attributes\Title;
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Response;
 
 #[Title('Create port')]
 class CreatePort extends BaseTool
@@ -20,14 +20,19 @@ class CreatePort extends BaseTool
         return 'Create a new port. Gender must be "male" or "female".';
     }
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->string('name')->description('Port name.')->required()
-            ->string('gender')->description('Port gender: "male" or "female".')->required();
+        return [
+            'name' => $schema->string()
+                ->description('Port name.')
+                ->required(),
+            'gender' => $schema->string()
+                ->description('Port gender: "male" or "female".')
+                ->required(),
+        ];
     }
 
-    protected function run(array $arguments): ToolResult
+    protected function run(array $arguments): Response
     {
         $validator = Validator::make($arguments, [
             'name' => ['required', 'string', 'max:255'],
@@ -35,7 +40,7 @@ class CreatePort extends BaseTool
         ]);
 
         if ($validator->fails()) {
-            return ToolResult::error($validator->errors()->first());
+            return Response::error($validator->errors()->first());
         }
 
         $port = Port::create([
@@ -43,7 +48,7 @@ class CreatePort extends BaseTool
             'gender' => $arguments['gender'],
         ]);
 
-        return ToolResult::json([
+        return Response::json([
             'created' => true,
             'id' => $port->id,
             'name' => $port->name,

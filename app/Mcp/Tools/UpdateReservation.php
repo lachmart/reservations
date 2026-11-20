@@ -7,9 +7,9 @@ namespace App\Mcp\Tools;
 use App\Models\Reservation;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Mcp\Server\Tools\Annotations\IsIdempotent;
-use Laravel\Mcp\Server\Tools\Annotations\Title;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
+use Laravel\Mcp\Server\Attributes\Title;
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Response;
 
 #[Title('Update reservation')]
 #[IsIdempotent]
@@ -21,27 +21,39 @@ class UpdateReservation extends BaseTool
             .'changed. Useful for marking a reservation paid/active or adjusting dates and price.';
     }
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->integer('id')->description('The reservation id to update.')->required()
-            ->string('name')->description('Customer name.')
-            ->string('email')->description('Customer email.')
-            ->string('phone')->description('Customer phone number.')
-            ->string('start_date')->description('Reservation start (ISO-8601).')
-            ->string('end_date')->description('Reservation end (ISO-8601).')
-            ->number('price')->description('Total price.')
-            ->string('note')->description('Free-form note.')
-            ->boolean('is_active')->description('Whether the reservation is active.')
-            ->boolean('is_paid')->description('Whether the reservation is paid.');
+        return [
+            'id' => $schema->integer()
+                ->description('The reservation id to update.')
+                ->required(),
+            'name' => $schema->string()
+                ->description('Customer name.'),
+            'email' => $schema->string()
+                ->description('Customer email.'),
+            'phone' => $schema->string()
+                ->description('Customer phone number.'),
+            'start_date' => $schema->string()
+                ->description('Reservation start (ISO-8601).'),
+            'end_date' => $schema->string()
+                ->description('Reservation end (ISO-8601).'),
+            'price' => $schema->number()
+                ->description('Total price.'),
+            'note' => $schema->string()
+                ->description('Free-form note.'),
+            'is_active' => $schema->boolean()
+                ->description('Whether the reservation is active.'),
+            'is_paid' => $schema->boolean()
+                ->description('Whether the reservation is paid.'),
+        ];
     }
 
-    protected function run(array $arguments): ToolResult
+    protected function run(array $arguments): Response
     {
         $reservation = Reservation::find($arguments['id'] ?? null);
 
         if (! $reservation) {
-            return ToolResult::error('No reservation found with id '.($arguments['id'] ?? 'null').'.');
+            return Response::error('No reservation found with id '.($arguments['id'] ?? 'null').'.');
         }
 
         $validator = Validator::make($arguments, [
@@ -57,7 +69,7 @@ class UpdateReservation extends BaseTool
         ]);
 
         if ($validator->fails()) {
-            return ToolResult::error($validator->errors()->first());
+            return Response::error($validator->errors()->first());
         }
 
         $data = $validator->validated();
@@ -66,16 +78,16 @@ class UpdateReservation extends BaseTool
         $end = $data['end_date'] ?? optional($reservation->end_date)->toDateTimeString();
 
         if ($start && $end && strtotime($end) <= strtotime($start)) {
-            return ToolResult::error('end_date must be after start_date.');
+            return Response::error('end_date must be after start_date.');
         }
 
         if ($data === []) {
-            return ToolResult::error('No fields provided to update.');
+            return Response::error('No fields provided to update.');
         }
 
         $reservation->fill($data)->save();
 
-        return ToolResult::json([
+        return Response::json([
             'updated' => true,
             'id' => $reservation->id,
             'changed_fields' => array_keys($data),

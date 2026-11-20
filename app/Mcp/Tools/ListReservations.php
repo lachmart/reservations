@@ -6,9 +6,9 @@ namespace App\Mcp\Tools;
 
 use App\Models\Reservation;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
-use Laravel\Mcp\Server\Tools\Annotations\Title;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
+use Laravel\Mcp\Server\Attributes\Title;
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Response;
 
 #[Title('List reservations')]
 #[IsReadOnly]
@@ -20,18 +20,25 @@ class ListReservations extends BaseTool
             .'email, or an overlapping date range. Returns the most recent matches first.';
     }
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->boolean('is_active')->description('Only reservations with this active flag.')
-            ->boolean('is_paid')->description('Only reservations with this paid flag.')
-            ->string('email')->description('Match reservations for this customer email (partial match).')
-            ->string('from')->description('Include reservations overlapping on/after this date (ISO-8601).')
-            ->string('to')->description('Include reservations overlapping on/before this date (ISO-8601).')
-            ->integer('limit')->description('Maximum number of reservations to return (default 25, max 100).');
+        return [
+            'is_active' => $schema->boolean()
+                ->description('Only reservations with this active flag.'),
+            'is_paid' => $schema->boolean()
+                ->description('Only reservations with this paid flag.'),
+            'email' => $schema->string()
+                ->description('Match reservations for this customer email (partial match).'),
+            'from' => $schema->string()
+                ->description('Include reservations overlapping on/after this date (ISO-8601).'),
+            'to' => $schema->string()
+                ->description('Include reservations overlapping on/before this date (ISO-8601).'),
+            'limit' => $schema->integer()
+                ->description('Maximum number of reservations to return (default 25, max 100).'),
+        ];
     }
 
-    protected function run(array $arguments): ToolResult
+    protected function run(array $arguments): Response
     {
         $query = Reservation::query()->withCount('reservationItems');
 
@@ -60,7 +67,7 @@ class ListReservations extends BaseTool
 
         $reservations = $query->orderByDesc('id')->limit($limit)->get();
 
-        return ToolResult::json([
+        return Response::json([
             'count' => $reservations->count(),
             'reservations' => $reservations->map(fn (Reservation $r) => [
                 'id' => $r->id,

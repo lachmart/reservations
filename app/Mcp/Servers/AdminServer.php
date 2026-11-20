@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Mcp\Servers;
 
+use Laravel\Mcp\Server;
 use App\Mcp\Tools\AddReservationItem;
 use App\Mcp\Tools\AttachProductPhoto;
 use App\Mcp\Tools\AttachProductPort;
@@ -28,22 +29,22 @@ use App\Mcp\Tools\UpdateProduct;
 use App\Mcp\Tools\UpdateReservation;
 use App\Mcp\Tools\UploadProductPhoto;
 
-class AdminServer extends BaseServer
+class AdminServer extends Server
 {
     /**
      * The name of the MCP server.
      */
-    public string $serverName = 'Reservations Admin';
+    protected string $name = 'Reservations Admin';
 
     /**
      * The version of the MCP server.
      */
-    public string $serverVersion = '1.0.0';
+    protected string $version = '1.0.0';
 
     /**
      * Instructions given to the AI agent connecting to this server.
      */
-    public string $instructions = <<<'TXT'
+    protected string $instructions = <<<'TXT'
     This authenticated server administers the whole rental reservations system: customer
     reservations and their line items, the product catalog, and the linked entities
     (categories, tags and ports).
@@ -62,7 +63,7 @@ class AdminServer extends BaseServer
      *
      * @var array<int, class-string>
      */
-    public array $tools = [
+    protected array $tools = [
         // Reservations
         ListReservations::class,
         GetReservation::class,

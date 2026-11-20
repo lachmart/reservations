@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ProductResource\RelationManagers;
 
+use Filament\Schemas\Schema;
 use App\Models\Port;
 use App\Models\Product;
 use Filament\Forms;
@@ -9,8 +10,8 @@ use Filament\Forms\Components\Select;
 use Filament\Tables;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Actions\AttachAction;
-use Filament\Tables\Actions\Action;
+use Filament\Actions\AttachAction;
+use Filament\Actions\Action;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
 
@@ -18,9 +19,9 @@ class PortsRelationManager extends RelationManager
 {
     protected static string $relationship = 'ports';
 
-    public function form(Forms\Form $form): Forms\Form
+    public function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->components([
             TextInput::make('pivot.amount') // Keep using pivot.amount for display
             ->numeric()
                 ->label('Amount')
@@ -53,7 +54,7 @@ class PortsRelationManager extends RelationManager
                         ]);
                     }),
             ])
-            ->actions([
+            ->recordActions([
                 Action::make('edit')
                     ->label('Edit')
                     ->form(fn (Port $record) => [
@@ -66,7 +67,7 @@ class PortsRelationManager extends RelationManager
                     ->action(function (Port $record, array $data) {
                         $record->pivot->update(['amount' => $data['amount']]);
                     }),
-                Tables\Actions\DetachAction::make(),
+                \Filament\Actions\DetachAction::make(),
             ]);
     }
 }

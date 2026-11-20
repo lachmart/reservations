@@ -8,9 +8,9 @@ use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Mcp\Server\Tools\Annotations\IsIdempotent;
-use Laravel\Mcp\Server\Tools\Annotations\Title;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
+use Laravel\Mcp\Server\Attributes\Title;
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Response;
 
 #[Title('Update product')]
 #[IsIdempotent]
@@ -22,24 +22,33 @@ class UpdateProduct extends BaseTool
             .'Useful for adjusting price, stock, description or category.';
     }
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->integer('id')->description('The product id to update.')->required()
-            ->string('name')->description('Product name.')
-            ->string('description')->description('Product description.')
-            ->string('status')->description('Product status label.')
-            ->integer('category_id')->description('Category id this product belongs to.')
-            ->number('price_per_day')->description('Rental price per day.')
-            ->integer('stock')->description('Total units in stock.');
+        return [
+            'id' => $schema->integer()
+                ->description('The product id to update.')
+                ->required(),
+            'name' => $schema->string()
+                ->description('Product name.'),
+            'description' => $schema->string()
+                ->description('Product description.'),
+            'status' => $schema->string()
+                ->description('Product status label.'),
+            'category_id' => $schema->integer()
+                ->description('Category id this product belongs to.'),
+            'price_per_day' => $schema->number()
+                ->description('Rental price per day.'),
+            'stock' => $schema->integer()
+                ->description('Total units in stock.'),
+        ];
     }
 
-    protected function run(array $arguments): ToolResult
+    protected function run(array $arguments): Response
     {
         $product = Product::find($arguments['id'] ?? null);
 
         if (! $product) {
-            return ToolResult::error('No product found with id '.($arguments['id'] ?? 'null').'.');
+            return Response::error('No product found with id '.($arguments['id'] ?? 'null').'.');
         }
 
         $validator = Validator::make($arguments, [
@@ -52,22 +61,22 @@ class UpdateProduct extends BaseTool
         ]);
 
         if ($validator->fails()) {
-            return ToolResult::error($validator->errors()->first());
+            return Response::error($validator->errors()->first());
         }
 
         $data = $validator->validated();
 
         if ($data === []) {
-            return ToolResult::error('No fields provided to update.');
+            return Response::error('No fields provided to update.');
         }
 
         if (! empty($data['category_id']) && ! Category::whereKey($data['category_id'])->exists()) {
-            return ToolResult::error("No category found with id {$data['category_id']}.");
+            return Response::error("No category found with id {$data['category_id']}.");
         }
 
         $product->fill($data)->save();
 
-        return ToolResult::json([
+        return Response::json([
             'updated' => true,
             'id' => $product->id,
             'changed_fields' => array_keys($data),

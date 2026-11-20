@@ -6,8 +6,8 @@ namespace App\Mcp\Tools;
 
 use App\Models\Port;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
-use Laravel\Mcp\Server\Tools\Annotations\Title;
-use Laravel\Mcp\Server\Tools\ToolResult;
+use Laravel\Mcp\Server\Attributes\Title;
+use Laravel\Mcp\Response;
 
 #[Title('List ports')]
 #[IsReadOnly]
@@ -18,11 +18,11 @@ class ListPorts extends BaseTool
         return 'List all ports with their gender and product counts.';
     }
 
-    protected function run(array $arguments): ToolResult
+    protected function run(array $arguments): Response
     {
         $ports = Port::withCount('products')->orderBy('name')->get();
 
-        return ToolResult::json([
+        return Response::json([
             'count' => $ports->count(),
             'ports' => $ports->map(fn (Port $p) => [
                 'id' => $p->id,

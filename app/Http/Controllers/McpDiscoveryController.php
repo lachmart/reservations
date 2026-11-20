@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Mcp\Servers\PublicServer;
 use Illuminate\Http\JsonResponse;
+use Laravel\Mcp\Enums\ProtocolVersion;
 use Laravel\Mcp\Server\Tool;
+use ReflectionClass;
 
 /**
  * Server card describing the public MCP server, so agents can discover it.
@@ -15,9 +17,10 @@ class McpDiscoveryController extends Controller
 {
     public function card(): JsonResponse
     {
-        $server = new PublicServer;
+        // The server needs a transport to be constructed; read its declared defaults.
+        $server = (new ReflectionClass(PublicServer::class))->getDefaultProperties();
 
-        $tools = collect($server->tools)->map(function (string $class) {
+        $tools = collect($server['tools'])->map(function (string $class) {
             /** @var Tool $tool */
             $tool = app($class);
 
@@ -28,8 +31,8 @@ class McpDiscoveryController extends Controller
             'name' => 'cz.marakarental/reservations',
             'title' => 'Maraka rental: rezervace ozvučení a světel (Olomouc)',
             'description' => 'Browse sound, light and stage gear for rent in Olomouc, check availability for a term and create a reservation with items. Prices in CZK.',
-            'version' => $server->serverVersion,
-            'protocolVersions' => $server->supportedProtocolVersion,
+            'version' => $server['version'],
+            'protocolVersions' => ProtocolVersion::initializeSupported(),
             'websiteUrl' => url('/'),
             'documentationUrl' => route('ai.index'),
             'remotes' => [

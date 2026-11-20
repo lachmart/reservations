@@ -19,8 +19,5 @@ Níže je, co zbývá. Většinou jde o obsah nebo rozhodnutí, ne o kód.
 ## Ostatní
 - [ ] Ceny setů a dopravy jsou v textech na více místech: `config/seo.php`, `config/landing.php`,
       `public/llms.txt`, `resources/views/ai.blade.php`. Při změně ceny v adminu upravit i tam.
-- [ ] laravel/mcp je na v0.1.1. Upgrade by odstranil vlastní opravy v
-      `App\Mcp\Servers\BaseServer` a `App\Mcp\Methods\CallTool`; zatím drží.
-- [ ] JSON-RPC `id` jako řetězec balíček v0.1 odmítá (spec ho povoluje).
 - [ ] Testy pod DDEV běží proti lokální MariaDB (DDEV přebíjí `DB_CONNECTION` z
       phpunit.xml), takže `RefreshDatabase` maže lokální dev data.

@@ -4,26 +4,27 @@ declare(strict_types=1);
 
 namespace App\Mcp\Servers;
 
+use Laravel\Mcp\Server;
 use App\Mcp\Tools\CheckProductAvailability;
 use App\Mcp\Tools\CreateReservation;
 use App\Mcp\Tools\ListProducts;
 
-class PublicServer extends BaseServer
+class PublicServer extends Server
 {
     /**
      * The name of the MCP server.
      */
-    public string $serverName = 'Reservations (Public Booking)';
+    protected string $name = 'Reservations (Public Booking)';
 
     /**
      * The version of the MCP server.
      */
-    public string $serverVersion = '1.0.0';
+    protected string $version = '1.0.0';
 
     /**
      * Instructions given to the AI agent connecting to this server.
      */
-    public string $instructions = <<<'TXT'
+    protected string $instructions = <<<'TXT'
     This public server lets a customer (or an agent acting for one) book sound, light
     and stage gear from Maraka rental (Olomouc, Czech Republic). Prices are in CZK.
 
@@ -49,7 +50,7 @@ class PublicServer extends BaseServer
      *
      * @var array<int, class-string>
      */
-    public array $tools = [
+    protected array $tools = [
         ListProducts::class,
         CheckProductAvailability::class,
         CreateReservation::class,

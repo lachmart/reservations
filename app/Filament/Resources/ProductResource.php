@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
 use App\Filament\Resources\ProductResource\Pages;
 use App\Filament\Resources\ProductResource\RelationManagers;
 use App\Models\Port;
@@ -9,7 +10,6 @@ use App\Models\Product;
 use App\Models\Tag;
 use Filament\Forms;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -20,12 +20,12 @@ class ProductResource extends Resource
 {
     protected static ?string $model = Product::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Forms\Components\TextInput::make('name')
                     ->required(),
                 Forms\Components\RichEditor::make('description')
@@ -60,7 +60,7 @@ class ProductResource extends Resource
                     ->preload()
                     ->createOptionForm(Tag::getForm())
                     ->relationship('tags', 'name'),
-                Forms\Components\Grid::make(2) // Two columns
+                \Filament\Schemas\Components\Grid::make(2) // Two columns
                 ->schema([
                     SpatieMediaLibraryFileUpload::make('avatar')
                         ->image()
@@ -107,12 +107,12 @@ class ProductResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                \Filament\Actions\EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                \Filament\Actions\BulkActionGroup::make([
+                    \Filament\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

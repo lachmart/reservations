@@ -3,14 +3,12 @@
 use App\Http\Middleware\VerifyMcpToken;
 use App\Mcp\Servers\AdminServer;
 use App\Mcp\Servers\PublicServer;
-use Laravel\Mcp\Server\Facades\Mcp;
+use Laravel\Mcp\Facades\Mcp;
 
 /*
 |--------------------------------------------------------------------------
 | MCP Servers
 |--------------------------------------------------------------------------
-|
-| Web routes here are automatically prefixed with "/mcp" by the package.
 |
 |   POST /mcp/reservations  Public booking server (no auth).
 |   POST /mcp/admin         Full admin server (requires MCP_TOKEN bearer).
@@ -22,10 +20,10 @@ use Laravel\Mcp\Server\Facades\Mcp;
 |
 */
 
-Mcp::web('reservations', PublicServer::class)
+Mcp::web('/mcp/reservations', PublicServer::class)
     ->middleware('throttle:60,1');
 
-Mcp::web('admin', AdminServer::class)
+Mcp::web('/mcp/admin', AdminServer::class)
     ->middleware(VerifyMcpToken::class);
 
 Mcp::local('reservations', PublicServer::class);

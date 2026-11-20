@@ -6,9 +6,9 @@ namespace App\Mcp\Tools;
 
 use App\Models\Category;
 use Laravel\Mcp\Server\Tools\Annotations\IsDestructive;
-use Laravel\Mcp\Server\Tools\Annotations\Title;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
+use Laravel\Mcp\Server\Attributes\Title;
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Response;
 
 #[Title('Delete category')]
 #[IsDestructive]
@@ -20,22 +20,25 @@ class DeleteCategory extends BaseTool
             .'category first) — products require a category, so an in-use category cannot be removed.';
     }
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->integer('id')->description('The category id to delete.')->required();
+        return [
+            'id' => $schema->integer()
+                ->description('The category id to delete.')
+                ->required(),
+        ];
     }
 
-    protected function run(array $arguments): ToolResult
+    protected function run(array $arguments): Response
     {
         $category = Category::withCount('products')->find($arguments['id'] ?? null);
 
         if (! $category) {
-            return ToolResult::error('No category found with id '.($arguments['id'] ?? 'null').'.');
+            return Response::error('No category found with id '.($arguments['id'] ?? 'null').'.');
         }
 
         if ($category->products_count > 0) {
-            return ToolResult::error(
+            return Response::error(
                 "Category \"{$category->name}\" still has {$category->products_count} product(s). "
                 .'Reassign them to another category before deleting.'
             );
@@ -43,6 +46,6 @@ class DeleteCategory extends BaseTool
 
         $category->delete();
 
-        return ToolResult::json(['deleted' => true, 'id' => $arguments['id'], 'name' => $category->name]);
+        return Response::json(['deleted' => true, 'id' => $arguments['id'], 'name' => $category->name]);
     }
 }

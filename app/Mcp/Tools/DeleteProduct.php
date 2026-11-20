@@ -7,9 +7,9 @@ namespace App\Mcp\Tools;
 use App\Models\Product;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Mcp\Server\Tools\Annotations\IsDestructive;
-use Laravel\Mcp\Server\Tools\Annotations\Title;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
+use Laravel\Mcp\Server\Attributes\Title;
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Response;
 
 #[Title('Delete product')]
 #[IsDestructive]
@@ -22,14 +22,18 @@ class DeleteProduct extends BaseTool
             .'items are removed too. Media, tag and port links are detached.';
     }
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->integer('id')->description('The product id to delete.')->required()
-            ->boolean('force')->description('Delete even if used by reservations (also removes those line items). Default false.');
+        return [
+            'id' => $schema->integer()
+                ->description('The product id to delete.')
+                ->required(),
+            'force' => $schema->boolean()
+                ->description('Delete even if used by reservations (also removes those line items). Default false.'),
+        ];
     }
 
-    protected function run(array $arguments): ToolResult
+    protected function run(array $arguments): Response
     {
         $validator = Validator::make($arguments, [
             'id' => ['required', 'integer'],
@@ -37,19 +41,19 @@ class DeleteProduct extends BaseTool
         ]);
 
         if ($validator->fails()) {
-            return ToolResult::error($validator->errors()->first());
+            return Response::error($validator->errors()->first());
         }
 
         $product = Product::withCount('reservationItems')->find($arguments['id']);
 
         if (! $product) {
-            return ToolResult::error("No product found with id {$arguments['id']}.");
+            return Response::error("No product found with id {$arguments['id']}.");
         }
 
         $force = $arguments['force'] ?? false;
 
         if ($product->reservationItems_count > 0 && ! $force) {
-            return ToolResult::error(
+            return Response::error(
                 "Product \"{$product->name}\" is used by {$product->reservationItems_count} reservation "
                 .'line item(s). Pass force=true to delete it and those line items anyway.'
             );
@@ -65,6 +69,6 @@ class DeleteProduct extends BaseTool
         $product->clearMediaCollection('product-images');
         $product->delete();
 
-        return ToolResult::json(['deleted' => true, 'id' => $arguments['id'], 'name' => $product->name]);
+        return Response::json(['deleted' => true, 'id' => $arguments['id'], 'name' => $product->name]);
     }
 }

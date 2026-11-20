@@ -7,9 +7,9 @@ namespace App\Mcp\Tools;
 use App\Models\Product;
 use App\Models\Reservation;
 use Illuminate\Support\Facades\Validator;
-use Laravel\Mcp\Server\Tools\Annotations\Title;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
+use Laravel\Mcp\Server\Attributes\Title;
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Response;
 
 #[Title('Add reservation item')]
 class AddReservationItem extends BaseTool
@@ -20,15 +20,21 @@ class AddReservationItem extends BaseTool
             .'available for the reservation date range before adding.';
     }
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->integer('reservation_id')->description('The reservation to add the item to.')->required()
-            ->integer('product_id')->description('The product being reserved.')->required()
-            ->integer('amount')->description('How many units to reserve (default 1).');
+        return [
+            'reservation_id' => $schema->integer()
+                ->description('The reservation to add the item to.')
+                ->required(),
+            'product_id' => $schema->integer()
+                ->description('The product being reserved.')
+                ->required(),
+            'amount' => $schema->integer()
+                ->description('How many units to reserve (default 1).'),
+        ];
     }
 
-    protected function run(array $arguments): ToolResult
+    protected function run(array $arguments): Response
     {
         $validator = Validator::make($arguments, [
             'reservation_id' => ['required', 'integer'],
@@ -37,19 +43,19 @@ class AddReservationItem extends BaseTool
         ]);
 
         if ($validator->fails()) {
-            return ToolResult::error($validator->errors()->first());
+            return Response::error($validator->errors()->first());
         }
 
         $reservation = Reservation::find($arguments['reservation_id']);
 
         if (! $reservation) {
-            return ToolResult::error("No reservation found with id {$arguments['reservation_id']}.");
+            return Response::error("No reservation found with id {$arguments['reservation_id']}.");
         }
 
         $product = Product::find($arguments['product_id']);
 
         if (! $product) {
-            return ToolResult::error("No product found with id {$arguments['product_id']}.");
+            return Response::error("No product found with id {$arguments['product_id']}.");
         }
 
         $amount = (int) ($arguments['amount'] ?? 1);
@@ -60,7 +66,7 @@ class AddReservationItem extends BaseTool
         );
 
         if ($amount > $available) {
-            return ToolResult::error(
+            return Response::error(
                 "Only {$available} unit(s) of \"{$product->name}\" are available for this "
                 ."reservation's date range; requested {$amount}."
             );
@@ -71,7 +77,7 @@ class AddReservationItem extends BaseTool
             'amount' => $amount,
         ]);
 
-        return ToolResult::json([
+        return Response::json([
             'added' => true,
             'item_id' => $item->id,
             'reservation_id' => $reservation->id,

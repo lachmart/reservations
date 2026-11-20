@@ -236,7 +236,7 @@ class McpPublicServerTest extends TestCase
     public function test_unknown_tool_is_a_json_rpc_error(): void
     {
         $this->callTool('add-reservation-item', ['reservation_id' => 1])
-            ->assertOk()
+            ->assertStatus(400) // laravel/mcp 1.x answers JSON-RPC errors with HTTP 400
             ->assertJsonPath('error.code', -32602)
             ->assertJsonMissingPath('result');
     }
@@ -249,7 +249,7 @@ class McpPublicServerTest extends TestCase
             'clientInfo' => ['name' => 'test', 'version' => '1'],
         ])
             ->assertOk()
-            ->assertJsonPath('result.protocolVersion', '2025-06-18')
+            ->assertJsonPath('result.protocolVersion', '2025-11-25') // our latest
             ->assertJsonMissingPath('error');
     }
 

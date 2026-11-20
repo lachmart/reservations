@@ -7,9 +7,9 @@ namespace App\Mcp\Tools;
 use App\Models\Reservation;
 use App\Models\ReservationItem;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
-use Laravel\Mcp\Server\Tools\Annotations\Title;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
+use Laravel\Mcp\Server\Attributes\Title;
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Response;
 
 #[Title('Get reservation')]
 #[IsReadOnly]
@@ -20,21 +20,24 @@ class GetReservation extends BaseTool
         return 'Fetch a single reservation by id, including its line items with product names.';
     }
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->integer('id')->description('The reservation id.')->required();
+        return [
+            'id' => $schema->integer()
+                ->description('The reservation id.')
+                ->required(),
+        ];
     }
 
-    protected function run(array $arguments): ToolResult
+    protected function run(array $arguments): Response
     {
         $reservation = Reservation::with('reservationItems.product')->find($arguments['id']);
 
         if (! $reservation) {
-            return ToolResult::error("No reservation found with id {$arguments['id']}.");
+            return Response::error("No reservation found with id {$arguments['id']}.");
         }
 
-        return ToolResult::json([
+        return Response::json([
             'id' => $reservation->id,
             'name' => $reservation->name,
             'email' => $reservation->email,

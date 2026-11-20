@@ -1,7 +1,7 @@
 # MCP servers
 
 This app ships two [Model Context Protocol](https://modelcontextprotocol.io) servers
-(built on [`laravel/mcp`](https://github.com/laravel/mcp)) so AI agents can drive the
+(built on [`laravel/mcp`](https://github.com/laravel/mcp) 1.x) so AI agents can drive the
 reservation system. Servers and tools live in `app/Mcp`, and are registered in
 `routes/ai.php`.
 
@@ -46,10 +46,10 @@ unpaid, and the customer and owner are e-mailed. `price`, `is_paid` and `is_acti
 rejected. It is rate limited to 5 reservations per IP per 10 minutes, and the whole
 endpoint to 60 requests per minute.
 
-Protocol notes (fixes on top of laravel/mcp v0.1 in `App\Mcp\Servers\BaseServer`):
-- An unknown tool returns JSON-RPC error `-32602`, not a tool result.
-- An unknown `protocolVersion` in `initialize` is answered with our latest version
-  instead of failing the handshake.
+Protocol: built on `laravel/mcp` 1.x, which negotiates the protocol version (latest
+2025-11-25) and answers an unknown tool with JSON-RPC error `-32602` (HTTP 400) itself.
+Tools extend `App\Mcp\Tools\BaseTool` (implement `run(array $arguments): Response`
+and `schema(JsonSchema $schema): array`).
 
 Discovery: the server card is at `/mcp/server-card.json` (and `/.well-known/mcp*`, which
 the hosting currently blocks).

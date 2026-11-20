@@ -7,9 +7,9 @@ namespace App\Mcp\Tools;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Support\Facades\Validator;
-use Laravel\Mcp\Server\Tools\Annotations\Title;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
+use Laravel\Mcp\Server\Attributes\Title;
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Response;
 
 #[Title('Create product')]
 class CreateProduct extends BaseTool
@@ -20,18 +20,27 @@ class CreateProduct extends BaseTool
             .'Link tags and ports afterwards with the dedicated tools.';
     }
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->string('name')->description('Product name.')->required()
-            ->integer('category_id')->description('Category id this product belongs to (required).')->required()
-            ->string('description')->description('Product description.')
-            ->string('status')->description('Product status label.')
-            ->number('price_per_day')->description('Rental price per day. Defaults to 0.')
-            ->integer('stock')->description('Total units in stock. Defaults to 0.');
+        return [
+            'name' => $schema->string()
+                ->description('Product name.')
+                ->required(),
+            'category_id' => $schema->integer()
+                ->description('Category id this product belongs to (required).')
+                ->required(),
+            'description' => $schema->string()
+                ->description('Product description.'),
+            'status' => $schema->string()
+                ->description('Product status label.'),
+            'price_per_day' => $schema->number()
+                ->description('Rental price per day. Defaults to 0.'),
+            'stock' => $schema->integer()
+                ->description('Total units in stock. Defaults to 0.'),
+        ];
     }
 
-    protected function run(array $arguments): ToolResult
+    protected function run(array $arguments): Response
     {
         $validator = Validator::make($arguments, [
             'name' => ['required', 'string', 'max:255'],
@@ -43,13 +52,13 @@ class CreateProduct extends BaseTool
         ]);
 
         if ($validator->fails()) {
-            return ToolResult::error($validator->errors()->first());
+            return Response::error($validator->errors()->first());
         }
 
         $data = $validator->validated();
 
         if (! Category::whereKey($data['category_id'])->exists()) {
-            return ToolResult::error("No category found with id {$data['category_id']}.");
+            return Response::error("No category found with id {$data['category_id']}.");
         }
 
         $product = Product::create([
@@ -62,7 +71,7 @@ class CreateProduct extends BaseTool
             'stock' => $data['stock'] ?? 0,
         ]);
 
-        return ToolResult::json([
+        return Response::json([
             'created' => true,
             'id' => $product->id,
             'name' => $product->name,

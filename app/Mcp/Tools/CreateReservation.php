@@ -10,9 +10,9 @@ use App\Services\ReservationBooking;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Validator;
 use InvalidArgumentException;
-use Laravel\Mcp\Server\Tools\Annotations\Title;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
+use Laravel\Mcp\Server\Attributes\Title;
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Response;
 
 /**
  * Public booking: creates a reservation with its items in one go, priced and
@@ -40,55 +40,52 @@ class CreateReservation extends BaseTool
             .'unpaid; the rental company confirms it and the final price including delivery.';
     }
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    public function schema(JsonSchema $schema): array
     {
-        $schema
-            ->string('name')->description('Customer name.')->required()
-            ->string('phone')->description('Customer phone. Phone or email is required.')
-            ->string('email')->description('Customer email. Phone or email is required.')
-            ->string('start_date')->description('Rental start (ISO-8601), e.g. "2027-07-06 10:00".')->required()
-            ->string('end_date')->description('Rental end (ISO-8601), must be after start_date.')->required()
-            ->raw('items', [
-                'type' => 'array',
-                'description' => 'Products to rent. Use product ids from list-products.',
-                'items' => [
-                    'type' => 'object',
-                    'properties' => [
-                        'product_id' => ['type' => 'integer', 'description' => 'Product (or bundle) id.'],
-                        'quantity' => ['type' => 'integer', 'minimum' => 1, 'description' => 'Number of units.'],
-                    ],
-                    'required' => ['product_id', 'quantity'],
-                ],
-            ])->required(! $this->isAdmin())
-            ->string('event_place')->description('Where the event takes place (town, venue). Needed to price delivery.')
-            ->string('event_type')->description('Kind of event: '.implode(', ', ReservationBooking::EVENT_TYPES).'.')
-            ->raw('delivery_zone', [
-                'type' => 'string',
-                'enum' => array_keys(ReservationBooking::deliveryZones()),
-                'description' => 'Transport zone (delivery and pick-up); its price is added to the total. '
-                    .collect(ReservationBooking::deliveryZones())
+        $zones = ReservationBooking::deliveryZones();
+
+        $properties = [
+            'name' => $schema->string()->description('Customer name.')->required(),
+            'phone' => $schema->string()->description('Customer phone. Phone or email is required.'),
+            'email' => $schema->string()->description('Customer email. Phone or email is required.'),
+            'start_date' => $schema->string()->description('Rental start (ISO-8601), e.g. "2027-07-06 10:00".')->required(),
+            'end_date' => $schema->string()->description('Rental end (ISO-8601), must be after start_date.')->required(),
+            'items' => $schema->array()
+                ->description('Products to rent. Use product ids from list-products.')
+                ->items($schema->object([
+                    'product_id' => $schema->integer()->description('Product (or bundle) id.')->required(),
+                    'quantity' => $schema->integer()->min(1)->description('Number of units.')->required(),
+                ]))
+                ->required(! $this->isAdmin()),
+            'event_place' => $schema->string()->description('Where the event takes place (town, venue). Needed to price delivery.'),
+            'event_type' => $schema->string()->description('Kind of event: '.implode(', ', ReservationBooking::EVENT_TYPES).'.'),
+            'delivery_zone' => $schema->string()
+                ->enum(array_keys($zones))
+                ->description('Transport zone (delivery and pick-up); its price is added to the total. '
+                    .collect($zones)
                         ->map(fn ($z, $k) => "{$k}: {$z['label']} (".(is_null($z['price']) ? 'quoted later' : "{$z['price']} CZK").')')
-                        ->implode('; ').'.',
-            ])
-            ->boolean('service')->description('Customer wants installation, wiring or an operator on site. Extra cost, quoted later.')
-            ->boolean('delivery')->description('Use delivery_zone instead. true without a zone = delivery wanted, priced later.')
-            ->string('note')->description('Free-form note for the rental company.');
+                        ->implode('; ').'.'),
+            'service' => $schema->boolean()->description('Customer wants installation, wiring or an operator on site. Extra cost, quoted later.'),
+            'delivery' => $schema->boolean()->description('Use delivery_zone instead. true without a zone = delivery wanted, priced later.'),
+            'note' => $schema->string()->description('Free-form note for the rental company.'),
+        ];
 
         if ($this->isAdmin()) {
-            $schema
-                ->number('price')->description('Override the computed total price.')
-                ->boolean('is_active')->description('Whether the reservation is active. Defaults to true.')
-                ->boolean('is_paid')->description('Whether the reservation is paid. Defaults to false.');
+            $properties += [
+                'price' => $schema->number()->description('Override the computed total price.'),
+                'is_active' => $schema->boolean()->description('Whether the reservation is active. Defaults to true.'),
+                'is_paid' => $schema->boolean()->description('Whether the reservation is paid. Defaults to false.'),
+            ];
         }
 
-        return $schema;
+        return $properties;
     }
 
-    protected function run(array $arguments): ToolResult
+    protected function run(array $arguments): Response
     {
         $forbidden = array_values(array_intersect(self::ADMIN_FIELDS, array_keys($arguments)));
         if (! $this->isAdmin() && $forbidden) {
-            return ToolResult::error(
+            return Response::error(
                 'These fields cannot be set on a public reservation: '.implode(', ', $forbidden)
                 .'. The price is calculated by the server from the items and the term.'
             );
@@ -97,7 +94,7 @@ class CreateReservation extends BaseTool
         $validator = Validator::make($arguments, $this->rules(), ReservationBooking::messages());
 
         if ($validator->fails()) {
-            return ToolResult::error($validator->errors()->first());
+            return Response::error($validator->errors()->first());
         }
 
         $data = $validator->validated();
@@ -105,7 +102,7 @@ class CreateReservation extends BaseTool
         if (! $this->isAdmin()) {
             $key = 'mcp-create-reservation:'.request()->ip();
             if (RateLimiter::tooManyAttempts($key, self::RATE_LIMIT)) {
-                return ToolResult::error('Too many reservations from this client. Try again in '
+                return Response::error('Too many reservations from this client. Try again in '
                     .RateLimiter::availableIn($key).' seconds, or call the rental company.');
             }
             RateLimiter::hit($key, self::RATE_WINDOW_SECONDS);
@@ -124,14 +121,14 @@ class CreateReservation extends BaseTool
                 $this->isAdmin() ? 'admin' : 'mcp',
             );
         } catch (ItemsUnavailable $e) {
-            return ToolResult::error($e->getMessage().' Nothing was saved. Check availability with check-product-availability and adjust the items or the term.');
+            return Response::error($e->getMessage().' Nothing was saved. Check availability with check-product-availability and adjust the items or the term.');
         } catch (InvalidArgumentException $e) {
-            return ToolResult::error($e->getMessage().' Nothing was saved.');
+            return Response::error($e->getMessage().' Nothing was saved.');
         }
 
         $this->afterCreate($reservation, $data);
 
-        return ToolResult::json($this->present($reservation->fresh(['reservationItems.product'])));
+        return Response::json($this->present($reservation->fresh(['reservationItems.product'])));
     }
 
     protected function isAdmin(): bool

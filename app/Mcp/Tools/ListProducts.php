@@ -6,9 +6,9 @@ namespace App\Mcp\Tools;
 
 use App\Models\Product;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
-use Laravel\Mcp\Server\Tools\Annotations\Title;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
+use Laravel\Mcp\Server\Attributes\Title;
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Response;
 
 #[Title('List products')]
 #[IsReadOnly]
@@ -20,16 +20,21 @@ class ListProducts extends BaseTool
             .'check-product-availability to see how much is free for a specific date range.';
     }
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->string('search')->description('Filter products whose name contains this text.')
-            ->integer('category_id')->description('Only products in this category.')
-            ->boolean('available_only')->description('Only products with positive price and stock.')
-            ->integer('limit')->description('Maximum number of products to return (default 50, max 200).');
+        return [
+            'search' => $schema->string()
+                ->description('Filter products whose name contains this text.'),
+            'category_id' => $schema->integer()
+                ->description('Only products in this category.'),
+            'available_only' => $schema->boolean()
+                ->description('Only products with positive price and stock.'),
+            'limit' => $schema->integer()
+                ->description('Maximum number of products to return (default 50, max 200).'),
+        ];
     }
 
-    protected function run(array $arguments): ToolResult
+    protected function run(array $arguments): Response
     {
         $query = Product::query()->with(['category', 'bundleItems']);
 
@@ -50,7 +55,7 @@ class ListProducts extends BaseTool
 
         $products = $query->orderBy('name')->limit($limit)->get();
 
-        return ToolResult::json([
+        return Response::json([
             'count' => $products->count(),
             'products' => $products->map(fn (Product $p) => [
                 'id' => $p->id,

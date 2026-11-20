@@ -7,9 +7,9 @@ namespace App\Mcp\Tools;
 use App\Models\Product;
 use App\Models\Tag;
 use Illuminate\Support\Facades\Validator;
-use Laravel\Mcp\Server\Tools\Annotations\Title;
-use Laravel\Mcp\Server\Tools\ToolInputSchema;
-use Laravel\Mcp\Server\Tools\ToolResult;
+use Laravel\Mcp\Server\Attributes\Title;
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Mcp\Response;
 
 #[Title('Set product tags')]
 class SyncProductTags extends BaseTool
@@ -20,14 +20,19 @@ class SyncProductTags extends BaseTool
             .'this replaces the product\'s current tags. Pass an empty string to remove all tags.';
     }
 
-    public function schema(ToolInputSchema $schema): ToolInputSchema
+    public function schema(JsonSchema $schema): array
     {
-        return $schema
-            ->integer('product_id')->description('The product to update.')->required()
-            ->string('tag_ids')->description('Comma-separated tag ids, e.g. "1,4,7". Empty to clear.')->required();
+        return [
+            'product_id' => $schema->integer()
+                ->description('The product to update.')
+                ->required(),
+            'tag_ids' => $schema->string()
+                ->description('Comma-separated tag ids, e.g. "1,4,7". Empty to clear.')
+                ->required(),
+        ];
     }
 
-    protected function run(array $arguments): ToolResult
+    protected function run(array $arguments): Response
     {
         $validator = Validator::make($arguments, [
             'product_id' => ['required', 'integer'],
@@ -35,13 +40,13 @@ class SyncProductTags extends BaseTool
         ]);
 
         if ($validator->fails()) {
-            return ToolResult::error($validator->errors()->first());
+            return Response::error($validator->errors()->first());
         }
 
         $product = Product::find($arguments['product_id']);
 
         if (! $product) {
-            return ToolResult::error("No product found with id {$arguments['product_id']}.");
+            return Response::error("No product found with id {$arguments['product_id']}.");
         }
 
         $ids = collect(explode(',', (string) $arguments['tag_ids']))
@@ -54,12 +59,12 @@ class SyncProductTags extends BaseTool
         $missing = $ids->diff($existing);
 
         if ($missing->isNotEmpty()) {
-            return ToolResult::error('Unknown tag id(s): '.$missing->implode(', ').'.');
+            return Response::error('Unknown tag id(s): '.$missing->implode(', ').'.');
         }
 
         $product->tags()->sync($existing->all());
 
-        return ToolResult::json([
+        return Response::json([
             'updated' => true,
             'product_id' => $product->id,
             'tag_ids' => $existing->all(),

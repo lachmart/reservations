@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Mcp\Tools;
 
 use App\Models\Reservation;
-use Laravel\Mcp\Server\Tools\Annotations\Title;
+use Laravel\Mcp\Server\Attributes\Title;
 
 /**
  * Admin flavour of create-reservation: items are optional (add more later with

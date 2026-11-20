@@ -2,12 +2,12 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
 use App\Enum\Gender;
 use App\Filament\Resources\PortResource\Pages;
 use App\Filament\Resources\PortResource\RelationManagers;
 use App\Models\Port;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -18,12 +18,12 @@ class PortResource extends Resource
 {
     protected static ?string $model = Port::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema(Port::getForm());
+        return $schema
+            ->components(Port::getForm());
     }
 
     public static function table(Table $table): Table
@@ -46,12 +46,12 @@ class PortResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                \Filament\Actions\EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                \Filament\Actions\BulkActionGroup::make([
+                    \Filament\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }
