@@ -8,6 +8,10 @@ Options -Indexes
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
+    # Let the hosting's certificate validation (Let's Encrypt HTTP-01) reach the
+    # challenge files it puts into the web root.
+    RewriteRule ^\.well-known/acme-challenge/ - [L]
+
     # Everything goes to public/ (its own .htaccess then runs Laravel), so .env,
     # vendor/, storage/ and the source code are never reachable from the web.
     RewriteRule ^(.*)$ public/$1 [L]
