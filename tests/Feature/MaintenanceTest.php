@@ -76,4 +76,12 @@ class MaintenanceTest extends TestCase
             @unlink(Maintenance::importPath());
         }
     }
+
+    public function test_endpoint_does_not_need_sessions_or_cache_tables(): void
+    {
+        // An empty database on the first deploy has no sessions/cache tables.
+        config(['app.maintenance_token' => 'secret', 'session.driver' => 'database', 'session.table' => 'missing_sessions', 'cache.default' => 'database', 'cache.stores.database.table' => 'missing_cache']);
+
+        $this->post('/_maintenance/migrate', [], ['X-Maintenance-Token' => 'secret'])->assertOk();
+    }
 }

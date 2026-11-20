@@ -8,8 +8,6 @@ use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\EnquiryController;
 use App\Http\Controllers\McpDiscoveryController;
 use App\Http\Controllers\LandingController;
-use App\Http\Controllers\MaintenanceController;
-use App\Support\Maintenance;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -43,12 +41,6 @@ Route::post('/cart/checkout', [CartController::class, 'checkout'])
     ->middleware('throttle:10,10')
     ->name('cart.checkout');
 Route::get('/thank-you', [CartController::class, 'thankyou'])->name('cart.thankyou');
-
-// Server housekeeping without SSH (deploy-ftp.sh); token-protected, 404 if unset.
-Route::post('/_maintenance/{task}', MaintenanceController::class)
-    ->whereIn('task', array_keys(Maintenance::TASKS + Maintenance::SCRIPT_TASKS))
-    ->middleware('throttle:10,1')
-    ->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class);
 
 // Landing pages for common searches (config/landing.php). Constrained to the
 // configured slugs so they can't shadow other routes.

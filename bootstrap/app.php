@@ -10,6 +10,13 @@ return Application::configure(basePath: dirname(__DIR__))
         api: __DIR__.'/../routes/api.php',
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
+        // Outside the "web" group: no session, cookies, CSRF or cache-backed
+        // throttling, all of which need database tables that an empty database
+        // (first deploy, moving hosts) doesn't have yet.
+        then: function () {
+            \Illuminate\Support\Facades\Route::post('/_maintenance/{task}', \App\Http\Controllers\MaintenanceController::class)
+                ->whereIn('task', array_keys(\App\Support\Maintenance::TASKS + \App\Support\Maintenance::SCRIPT_TASKS));
+        },
     )
     ->withMiddleware(function (Middleware $middleware) {
         // Redirect old/non-canonical hosts (api.*) to the canonical APP_URL host.
