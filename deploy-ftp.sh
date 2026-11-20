@@ -98,9 +98,21 @@ case "$FTP_PROTOCOL" in
   *)    URL="ftp://${FTP_HOST}" ;;
 esac
 
+# vendor/ is ~100 MB of small files; comparing it over FTP is most of the deploy
+# time. Upload it only when composer.lock changed since the last successful deploy
+# (FORCE_VENDOR=1 to force).
+LOCK_HASH=$(shasum composer.lock | cut -d' ' -f1)
+LAST_LOCK_FILE=.deploy-ftp.vendor-lock
+DIRS="app bootstrap config database resources routes"
+if [[ "${FORCE_VENDOR:-0}" == "1" || "$(cat "$LAST_LOCK_FILE" 2>/dev/null)" != "$LOCK_HASH" ]]; then
+  DIRS+=" vendor"; info "composer.lock changed: vendor/ will be uploaded."
+else
+  info "composer.lock unchanged: skipping vendor/."
+fi
+
 # Folders mirrored with --delete (stale code must go). public/storage is kept.
 MIRRORS=""
-for d in app bootstrap config database resources routes vendor; do
+for d in $DIRS; do
   MIRRORS+="mirror -R --delete --parallel=${FTP_PARALLEL:-2} --no-perms --verbose=1 ${DRY} ${BUILD}/$d $d
 "
 done
@@ -158,6 +170,7 @@ ${MOVE}
 bye
 LFTP
 ok "Upload finished."
+[[ "$MODE" == deploy && " $DIRS " == *" vendor "* ]] && echo "$LOCK_HASH" > "$LAST_LOCK_FILE"
 
 [[ "$MODE" == dry ]] && exit 0
 
@@ -173,13 +186,13 @@ if [[ -n "${SITE_IP:-}" ]]; then
 fi
 maint() {
   info "Server task: $1…"
-  curl -fsS "${CURL_EXTRA[@]}" -X POST -H "X-Maintenance-Token: ${MAINTENANCE_TOKEN}" "${CHECK_URL}/_maintenance/$1" \
+  curl -fsS ${CURL_EXTRA[@]+"${CURL_EXTRA[@]}"} -X POST -H "X-Maintenance-Token: ${MAINTENANCE_TOKEN}" "${CHECK_URL}/_maintenance/$1" \
     || die "Server task '$1' failed (see output above). The new code is uploaded; fix and rerun, or use Admin → Údržba."
 }
 
 [[ -n "${MOVE_DUMP:-}" ]] && maint import-database
 maint deploy
 
-code=$(curl -s "${CURL_EXTRA[@]}" -o /dev/null -w '%{http_code}' "${CHECK_URL}/")
+code=$(curl -s ${CURL_EXTRA[@]+"${CURL_EXTRA[@]}"} -o /dev/null -w '%{http_code}' "${CHECK_URL}/")
 [[ "$code" == 200 ]] || die "Home page answers ${code}."
 ok "Deploy complete → ${CHECK_URL}${SITE_IP:+ (via ${SITE_IP})}"

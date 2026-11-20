@@ -28,3 +28,4 @@ yarn-error.log
 # FTP deploy: build output and secrets
 /.build
 .deploy-ftp.env
+.deploy-ftp.vendor-lock
