@@ -1,5 +1,34 @@
-DirectoryIndex index.php
+# Used only on hosting where the web root can't be pointed at public/ (typical
+# FTP-only hosting): the whole project is uploaded to the web root and every
+# request is served from public/. Where the web root IS public/, this file is
+# never read.
 
-RewriteEngine On
-RewriteRule ^$ public/index.php [L]
-RewriteRule ^((?!public/).*)$ public/$1 [L,NC]
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Everything goes to public/ (its own .htaccess then runs Laravel), so .env,
+    # vendor/, storage/ and the source code are never reachable from the web.
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+# Without mod_rewrite, refuse everything rather than expose .env and vendor/.
+<IfModule !mod_rewrite.c>
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Deny from all
+    </IfModule>
+</IfModule>
+
+# Belt and braces: never serve dotfiles or dependency manifests directly.
+<FilesMatch "^(\.env.*|composer\.(json|lock)|package(-lock)?\.json|artisan|phpunit\.xml)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Deny from all
+    </IfModule>
+</FilesMatch>
