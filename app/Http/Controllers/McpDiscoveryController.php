@@ -37,6 +37,10 @@ class McpDiscoveryController extends Controller
             ],
             'authentication' => ['required' => false],
             'tools' => $tools,
-        ], 200, ['Access-Control-Allow-Origin' => '*'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        ], 200, [
+            'Access-Control-Allow-Origin' => '*',
+            // Explicit lifetime so agents and proxies don't keep a stale card.
+            'Cache-Control' => 'public, max-age=3600',
+        ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
     }
 }

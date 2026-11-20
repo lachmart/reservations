@@ -23,3 +23,11 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+
+# Machine-readable files for AI agents: without Cache-Control, browsers and proxies
+# guess a lifetime from Last-Modified and keep serving stale copies.
+<IfModule mod_headers.c>
+    <FilesMatch "^(llms\.txt|robots\.txt)$">
+        Header set Cache-Control "public, max-age=3600"
+    </FilesMatch>
+</IfModule>

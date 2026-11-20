@@ -282,7 +282,8 @@ class McpPublicServerTest extends TestCase
             $this->getJson($path)
                 ->assertOk()
                 ->assertJsonPath('remotes.0.url', url('/mcp/reservations'))
-                ->assertJsonCount(3, 'tools');
+                ->assertJsonCount(3, 'tools')
+                ->assertHeader('Cache-Control', 'max-age=3600, public');
         }
     }
 }
