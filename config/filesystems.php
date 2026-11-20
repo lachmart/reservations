@@ -38,9 +38,11 @@ return [
             'report' => false,
         ],
 
+        // PUBLIC_STORAGE_IN_PUBLIC=true: hosting that can't create the public/storage
+        // symlink (FTP-only) keeps public files (product photos) in public/storage.
         'public' => [
             'driver' => 'local',
-            'root' => storage_path('app/public'),
+            'root' => env('PUBLIC_STORAGE_IN_PUBLIC', false) ? public_path('storage') : storage_path('app/public'),
             'url' => env('APP_URL').'/storage',
             'visibility' => 'public',
             'throw' => false,
@@ -73,7 +75,7 @@ return [
     |
     */
 
-    'links' => [
+    'links' => env('PUBLIC_STORAGE_IN_PUBLIC', false) ? [] : [
         public_path('storage') => storage_path('app/public'),
     ],
 

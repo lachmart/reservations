@@ -123,4 +123,10 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    | Token for POST /_maintenance/{task} (migrations and caches without SSH, used
+    | by deploy-ftp.sh). Empty = the endpoint answers 404.
+    */
+    'maintenance_token' => env('MAINTENANCE_TOKEN'),
+
 ];

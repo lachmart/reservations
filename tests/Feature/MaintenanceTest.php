@@ -1,0 +1,64 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Filament\Pages\Maintenance as MaintenancePage;
+use App\Models\User;
+use App\Support\Maintenance;
+use Filament\Actions\Testing\TestAction;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
+use Mockery;
+use Tests\TestCase;
+
+class MaintenanceTest extends TestCase
+{
+    use RefreshDatabase;
+
+    public function test_endpoint_is_hidden_without_a_token(): void
+    {
+        config(['app.maintenance_token' => null]);
+
+        $this->post('/_maintenance/migrate')->assertNotFound();
+    }
+
+    public function test_endpoint_rejects_a_wrong_token_and_unknown_tasks(): void
+    {
+        config(['app.maintenance_token' => 'secret']);
+
+        $this->post('/_maintenance/migrate', [], ['X-Maintenance-Token' => 'nope'])->assertForbidden();
+        $this->post('/_maintenance/rm-rf', [], ['X-Maintenance-Token' => 'secret'])->assertNotFound();
+    }
+
+    public function test_endpoint_runs_migrations_with_the_token(): void
+    {
+        config(['app.maintenance_token' => 'secret']);
+
+        $this->post('/_maintenance/migrate', [], ['X-Maintenance-Token' => 'secret'])
+            ->assertOk()
+            ->assertSee('== migrate: OK');
+    }
+
+    public function test_deploy_task_runs_every_step_and_stops_on_failure(): void
+    {
+        config(['app.maintenance_token' => 'secret']);
+        // Don't really cache config during tests; just check the wiring.
+        $fake = Mockery::mock(Maintenance::class);
+        $fake->shouldReceive('run')->with('deploy')->once()->andReturn(['ok' => false, 'output' => '== migrate: FAILED']);
+        $this->app->instance(Maintenance::class, $fake);
+
+        $this->post('/_maintenance/deploy', [], ['X-Maintenance-Token' => 'secret'])
+            ->assertStatus(500)
+            ->assertSee('FAILED');
+    }
+
+    public function test_admin_page_runs_a_task(): void
+    {
+        $this->actingAs(User::factory()->create());
+        $this->get('/admin/maintenance')->assertOk()->assertSee('Údržba serveru');
+
+        Livewire::test(MaintenancePage::class)
+            ->callAction(TestAction::make('migrate'))
+            ->assertNotified();
+    }
+}
