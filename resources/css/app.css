@@ -180,6 +180,8 @@
 .dark .flatpickr-day.startRange, .dark .flatpickr-day.endRange { text-shadow: none; }
 .flatpickr-monthDropdown-months .flatpickr-monthDropdown-month { background: var(--surface); color: var(--ink); }
 span.flatpickr-weekday, .flatpickr-current-month .numInputWrapper span { color: var(--faint); }
+/* Keep the prev/next arrows on the month row, below the jump select. */
+.flatpickr-months { position: relative; }
 .fp-jump-wrap {
   display: flex; align-items: center; gap: 0.5rem;
   padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--line);
