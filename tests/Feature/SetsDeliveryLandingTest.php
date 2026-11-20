@@ -16,6 +16,7 @@ class SetsDeliveryLandingTest extends TestCase
 
     private const CATALOG = [
         'Nexo PS15R2 (2000W, 1x15"+1x3")' => [1500, 2],
+        'Nexo PS10R2' => [1000, 2],
         'Subwoofer MT18' => [800, 4],
         'Amprack FP' => [1000, 1],
         'Gravity SP 5322 B' => [50, 2],
@@ -212,5 +213,20 @@ class SetsDeliveryLandingTest extends TestCase
         $this->assertTrue($r->service);
         $this->assertSame(1100.0, (float) $r->price); // rental + transport only
         Mail::assertSent(\App\Mail\ReservationCreated::class, fn ($m) => str_contains($m->render(), 'Instalace, zapojení nebo obsluha'));
+    }
+
+    public function test_band_set_switches_to_ps10_and_is_cheaper_than_its_parts(): void
+    {
+        $this->seedCatalog();
+        $this->runSetsMigration();
+        (require database_path('migrations/2026_11_22_000002_band_set_uses_ps10.php'))->up();
+
+        $band = Product::where('slug', 'set-svatba-s-kapelou')->firstOrFail();
+        $names = $band->bundleItems->pluck('pivot.amount', 'name')->map(fn ($a) => (int) $a)->all();
+        $this->assertSame(2, $names['Nexo PS10R2']);
+        $this->assertArrayNotHasKey('Nexo PS15R2 (2000W, 1x15"+1x3")', $names);
+        $this->assertSame(4290.0, (float) $band->price_per_day);
+        $parts = $band->bundleItems->sum(fn ($c) => (float) $c->price_per_day * (int) $c->pivot->amount);
+        $this->assertGreaterThan((float) $band->price_per_day, $parts);
     }
 }

@@ -11,8 +11,8 @@ Níže je, co zbývá. Většinou jde o obsah nebo rozhodnutí, ne o kód.
       dá přepsat ručně, ale není to vidět. Při `showMonths: 2` flatpickr nepodporuje
       `monthSelectorType: 'dropdown'`. Varianty: vlastní select „měsíc + rok“ nad
       kalendářem, nebo zapnout `allowInput` s parsováním „06.07.2027 do 07.07.2027“.
-- [ ] **C3 Nexo rack do setu Svatba s kapelou**: PS15R2 potřebují Nexo rack, který v katalogu
-      není. Založit produkt (cena/den, počet kusů) a přidat ho do setu; MT18 jede z Amprack FP.
+- [ ] **Nexo rack**: PS15R2 potřebují Nexo rack, který v katalogu není. Set Svatba s kapelou
+      proto jede s PS10R2. Až bude rack v katalogu, jde případně udělat i větší set s PS15.
 
 ## D. SEO
 - [ ] **D1** doplnit `openingHours` do LocalBusiness (`layouts/app.blade.php`), chybí údaje.
