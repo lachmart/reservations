@@ -199,4 +199,91 @@ class CartTest extends TestCase
         Mail::assertSent(ReservationCreated::class, fn ($m) => $m->hasTo('owner@example.com') && $m->hasTo('second@example.com') && ! $m->hasTo('john@example.com'));
         Mail::assertSent(ReservationCreated::class, 2);
     }
+
+    public function test_checkout_with_phone_only_stores_event_details_and_notifies_owner(): void
+    {
+        config(['contact.owner_notify' => ['owner@example.com']]);
+        $product = Product::factory()->create(['stock' => 5, 'price_per_day' => 100]);
+        $this->withSession(['cart' => [
+            'start_date' => '2027-07-06 10:00:00',
+            'end_date' => '2027-07-07 10:00:00',
+            'items' => [$product->id => 2],
+            'bundles' => [],
+        ]]);
+        Mail::fake();
+
+        $this->post(route('cart.checkout'), [
+            'name' => 'Jana',
+            'phone' => '777 123 456',
+            'event_type' => 'Svatba',
+            'event_place' => 'Šternberk',
+            'delivery' => '1',
+        ])->assertSessionHasNoErrors()->assertRedirect(route('cart.thankyou'));
+
+        $reservation = Reservation::firstOrFail();
+        $this->assertSame('', $reservation->email);
+        $this->assertSame('Svatba', $reservation->event_type);
+        $this->assertSame('Šternberk', $reservation->event_place);
+        $this->assertTrue($reservation->delivery);
+        $this->assertSame('web', $reservation->source);
+        $this->assertEquals(200.00, (float) $reservation->price);
+
+        // No customer address, so only the owner copy goes out.
+        Mail::assertSent(ReservationCreated::class, 1);
+        Mail::assertSent(ReservationCreated::class, fn ($m) => $m->hasTo('owner@example.com'));
+    }
+
+    public function test_checkout_requires_phone_or_email(): void
+    {
+        $product = Product::factory()->create(['stock' => 5]);
+        $this->withSession(['cart' => [
+            'start_date' => '2027-07-06 10:00:00',
+            'end_date' => '2027-07-07 10:00:00',
+            'items' => [$product->id => 1],
+            'bundles' => [],
+        ]]);
+
+        $this->post(route('cart.checkout'), ['name' => 'Jana'])
+            ->assertSessionHasErrors(['phone', 'email']);
+        $this->assertDatabaseCount('reservations', 0);
+    }
+
+    public function test_checkout_fails_without_saving_when_stock_ran_out(): void
+    {
+        $product = Product::factory()->create(['stock' => 1]);
+        Reservation::factory()->create([
+            'start_date' => '2027-07-06 00:00:00', 'end_date' => '2027-07-08 00:00:00',
+            'phone' => '', 'is_active' => true, 'is_paid' => false,
+        ])->reservationItems()->create(['product_id' => $product->id, 'amount' => 1]);
+
+        $this->withSession(['cart' => [
+            'start_date' => '2027-07-06 10:00:00',
+            'end_date' => '2027-07-07 10:00:00',
+            'items' => [$product->id => 1],
+            'bundles' => [],
+        ]]);
+
+        $this->post(route('cart.checkout'), ['name' => 'Jana', 'phone' => '1'])
+            ->assertSessionHasErrors('cart');
+        $this->assertDatabaseCount('reservations', 1);
+    }
+
+    public function test_cart_page_offers_event_details_and_delivery(): void
+    {
+        $product = Product::factory()->create(['stock' => 5, 'price_per_day' => 100]);
+        $this->withSession(['cart' => [
+            'start_date' => '2027-07-06 10:00:00',
+            'end_date' => '2027-07-07 10:00:00',
+            'items' => [$product->id => 1],
+            'bundles' => [],
+        ]]);
+
+        $this->get(route('cart.index'))
+            ->assertOk()
+            ->assertSee('name="event_place"', false)
+            ->assertSee('name="event_type"', false)
+            ->assertSee('name="delivery"', false)
+            ->assertSee('Dovoz a zapojení')
+            ->assertDontSee('type="email" name="email" value="" class="field" required', false);
+    }
 }

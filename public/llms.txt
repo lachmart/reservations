@@ -15,8 +15,25 @@ procházet techniku, ověřit dostupnost na konkrétní termín a založit rezer
 - Nástroje:
   - `list-products` — výpis dostupné techniky (název, kategorie, cena za den, sklad)
   - `check-product-availability` — dostupnost kusů na termín (start_date, end_date)
-  - `create-reservation` — vytvoření rezervace (jméno, e-mail, termín)
+  - `create-reservation` — rezervace včetně položek (`items: [{product_id, quantity}]`),
+    termínu a kontaktu (telefon nebo e-mail); cenu spočítá server, při nedostupnosti
+    se nic neuloží
+- Popis serveru (server card): https://www.marakarental.cz/mcp/server-card.json
 - Dokumentace: https://www.marakarental.cz/ai
+
+### Ukázka kompletní rezervace
+
+Každý řádek je samostatný POST na endpoint výše (JSON-RPC 2.0):
+
+```
+{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"my-agent","version":"1.0"}}}
+{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"list-products","arguments":{}}}
+{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"check-product-availability","arguments":{"product_id":12,"start_date":"2027-07-06 10:00","end_date":"2027-07-07 10:00"}}}
+{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"create-reservation","arguments":{"name":"Jana Nováková","phone":"+420 777 123 456","start_date":"2027-07-06 10:00","end_date":"2027-07-07 10:00","event_type":"Svatba","event_place":"Olomouc","delivery":true,"items":[{"product_id":12,"quantity":2},{"product_id":15,"quantity":2}]}}}
+```
+
+Nová rezervace je nepotvrzená a nezaplacená, dokud ji nepotvrdíme. Cena je za techniku,
+dovoz a zapojení naceníme podle místa akce.
 
 ## Klíčové stránky
 

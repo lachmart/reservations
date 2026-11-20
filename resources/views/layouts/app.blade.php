@@ -11,8 +11,11 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
     <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
     <link rel="manifest" href="/site.webmanifest">
+    {{-- Machine-readable entry points for AI assistants and agents --}}
+    <link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt">
+    <link rel="service-desc" type="application/json" href="{{ url('/mcp/server-card.json') }}" title="MCP server card">
     @php
-        $seoTitle = trim($__env->yieldContent('title')) ?: 'Maraka rental — pronájem zvukové a světelné techniky';
+        $seoTitle = trim($__env->yieldContent('title')) ?: 'Maraka rental — půjčovna ozvučení a světel Olomouc';
         $seoDesc = trim($__env->yieldContent('meta_description')) ?: 'Půjčovna profesionální zvukové a světelné techniky pro akce až do 600 osob v Olomouci a okolí. Vyberte termín, sestavte si vybavení a rezervujte online.';
         $seoCanonical = trim($__env->yieldContent('canonical')) ?: request()->url();
         $seoImage = trim($__env->yieldContent('og_image'));
@@ -140,8 +143,8 @@
                 </a>
                 @php($__cart = session('cart', []))
                 @php($__cartCount = array_sum((array) ($__cart['items'] ?? [])))
-                <a href="{{ route('cart.index') }}" id="nav-cart-link" class="btn-secondary ml-1 py-2">
-                    <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                <a href="{{ route('cart.index') }}" id="nav-cart-link" class="btn-secondary ml-1 py-2" aria-label="Košík{{ $__cartCount > 0 ? ' ('.$__cartCount.' ks)' : '' }}">
+                    <svg class="size-4" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
                     <span class="hidden sm:inline">Košík</span>
                     <span data-cart-count class="inline-flex min-w-5 items-center justify-center rounded-full bg-accent px-1.5 text-xs font-bold text-accent-ink {{ $__cartCount > 0 ? '' : 'hidden' }}">{{ $__cartCount }}</span>
                 </a>

@@ -2,18 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\ReservationCreated;
+use App\Exceptions\ItemsUnavailable;
 use App\Models\Product;
-use App\Models\Reservation;
-use App\Models\ReservationItem;
+use App\Services\ReservationBooking;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 
 class CartController extends Controller
 {
@@ -219,7 +216,7 @@ class CartController extends Controller
         if (! $isBundle && $available !== null && ($currentQty + $amount) > $available) {
             $message = "Cannot add – available quantity is {$available} pcs, you already have {$currentQty} pcs in cart.";
             if ($request->expectsJson()) {
-                return response()->json(['message' => $message], 422);
+                return response()->json(['status' => 'error', 'message' => $message], 422);
             }
 
             return back()->withErrors(['amount' => $message])->withInput();
@@ -300,7 +297,7 @@ class CartController extends Controller
         if (! $isBundle && $available !== null && $amount > $available) {
             $message = "Maximum quantity is {$available} pcs.";
             if ($request->expectsJson()) {
-                return response()->json(['message' => $message], 422);
+                return response()->json(['status' => 'error', 'message' => $message], 422);
             }
 
             return back()->withErrors(['amount' => $message])->withInput();
@@ -480,154 +477,45 @@ class CartController extends Controller
         return view('cart.thankyou');
     }
 
-    public function checkout(Request $request): RedirectResponse
+    public function checkout(Request $request, ReservationBooking $booking): RedirectResponse
     {
         $cart = $this->getCart($request);
         if (empty($cart['items'])) {
-            return back()->withErrors(['cart' => 'Cart is empty.']);
+            return back()->withErrors(['cart' => 'Košík je prázdný.']);
         }
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email'],
-            'phone' => ['nullable', 'string', 'max:50'],
-            'note' => ['nullable', 'string', 'max:1000'],
-        ]);
+
+        $data = $request->validate(
+            ReservationBooking::contactRules() + ReservationBooking::eventRules(),
+            ReservationBooking::messages(),
+        );
+
         if (empty($cart['start_date']) || empty($cart['end_date'])) {
-            return back()->withErrors(['dates' => 'Please set the reservation term first.']);
+            return back()->withErrors(['dates' => 'Nejprve prosím vyberte termín.'])->withInput();
         }
 
-        // Validate dates order (end must be after start)
         try {
-            $start = Carbon::parse($cart['start_date']);
-            $end = Carbon::parse($cart['end_date']);
-            if ($end->lessThanOrEqualTo($start)) {
-                return back()->withErrors(['dates' => 'End date must be after start date.'])->withInput();
-            }
+            $reservation = $booking->book(
+                $data,
+                $cart['start_date'],
+                $cart['end_date'],
+                $cart['items'],
+                $cart['bundles'],
+                'web',
+            );
+        } catch (ItemsUnavailable $e) {
+            return back()->withErrors(['cart' => 'Některé položky už v tomto termínu nejsou dostupné v požadovaném množství.'])->withInput();
+        } catch (\InvalidArgumentException $e) {
+            return back()->withErrors(['dates' => 'Neplatný termín rezervace.'])->withInput();
         } catch (\Throwable $e) {
-            return back()->withErrors(['dates' => 'Invalid reservation term.'])->withInput();
+            report($e);
+
+            return back()->withErrors(['server' => 'Při vytváření rezervace došlo k chybě.'])->withInput();
         }
 
-        // Validate availability for all items atomically and create reservation
-        try {
-            DB::beginTransaction();
-
-            // Re-check availability
-            foreach ($cart['items'] as $productId => $amount) {
-                $product = Product::findOrFail($productId);
-                $available = $product->availableForRange($cart['start_date'], $cart['end_date']);
-                if ($amount > $available) {
-                    DB::rollBack();
-
-                    return back()->withErrors(['cart' => 'Some items are not available in requested quantity.'])->withInput();
-                }
-            }
-
-            // Calculate total price for the reservation
-            try {
-                $minutes = $start->diffInMinutes($end);
-                $days = max(1, (int) ceil($minutes / (60 * 24)));
-            } catch (\Throwable $e) {
-                DB::rollBack();
-
-                return back()->withErrors(['dates' => 'Invalid reservation term.'])->withInput();
-            }
-
-            // Compute total using bundle pricing where applicable, and standalone items excluding bundle contributions
-            $totalPrice = 0.0;
-
-            // Resolve products for items and bundles
-            $productIds = array_keys($cart['items'] ?: []);
-            $bundleIds = array_keys($cart['bundles'] ?: []);
-            $allIds = array_unique(array_merge($productIds, $bundleIds));
-            $products = Product::whereIn('id', $allIds)->get()->keyBy('id');
-
-            // Sum bundle prices
-            foreach ($cart['bundles'] as $bundleId => $bundleQty) {
-                $bundle = $products[$bundleId] ?? null;
-                if (! $bundle) {
-                    continue;
-                }
-                $bundlePricePerDay = (float) ($bundle->price_per_day ?? 0);
-                $totalPrice += $bundlePricePerDay * (int) $bundleQty * $days;
-            }
-
-            // Compute bundle contributions map
-            $bundleContrib = [];
-            foreach ($cart['bundles'] as $bundleId => $bundleQty) {
-                $bundle = $products[$bundleId] ?? null;
-                if (! $bundle) {
-                    continue;
-                }
-                foreach ($bundle->bundleItems as $child) {
-                    $bundleContrib[$child->id] = ($bundleContrib[$child->id] ?? 0) + ((int) $child->pivot->amount * (int) $bundleQty);
-                }
-            }
-
-            // Add standalone items (excluding quantities covered by bundles)
-            foreach ($cart['items'] as $productId => $amount) {
-                $product = $products[$productId] ?? null;
-                if (! $product) {
-                    continue;
-                }
-                $standaloneAmount = (int) $amount - (int) ($bundleContrib[$productId] ?? 0);
-                if ($standaloneAmount <= 0) {
-                    continue;
-                }
-                $totalPrice += ((float) ($product->price_per_day ?? 0)) * $standaloneAmount * $days;
-            }
-
-            $reservation = Reservation::create([
-                'name' => $data['name'],
-                'email' => $data['email'],
-                'phone' => $data['phone'] ?? '',
-                'note' => $data['note'] ?? '',
-                'start_date' => $cart['start_date'],
-                'end_date' => $cart['end_date'],
-                'price' => $totalPrice,
-                'is_active' => true,
-                'is_paid' => false,
-            ]);
-
-            foreach ($cart['items'] as $productId => $amount) {
-                ReservationItem::create([
-                    'reservation_id' => $reservation->id,
-                    'product_id' => $productId,
-                    'amount' => (int) $amount,
-                ]);
-            }
-
-            DB::commit();
-        } catch (\Throwable $e) {
-            DB::rollBack();
-
-            return back()->withErrors(['server' => 'An error occurred while creating the reservation.'])->withInput();
-        }
-
-        // Clear cart
         $request->session()->forget('cart');
 
-        // Send confirmation to the customer and a copy to the business owner so
-        // new reservations are noticed. Non-blocking so email issues never break UX.
-        try {
-            Mail::to($reservation->email)->send(new ReservationCreated($reservation));
-        } catch (\Throwable $e) {
-            \Log::warning('Reservation confirmation email failed: '.$e->getMessage(), [
-                'reservation_id' => $reservation->id ?? null,
-            ]);
-        }
+        $booking->notify($reservation);
 
-        // Owner copy as its own message (not BCC), so it lands in the inbox and a
-        // problem with the customer's address can't stop it.
-        try {
-            if ($owners = config('contact.owner_notify')) {
-                Mail::to($owners)->send(new ReservationCreated($reservation));
-            }
-        } catch (\Throwable $e) {
-            \Log::warning('Reservation owner notification failed: '.$e->getMessage(), [
-                'reservation_id' => $reservation->id ?? null,
-            ]);
-        }
-
-        return redirect()->route('cart.thankyou')->with('success', 'Reservation was created. Thank you!');
+        return redirect()->route('cart.thankyou')->with('success', 'Rezervace byla vytvořena. Děkujeme!');
     }
 }

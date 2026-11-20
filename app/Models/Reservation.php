@@ -25,6 +25,10 @@ class Reservation extends Model
         'note',
         'is_active',
         'is_paid',
+        'event_place',
+        'event_type',
+        'delivery',
+        'source',
     ];
 
     /**
@@ -39,6 +43,7 @@ class Reservation extends Model
         'price' => 'decimal:2',
         'is_active' => 'boolean',
         'is_paid' => 'boolean',
+        'delivery' => 'boolean',
     ];
 
     public function reservationItems(): HasMany

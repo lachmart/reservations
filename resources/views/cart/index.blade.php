@@ -176,7 +176,8 @@
                             <div class="flex items-center justify-between text-muted"><span>Počet dní</span><span class="font-semibold text-ink">{{ $days }}</span></div>
                             <div class="flex items-center justify-between text-muted"><span>Položek</span><span class="font-semibold text-ink">{{ array_sum(array_map(fn($r) => (int) $r['amount'], $items)) }}</span></div>
                             <div class="rule my-3"></div>
-                            <div class="flex items-baseline justify-between"><span class="font-semibold text-ink">Celkem</span><span class="font-display text-2xl font-extrabold text-ink">{{ number_format((float) $total, 0, ',', ' ') }} Kč</span></div>
+                            <div class="flex items-baseline justify-between"><span class="font-semibold text-ink">Technika celkem</span><span class="font-display text-2xl font-extrabold text-ink">{{ number_format((float) $total, 0, ',', ' ') }} Kč</span></div>
+                            <div class="flex items-center justify-between text-muted"><span>Dovoz a zapojení</span><span class="font-semibold text-ink">dle místa, potvrdíme</span></div>
                         </div>
                     @else
                         <p class="mt-2 text-sm text-muted">Pro zobrazení ceny nastavte termín výše.</p>
@@ -189,12 +190,35 @@
                     <h2 class="card-title">Dokončit rezervaci</h2>
                     <form method="post" action="{{ route('cart.checkout') }}" class="mt-3 space-y-3">
                         @csrf
-                        <div><label class="label">Jméno</label><input type="text" name="name" value="{{ old('name') }}" class="field" required></div>
-                        <div><label class="label">E-mail</label><input type="email" name="email" value="{{ old('email') }}" class="field" required></div>
-                        <div><label class="label">Telefon</label><input type="text" name="phone" value="{{ old('phone') }}" class="field"></div>
-                        <div><label class="label">Poznámka</label><textarea name="note" class="field" rows="3">{{ old('note') }}</textarea></div>
+                        @if($errors->hasAny(['name', 'phone', 'email', 'event_place', 'event_type', 'note']))
+                            <ul class="list-inside list-disc text-sm" style="color:oklch(0.55 0.17 28)">
+                                @foreach(array_unique(array_merge($errors->get('name'), $errors->get('phone'), $errors->get('email'), $errors->get('event_place'), $errors->get('event_type'), $errors->get('note'))) as $message)
+                                    <li>{{ $message }}</li>
+                                @endforeach
+                            </ul>
+                        @endif
+                        <div><label class="label" for="checkout-name">Jméno *</label><input id="checkout-name" type="text" name="name" value="{{ old('name') }}" class="field" required maxlength="255" autocomplete="name"></div>
+                        <div><label class="label" for="checkout-phone">Telefon</label><input id="checkout-phone" type="tel" name="phone" value="{{ old('phone') }}" class="field" maxlength="50" autocomplete="tel"></div>
+                        <div><label class="label" for="checkout-email">E-mail</label><input id="checkout-email" type="email" name="email" value="{{ old('email') }}" class="field" maxlength="255" autocomplete="email"></div>
+                        <p class="text-xs text-faint">Vyplňte telefon nebo e-mail. Potvrzení posíláme e-mailem.</p>
+                        <div>
+                            <label class="label" for="checkout-event-type">Typ akce</label>
+                            <select id="checkout-event-type" name="event_type" class="field">
+                                <option value="">Vyberte…</option>
+                                @foreach(\App\Services\ReservationBooking::EVENT_TYPES as $t)
+                                    <option value="{{ $t }}" @selected(old('event_type') === $t)>{{ $t }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div><label class="label" for="checkout-event-place">Místo akce</label><input id="checkout-event-place" type="text" name="event_place" value="{{ old('event_place') }}" class="field" maxlength="255" placeholder="Obec, případně název sálu"></div>
+                        <label class="flex items-start gap-2 text-sm text-ink">
+                            <input type="hidden" name="delivery" value="0">
+                            <input type="checkbox" name="delivery" value="1" class="mt-1" @checked(old('delivery', '1') === '1')>
+                            <span><span class="font-semibold">Dovoz a zapojení</span><br><span class="text-muted">Olomouc a okolí, cenu podle místa potvrdíme.</span></span>
+                        </label>
+                        <div><label class="label" for="checkout-note">Poznámka</label><textarea id="checkout-note" name="note" class="field" rows="3" maxlength="1000">{{ old('note') }}</textarea></div>
                         <button class="btn-primary w-full py-3" type="submit" {{ count($items) === 0 ? 'disabled' : '' }}>Odeslat rezervaci</button>
-                        <p class="text-center text-xs text-faint">Ozveme se vám s potvrzením a cenou.</p>
+                        <p class="text-center text-xs text-faint">Ozveme se vám s potvrzením a konečnou cenou včetně dovozu.</p>
                         @error('cart')<p class="text-sm" style="color:oklch(0.55 0.17 28)">{{ $message }}</p>@enderror
                         @error('dates')<p class="text-sm" style="color:oklch(0.55 0.17 28)">{{ $message }}</p>@enderror
                         @error('server')<p class="text-sm" style="color:oklch(0.55 0.17 28)">{{ $message }}</p>@enderror

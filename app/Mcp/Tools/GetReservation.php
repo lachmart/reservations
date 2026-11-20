@@ -43,6 +43,10 @@ class GetReservation extends BaseTool
             'end_date' => optional($reservation->end_date)->toIso8601String(),
             'price' => $reservation->price,
             'note' => $reservation->note,
+            'event_place' => $reservation->event_place,
+            'event_type' => $reservation->event_type,
+            'delivery' => (bool) $reservation->delivery,
+            'source' => $reservation->source,
             'is_active' => $reservation->is_active,
             'is_paid' => $reservation->is_paid,
             'items' => $reservation->reservationItems->map(fn (ReservationItem $item) => [

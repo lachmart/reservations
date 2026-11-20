@@ -35,8 +35,26 @@ endpoint needs no token.
 
 **Public** — `list-products`, `check-product-availability`, `create-reservation`.
 
+Public `create-reservation` takes all items at once (`items: [{product_id, quantity}]`,
+bundles are expanded) plus contact (phone or e-mail), term, `event_place`, `event_type`,
+`delivery` and `note`. It goes through `App\Services\ReservationBooking`, the same code
+as the web cart: availability is checked and the reservation and items are saved in one
+transaction, the price is computed on the server, the reservation starts active and
+unpaid, and the customer and owner are e-mailed. `price`, `is_paid` and `is_active` are
+rejected. It is rate limited to 5 reservations per IP per 10 minutes, and the whole
+endpoint to 60 requests per minute.
+
+Protocol notes (fixes on top of laravel/mcp v0.1 in `App\Mcp\Servers\BaseServer`):
+- An unknown tool returns JSON-RPC error `-32602`, not a tool result.
+- An unknown `protocolVersion` in `initialize` is answered with our latest version
+  instead of failing the handshake.
+
+Discovery: the server card is at `/mcp/server-card.json` (and `/.well-known/mcp*`, which
+the hosting currently blocks).
+
 **Admin** — everything above plus:
-- Reservations: `list-reservations`, `get-reservation`, `create-reservation`,
+- Reservations: `list-reservations`, `get-reservation`, `create-reservation` (items
+  optional, may override `price`/`is_active`/`is_paid`, sends no e-mail),
   `update-reservation`, `delete-reservation`, `add-reservation-item`
 - Catalog: `create-product`, `update-product`
 - Linked entities: `list-categories`, `create-category`, `list-tags`, `create-tag`,

@@ -43,8 +43,28 @@
         <ul class="mt-3 space-y-2 text-muted">
             <li><code class="text-ink">list-products</code> — výpis dostupné techniky</li>
             <li><code class="text-ink">check-product-availability</code> — dostupnost na termín</li>
-            <li><code class="text-ink">create-reservation</code> — založení rezervace</li>
+            <li><code class="text-ink">create-reservation</code> — založení rezervace včetně položek; cenu spočítá server</li>
         </ul>
+
+        <h2 class="mt-10 font-display text-xl font-bold text-ink">Ukázka kompletní rezervace</h2>
+        <p class="mt-2 text-muted">Každý krok je samostatný <code>POST {{ url('/mcp/reservations') }}</code> s JSON-RPC 2.0. Rezervace se uloží jen tehdy, když jsou dostupné všechny položky. Je nepotvrzená a nezaplacená, dokud ji nepotvrdíme.</p>
+        <pre class="mt-3 overflow-x-auto rounded-xl border border-line bg-surface p-4 text-xs leading-relaxed text-ink"><code>// 1. initialize
+{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"my-agent","version":"1.0"}}}
+
+// 2. katalog: id, cena za den, sety (is_bundle)
+{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"list-products","arguments":{}}}
+
+// 3. dostupnost na termín (pro každou položku)
+{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"check-product-availability","arguments":{"product_id":12,"start_date":"2027-07-06 10:00","end_date":"2027-07-07 10:00"}}}
+
+// 4. rezervace se všemi položkami najednou
+{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"create-reservation","arguments":{
+  "name":"Jana Nováková","phone":"+420 777 123 456","email":"jana@example.com",
+  "start_date":"2027-07-06 10:00","end_date":"2027-07-07 10:00",
+  "event_type":"Svatba","event_place":"Olomouc","delivery":true,
+  "items":[{"product_id":12,"quantity":2},{"product_id":15,"quantity":2}]
+}}}</code></pre>
+        <p class="mt-3 text-sm text-muted">Stačí telefon, nebo e-mail. Cena v odpovědi je za techniku; dovoz a zapojení naceníme podle místa. Popis serveru: <a href="{{ url('/mcp/server-card.json') }}" class="font-semibold text-accent-ink underline dark:text-accent">server-card.json</a>.</p>
 
         <div class="mt-12 rounded-2xl px-6 py-6" style="background:var(--ink)">
             <p class="font-display text-lg font-bold" style="color:var(--paper)">Raději napřímo?</p>

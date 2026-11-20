@@ -30,10 +30,22 @@ class ReservationResource extends Resource
                 Forms\Components\TextInput::make('email')
                     ->email()
                     ->maxLength(255)
-                    ->required(),
+                    ->requiredWithout('phone')
+                    // email/phone columns are NOT NULL: store '' when left empty
+                    ->dehydrateStateUsing(fn ($state) => $state ?? ''),
                 Forms\Components\TextInput::make('phone')
                     ->tel()
-                    ->maxLength(50),
+                    ->maxLength(50)
+                    ->requiredWithout('email')
+                    ->dehydrateStateUsing(fn ($state) => $state ?? ''),
+                Forms\Components\TextInput::make('event_place')
+                    ->label('Event place')
+                    ->maxLength(255),
+                Forms\Components\Select::make('event_type')
+                    ->label('Event type')
+                    ->options(array_combine(\App\Services\ReservationBooking::EVENT_TYPES, \App\Services\ReservationBooking::EVENT_TYPES)),
+                Forms\Components\Toggle::make('delivery')
+                    ->label('Delivery & set-up'),
                 Forms\Components\DateTimePicker::make('start_date')
                     ->required()
                     ->rule('before:end_date'),
@@ -73,6 +85,17 @@ class ReservationResource extends Resource
                 Tables\Columns\TextColumn::make('end_date')
                     ->dateTime()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('event_place')
+                    ->label('Place')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('event_type')
+                    ->label('Type')
+                    ->toggleable(),
+                Tables\Columns\IconColumn::make('delivery')
+                    ->boolean(),
+                Tables\Columns\TextColumn::make('source')
+                    ->badge()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('note')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('price')

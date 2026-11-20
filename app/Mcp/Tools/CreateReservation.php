@@ -4,48 +4,88 @@ declare(strict_types=1);
 
 namespace App\Mcp\Tools;
 
+use App\Exceptions\ItemsUnavailable;
 use App\Models\Reservation;
+use App\Services\ReservationBooking;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Validator;
+use InvalidArgumentException;
 use Laravel\Mcp\Server\Tools\Annotations\Title;
 use Laravel\Mcp\Server\Tools\ToolInputSchema;
 use Laravel\Mcp\Server\Tools\ToolResult;
 
+/**
+ * Public booking: creates a reservation with its items in one go, priced and
+ * checked by the server exactly like a reservation sent from the web cart.
+ */
 #[Title('Create reservation')]
 class CreateReservation extends BaseTool
 {
+    /** Fields only the admin server may set; the public server rejects them. */
+    protected const ADMIN_FIELDS = ['price', 'is_active', 'is_paid'];
+
+    /** Reservations one client (IP) may create per window. */
+    protected const RATE_LIMIT = 5;
+
+    protected const RATE_WINDOW_SECONDS = 600;
+
     public function description(): string
     {
-        return 'Create a new customer reservation. Add line items afterwards with '
-            .'add-reservation-item.';
+        return 'Create a reservation with its items in one call. Pass every product and '
+            .'quantity in `items`; bundles (sets) are expanded automatically. The server '
+            .'checks availability for the whole term and computes the price from the '
+            .'products and number of days (every started 24 hours is one day). If any item '
+            .'is short, nothing is saved and the error lists what is missing. Give a phone '
+            .'or an e-mail (at least one). The reservation is created unconfirmed and '
+            .'unpaid; the rental company confirms it and the final price including delivery.';
     }
 
     public function schema(ToolInputSchema $schema): ToolInputSchema
     {
-        return $schema
+        $schema
             ->string('name')->description('Customer name.')->required()
-            ->string('email')->description('Customer email.')->required()
-            ->string('phone')->description('Customer phone number.')
-            ->string('start_date')->description('Reservation start (ISO-8601).')->required()
-            ->string('end_date')->description('Reservation end (ISO-8601), must be after start_date.')->required()
-            ->number('price')->description('Total price. Defaults to 0 when omitted.')
-            ->string('note')->description('Free-form note.')
-            ->boolean('is_active')->description('Whether the reservation is active. Defaults to true.')
-            ->boolean('is_paid')->description('Whether the reservation is paid. Defaults to false.');
+            ->string('phone')->description('Customer phone. Phone or email is required.')
+            ->string('email')->description('Customer email. Phone or email is required.')
+            ->string('start_date')->description('Rental start (ISO-8601), e.g. "2027-07-06 10:00".')->required()
+            ->string('end_date')->description('Rental end (ISO-8601), must be after start_date.')->required()
+            ->raw('items', [
+                'type' => 'array',
+                'description' => 'Products to rent. Use product ids from list-products.',
+                'items' => [
+                    'type' => 'object',
+                    'properties' => [
+                        'product_id' => ['type' => 'integer', 'description' => 'Product (or bundle) id.'],
+                        'quantity' => ['type' => 'integer', 'minimum' => 1, 'description' => 'Number of units.'],
+                    ],
+                    'required' => ['product_id', 'quantity'],
+                ],
+            ])->required(! $this->isAdmin())
+            ->string('event_place')->description('Where the event takes place (town, venue). Needed to price delivery.')
+            ->string('event_type')->description('Kind of event: '.implode(', ', ReservationBooking::EVENT_TYPES).'.')
+            ->boolean('delivery')->description('Customer wants delivery and set-up (priced by place, confirmed later). Defaults to false.')
+            ->string('note')->description('Free-form note for the rental company.');
+
+        if ($this->isAdmin()) {
+            $schema
+                ->number('price')->description('Override the computed total price.')
+                ->boolean('is_active')->description('Whether the reservation is active. Defaults to true.')
+                ->boolean('is_paid')->description('Whether the reservation is paid. Defaults to false.');
+        }
+
+        return $schema;
     }
 
     protected function run(array $arguments): ToolResult
     {
-        $validator = Validator::make($arguments, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email'],
-            'phone' => ['nullable', 'string', 'max:255'],
-            'start_date' => ['required', 'date'],
-            'end_date' => ['required', 'date', 'after:start_date'],
-            'price' => ['nullable', 'numeric', 'min:0'],
-            'note' => ['nullable', 'string'],
-            'is_active' => ['nullable', 'boolean'],
-            'is_paid' => ['nullable', 'boolean'],
-        ]);
+        $forbidden = array_values(array_intersect(self::ADMIN_FIELDS, array_keys($arguments)));
+        if (! $this->isAdmin() && $forbidden) {
+            return ToolResult::error(
+                'These fields cannot be set on a public reservation: '.implode(', ', $forbidden)
+                .'. The price is calculated by the server from the items and the term.'
+            );
+        }
+
+        $validator = Validator::make($arguments, $this->rules(), ReservationBooking::messages());
 
         if ($validator->fails()) {
             return ToolResult::error($validator->errors()->first());
@@ -53,26 +93,87 @@ class CreateReservation extends BaseTool
 
         $data = $validator->validated();
 
-        $reservation = Reservation::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'phone' => $data['phone'] ?? null,
-            'start_date' => $data['start_date'],
-            'end_date' => $data['end_date'],
-            'price' => $data['price'] ?? 0,
-            // The live `note` column is NOT NULL, so fall back to an empty string.
-            'note' => $data['note'] ?? '',
-            'is_active' => $data['is_active'] ?? true,
-            'is_paid' => $data['is_paid'] ?? false,
-        ]);
+        if (! $this->isAdmin()) {
+            $key = 'mcp-create-reservation:'.request()->ip();
+            if (RateLimiter::tooManyAttempts($key, self::RATE_LIMIT)) {
+                return ToolResult::error('Too many reservations from this client. Try again in '
+                    .RateLimiter::availableIn($key).' seconds, or call the rental company.');
+            }
+            RateLimiter::hit($key, self::RATE_WINDOW_SECONDS);
+        }
 
-        return ToolResult::json([
+        $booking = app(ReservationBooking::class);
+
+        try {
+            $selection = ReservationBooking::selectionFromLines($data['items'] ?? []);
+            $reservation = $booking->book(
+                $data,
+                $data['start_date'],
+                $data['end_date'],
+                $selection['items'],
+                $selection['bundles'],
+                $this->isAdmin() ? 'admin' : 'mcp',
+            );
+        } catch (ItemsUnavailable $e) {
+            return ToolResult::error($e->getMessage().' Nothing was saved. Check availability with check-product-availability and adjust the items or the term.');
+        } catch (InvalidArgumentException $e) {
+            return ToolResult::error($e->getMessage().' Nothing was saved.');
+        }
+
+        $this->afterCreate($reservation, $data);
+
+        return ToolResult::json($this->present($reservation->fresh(['reservationItems.product'])));
+    }
+
+    protected function isAdmin(): bool
+    {
+        return false;
+    }
+
+    protected function rules(): array
+    {
+        return ReservationBooking::contactRules() + ReservationBooking::eventRules() + [
+            'start_date' => ['required', 'date'],
+            'end_date' => ['required', 'date', 'after:start_date'],
+            'items' => ['required', 'array', 'min:1'],
+            'items.*.product_id' => ['required', 'integer'],
+            'items.*.quantity' => ['required', 'integer', 'min:1', 'max:1000'],
+        ];
+    }
+
+    /**
+     * Public reservations notify the customer and the owner, like the web cart.
+     */
+    protected function afterCreate(Reservation $reservation, array $data): void
+    {
+        app(ReservationBooking::class)->notify($reservation);
+    }
+
+    protected function present(Reservation $reservation): array
+    {
+        return [
             'created' => true,
             'id' => $reservation->id,
+            'status' => $reservation->is_paid ? 'paid' : 'awaiting confirmation, unpaid',
             'name' => $reservation->name,
-            'email' => $reservation->email,
+            'phone' => $reservation->phone ?: null,
+            'email' => $reservation->email ?: null,
             'start_date' => optional($reservation->start_date)->toIso8601String(),
             'end_date' => optional($reservation->end_date)->toIso8601String(),
-        ]);
+            'days' => ReservationBooking::days((string) $reservation->start_date, (string) $reservation->end_date),
+            'price' => (float) $reservation->price,
+            'currency' => 'CZK',
+            'price_note' => $reservation->delivery
+                ? 'Rental price only. Delivery and set-up are priced by place and confirmed by the rental company.'
+                : 'Rental price only, customer picks up the gear.',
+            'event_place' => $reservation->event_place,
+            'event_type' => $reservation->event_type,
+            'delivery' => (bool) $reservation->delivery,
+            'items' => $reservation->reservationItems->map(fn ($item) => [
+                'product_id' => $item->product_id,
+                'product_name' => optional($item->product)->name,
+                'quantity' => (int) $item->amount,
+            ])->values()->all(),
+        ];
     }
 }

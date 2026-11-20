@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\EnquiryReceived;
+use App\Services\ReservationBooking;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -21,18 +22,12 @@ class EnquiryController extends Controller
             return back()->with('enquiry_sent', true);
         }
 
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'phone' => ['nullable', 'required_without:email', 'string', 'max:50'],
-            'email' => ['nullable', 'required_without:phone', 'email', 'max:255'],
+        $data = $request->validate(ReservationBooking::contactRules() + [
             'event_date' => ['nullable', 'date'],
             'event_type' => ['nullable', 'string', 'max:100'],
+            'event_place' => ['nullable', 'string', 'max:255'],
             'message' => ['required', 'string', 'max:3000'],
-        ], [
-            'name.required' => 'Vyplňte prosím jméno.',
-            'phone.required_without' => 'Vyplňte telefon nebo e-mail, ať se vám můžeme ozvat.',
-            'email.required_without' => 'Vyplňte telefon nebo e-mail, ať se vám můžeme ozvat.',
-            'email.email' => 'E-mail nemá platný tvar.',
+        ], ReservationBooking::messages() + [
             'event_date.date' => 'Datum akce nemá platný tvar.',
             'message.required' => 'Napište nám prosím, co na akci potřebujete.',
         ]);

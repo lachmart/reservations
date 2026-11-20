@@ -20,6 +20,9 @@
     @if(!empty($enquiry['event_type']))
         <tr><td><strong>Typ akce</strong></td><td>{{ $enquiry['event_type'] }}</td></tr>
     @endif
+    @if(!empty($enquiry['event_place']))
+        <tr><td><strong>Místo akce</strong></td><td>{{ $enquiry['event_place'] }}</td></tr>
+    @endif
 </table>
 <h3>Zpráva</h3>
 <p style="white-space:pre-line;">{{ $enquiry['message'] }}</p>

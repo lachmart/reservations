@@ -23,7 +23,7 @@
             <div class="lg:col-span-7">
                 <div class="kicker">Půjčovna zvuku a světel · Olomouc</div>
                 <h1 class="mt-4 max-w-2xl text-display-xl font-extrabold text-ink">
-                    Pronájem ozvučení a&nbsp;světel<br class="hidden sm:block"> pro vaši <span class="text-brand">akci</span>.
+                    Pronájem ozvučení a&nbsp;světel<br class="hidden sm:block"> v&nbsp;Olomouci pro vaši <span class="text-brand">akci</span>.
                 </h1>
                 <p class="mt-5 max-w-xl text-lg leading-relaxed text-muted">
                     Půjčujeme profesionální ozvučení, světla a pódiovou techniku na svatby, koncerty, plesy i firemní akce v Olomouci a okolí. Vyberte termín a rezervujte online, nebo nám pošlete poptávku a set sestavíme za vás.

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $product->name . ' — pronájem | Maraka rental')
+@section('title', $product->name . ' — pronájem Olomouc | Maraka rental')
 @section('meta_description', 'Pronájem ' . $product->name . ' za ' . number_format((float) $product->price_per_day, 0, ',', ' ') . ' Kč/den' . ($product->category ? ' — ' . $product->category->name : '') . '. Zkontrolujte dostupnost na váš termín a rezervujte online. Olomouc a okolí.')
 @section('og_type', 'product')
 @if($product->mainImageUrl())@section('og_image', $product->mainImageUrl())@endif

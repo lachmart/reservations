@@ -22,7 +22,8 @@ use Laravel\Mcp\Server\Facades\Mcp;
 |
 */
 
-Mcp::web('reservations', PublicServer::class);
+Mcp::web('reservations', PublicServer::class)
+    ->middleware('throttle:60,1');
 
 Mcp::web('admin', AdminServer::class)
     ->middleware(VerifyMcpToken::class);

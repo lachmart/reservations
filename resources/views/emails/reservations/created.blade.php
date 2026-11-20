@@ -11,7 +11,29 @@
 <ul>
     <li>Začátek: {{ optional($reservation->start_date)->format('d.m.Y H:i') }}</li>
     <li>Konec: {{ optional($reservation->end_date)->format('d.m.Y H:i') }}</li>
-    <li>Cena: {{ number_format((float) $reservation->price, 2, ',', ' ') }} Kč</li>
+    <li>Cena za techniku: {{ number_format((float) $reservation->price, 2, ',', ' ') }} Kč</li>
+    @if($reservation->delivery)
+        <li>Dovoz a zapojení: ano (cenu podle místa potvrdíme)</li>
+    @else
+        <li>Dovoz a zapojení: ne, vyzvednutí osobně</li>
+    @endif
+    @if(!empty($reservation->event_type))
+        <li>Typ akce: {{ $reservation->event_type }}</li>
+    @endif
+    @if(!empty($reservation->event_place))
+        <li>Místo akce: {{ $reservation->event_place }}</li>
+    @endif
+</ul>
+
+<h3>Kontakt</h3>
+<ul>
+    <li>Jméno: {{ $reservation->name }}</li>
+    @if(!empty($reservation->phone))
+        <li>Telefon: {{ $reservation->phone }}</li>
+    @endif
+    @if(!empty($reservation->email))
+        <li>E-mail: {{ $reservation->email }}</li>
+    @endif
 </ul>
 
 @if($reservation->reservationItems && $reservation->reservationItems->count())

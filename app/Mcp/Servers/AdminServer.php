@@ -11,7 +11,7 @@ use App\Mcp\Tools\CheckProductAvailability;
 use App\Mcp\Tools\CreateCategory;
 use App\Mcp\Tools\CreatePort;
 use App\Mcp\Tools\CreateProduct;
-use App\Mcp\Tools\CreateReservation;
+use App\Mcp\Tools\AdminCreateReservation;
 use App\Mcp\Tools\CreateTag;
 use App\Mcp\Tools\DeleteCategory;
 use App\Mcp\Tools\DeleteProduct;
@@ -27,9 +27,8 @@ use App\Mcp\Tools\SyncProductTags;
 use App\Mcp\Tools\UpdateProduct;
 use App\Mcp\Tools\UpdateReservation;
 use App\Mcp\Tools\UploadProductPhoto;
-use Laravel\Mcp\Server;
 
-class AdminServer extends Server
+class AdminServer extends BaseServer
 {
     /**
      * The name of the MCP server.
@@ -67,7 +66,7 @@ class AdminServer extends Server
         // Reservations
         ListReservations::class,
         GetReservation::class,
-        CreateReservation::class,
+        AdminCreateReservation::class,
         UpdateReservation::class,
         DeleteReservation::class,
         AddReservationItem::class,

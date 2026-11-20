@@ -6,11 +6,18 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\EnquiryController;
+use App\Http\Controllers\McpDiscoveryController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::view('/ai', 'ai')->name('ai.index');
 Route::get('/sitemap.xml', [SitemapController::class, 'index']);
+
+// MCP discovery (server card). The /.well-known paths are blocked by the hosting
+// today, so the same card is also served from /mcp/server-card.json.
+foreach (['/.well-known/mcp', '/.well-known/mcp.json', '/.well-known/mcp/server-card.json', '/mcp/server-card.json'] as $path) {
+    Route::get($path, [McpDiscoveryController::class, 'card']);
+}
 
 Route::post('/poptavka', [EnquiryController::class, 'store'])
     ->middleware('throttle:5,10')
@@ -29,5 +36,7 @@ Route::delete('/cart/{product}', [CartController::class, 'remove'])->name('cart.
 Route::patch('/cart/bundle/{product}', [CartController::class, 'updateBundle'])->name('cart.updateBundle');
 Route::delete('/cart/bundle/{product}', [CartController::class, 'removeBundle'])->name('cart.removeBundle');
 Route::delete('/cart', [CartController::class, 'clear'])->name('cart.clear');
-Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+Route::post('/cart/checkout', [CartController::class, 'checkout'])
+    ->middleware('throttle:10,10')
+    ->name('cart.checkout');
 Route::get('/thank-you', [CartController::class, 'thankyou'])->name('cart.thankyou');

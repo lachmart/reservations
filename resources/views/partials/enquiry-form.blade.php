@@ -1,5 +1,5 @@
 {{-- Quick enquiry ("poptávka"). Anchor #poptavka is linked from the header. --}}
-@php($enquiryErrors = $errors->hasAny(['name', 'phone', 'email', 'event_date', 'event_type', 'message']))
+@php($enquiryErrors = $errors->hasAny(['name', 'phone', 'email', 'event_date', 'event_type', 'event_place', 'message']))
 <section id="poptavka" class="scroll-mt-24 {{ $class ?? '' }}">
     <div class="grid gap-8 rounded-2xl border border-line bg-surface p-6 shadow-card sm:p-10 lg:grid-cols-5">
         <div class="lg:col-span-2">
@@ -29,7 +29,7 @@
 
                     @if($enquiryErrors)
                         <ul class="list-inside list-disc text-sm sm:col-span-2" style="color:oklch(0.55 0.17 28)">
-                            @foreach(['name', 'phone', 'email', 'event_date', 'event_type', 'message'] as $f)
+                            @foreach(['name', 'phone', 'email', 'event_date', 'event_type', 'event_place', 'message'] as $f)
                                 @error($f)<li>{{ $message }}</li>@enderror
                             @endforeach
                         </ul>
@@ -55,10 +55,14 @@
                         <span class="text-sm font-semibold text-ink">Typ akce</span>
                         <select name="event_type" class="field mt-1">
                             <option value="">Vyberte…</option>
-                            @foreach(['Svatba', 'Oslava / narozeniny', 'Ples', 'Firemní akce', 'Koncert', 'Festival', 'Divadlo', 'Konference', 'Jiné'] as $t)
+                            @foreach(\App\Services\ReservationBooking::EVENT_TYPES as $t)
                                 <option value="{{ $t }}" @selected(old('event_type') === $t)>{{ $t }}</option>
                             @endforeach
                         </select>
+                    </label>
+                    <label class="block sm:col-span-2">
+                        <span class="text-sm font-semibold text-ink">Místo akce</span>
+                        <input type="text" name="event_place" value="{{ old('event_place') }}" maxlength="255" class="field mt-1" placeholder="Obec, případně název sálu">
                     </label>
                     <label class="block sm:col-span-2">
                         <span class="text-sm font-semibold text-ink">Co potřebujete? *</span>
