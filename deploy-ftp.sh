@@ -101,10 +101,10 @@ esac
 # Folders mirrored with --delete (stale code must go). public/storage is kept.
 MIRRORS=""
 for d in app bootstrap config database resources routes vendor; do
-  MIRRORS+="mirror -R --delete --parallel=8 --no-perms --verbose=1 ${DRY} ${BUILD}/$d $d
+  MIRRORS+="mirror -R --delete --parallel=${FTP_PARALLEL:-2} --no-perms --verbose=1 ${DRY} ${BUILD}/$d $d
 "
 done
-MIRRORS+="mirror -R --delete --parallel=8 --no-perms --verbose=1 ${DRY} --exclude-glob storage/ ${BUILD}/public public
+MIRRORS+="mirror -R --delete --parallel=${FTP_PARALLEL:-2} --no-perms --verbose=1 ${DRY} --exclude-glob storage/ ${BUILD}/public public
 "
 # Runtime folders: create what's missing, never overwrite or delete.
 MIRRORS+="mirror -R --only-missing --no-perms ${DRY} ${BUILD}/storage storage
@@ -126,7 +126,7 @@ if [[ -n "${MOVE_DUMP:-}" ]]; then
 fi
 if [[ -n "${MOVE_MEDIA:-}" ]]; then
   [[ -d "$MOVE_MEDIA" ]] || die "MOVE_MEDIA not found: $MOVE_MEDIA"
-  MOVE+="mirror -R --only-newer --parallel=8 --no-perms ${DRY} \"${MOVE_MEDIA%/}\" storage/app/public
+  MOVE+="mirror -R --only-newer --parallel=${FTP_PARALLEL:-2} --no-perms ${DRY} \"${MOVE_MEDIA%/}\" storage/app/public
 "
 fi
 
@@ -142,7 +142,10 @@ info "Uploading to ${FTP_PROTOCOL}://${FTP_HOST}${FTP_PATH} ${DRY:+(dry run)}…
 export LFTP_PASSWORD="$FTP_PASSWORD"
 lftp <<LFTP
 set cmd:fail-exit yes
-set net:max-retries 3
+set net:max-retries 8
+set net:reconnect-interval-base 5
+set net:reconnect-interval-max 30
+set net:timeout 30
 set ftp:ssl-allow yes
 set ssl:verify-certificate ${FTP_VERIFY_CERT:-yes}
 open --env-password -u "${FTP_USER}" "${URL}"

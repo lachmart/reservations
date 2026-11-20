@@ -1,71 +1,54 @@
 # Deployment
 
-Production host: **SSH-enabled shared hosting** (`www.marakarental.cz`).
-Approach: build assets locally, `rsync` the code up, run Composer + Artisan on the
-server. Automated by [`deploy.sh`](./deploy.sh).
+Production: **www.marakarental.cz on Váš Hosting, FTP only** (no SSH, no Composer on
+the server, PHP 8.5). Deploy with [`deploy-ftp.sh`](./deploy-ftp.sh). The older
+SSH-based flow is kept in [`DEPLOY-SSH.md`](./DEPLOY-SSH.md) for hosts that have SSH.
 
-## One-time server setup
+## How it works
 
-Do these once, by hand, before the first `./deploy.sh`.
+- The whole project is uploaded into the web root (`/www`). The root `.htaccess` sends
+  every request into `public/`, so `.env`, `vendor/` and the source are never served.
+- `vendor/` is built locally (`composer install --no-dev`, platform pinned to PHP 8.3 in
+  `composer.json`, so it runs on 8.3–8.5) and uploaded.
+- Everything that used to be `php artisan …` runs through the app itself:
+  `POST /_maintenance/{task}` with header `X-Maintenance-Token` (value =
+  `MAINTENANCE_TOKEN` in the server `.env`; the endpoint is 404 without it), or the
+  admin page **Údržba**. Tasks: `deploy` (migrate + caches + storage link), `migrate`,
+  `optimize`, `storage-link`, and `import-database` (moving hosts only, refuses a
+  non-empty database).
 
-1. **Point the subdomain's document root at `.../public`.**
-   Laravel must be served from its `public/` folder, never the app root. Set this in your
-   hosting panel (subdomain / web root = `<REMOTE_PATH>/public`). If the panel forces a
-   fixed docroot you can't change, tell me and I'll give you the `public`-relocation
-   workaround.
-
-2. **Create the app directory** on the server, e.g. `~/www/reservations`
-   (this becomes `REMOTE_PATH`).
-
-3. **Upload the environment file** (the script never uploads it — it holds secrets):
-   ```bash
-   scp .env.production <user>@www.marakarental.cz:~/www/reservations/.env
-   ```
-   Confirm on the server that `APP_ENV=production`, `APP_DEBUG=false`, the `DB_*` values,
-   and `MCP_TOKEN` are correct. `APP_KEY` is already set in `.env.production`.
-
-4. **Database**: the `DB_*` in `.env.production` point at `rezervace_27`. Ensure that DB
-   exists and the user has access. First deploy will run migrations (`RUN_MIGRATIONS=1`),
-   or import a dump manually via phpMyAdmin/Adminer and set `RUN_MIGRATIONS=0` initially.
-
-5. **Ownership / writable dirs**: handled automatically on every deploy. You connect as
-   **root**, but the web server needs files owned by `www-data`. After syncing and running
-   Composer/Artisan (which, as root, create root-owned `vendor/` and caches), the script
-   runs `chown -R www-data:www-data` over the app and makes `storage/` and
-   `bootstrap/cache/` writable. Set `WEB_USER`/`WEB_GROUP` in `.deploy.env` if your host
-   uses a different web user.
-
-## Routine deploy
+## Everyday deploy
 
 ```bash
-cp .deploy.env.example .deploy.env   # first time only — fill in host + path
-./deploy.sh --dry-run                # preview what rsync will change
-./deploy.sh                          # deploy for real
+./deploy-ftp.sh            # build, upload, migrate + caches, check the home page
+./deploy-ftp.sh --dry-run  # show what would be uploaded
+./deploy-ftp.sh --build-only
 ```
 
-What `deploy.sh` does each run:
-1. `npm ci && npm run build` locally (the host has no Node, so assets are built here).
-2. `rsync` the code up — **excludes** `.env`, `vendor/`, `node_modules/`, `.git`, tests,
-   and server-owned runtime dirs (uploaded media, logs, sessions, caches). `public/build`
-   **is** shipped.
-3. Over SSH (as root): `composer install --no-dev -o`, optional `migrate --force`,
-   `storage:link`, and rebuilds config/route/view/Filament caches — wrapped in
-   `artisan down`/`up` maintenance mode — then `chown -R www-data:www-data` so the web
-   server owns everything.
+Needs locally: `lftp`, `rsync`, `npm`, `php` 8.3+ and `composer`. Config lives in the
+git-ignored `.deploy-ftp.env` (template: `.deploy-ftp.env.example`). The upload deletes
+stale files only inside the app folders; `storage/` (photos, logs), `public/storage`,
+`.env` and anything else in the web root are never deleted.
 
-> **rsync note:** macOS ships `openrsync`, which lacks `--chown`. The script detects this
-> and falls back to not stamping your local UID; the server-side `chown` fixes ownership
-> either way. Nothing to configure.
+If a deploy fails halfway, rerun it; or open Admin → Údržba → "Po nahrání".
 
-## MCP servers in production
+## Server .env
 
-The MCP endpoints (`/mcp/reservations`, `/mcp/admin` — see [MCP.md](./MCP.md)) ship with
-the app, so they'll be live at `https://www.marakarental.cz/mcp/...` after deploy. Make
-sure a **strong** `MCP_TOKEN` is set in the server `.env` (different from local). With
-`APP_DEBUG=false` (now fixed), errors no longer leak that token.
+Kept locally as `.env.production` (git-ignored). With `UPLOAD_ENV=1` the script uploads
+it as the server `.env` on every deploy, so change settings there, not on the server.
+Must contain `MAINTENANCE_TOKEN` (same value as in `.deploy-ftp.env`).
 
-## Rollback
+If the host ever refuses the `public/storage` symlink, set `PUBLIC_STORAGE_IN_PUBLIC=true`
+and keep product photos in `public/storage` instead (Váš Hosting allows the symlink).
 
-`deploy.sh` doesn't keep releases. If a deploy breaks things, re-run it from a known-good
-local commit (`git checkout <good-sha>` → `./deploy.sh`). If you want zero-downtime
-timestamped releases with an instant symlink rollback, say so and I'll extend the script.
+## Moving to another host (done once, 2026-11-20)
+
+1. Create the database and FTP account; put them into `.env.production` / `.deploy-ftp.env`.
+2. Dump the old database (gzip SQL, no `LOCK TABLES`) and copy the old
+   `storage/app/public` locally.
+3. In `.deploy-ftp.env` set `SITE_IP` (new server), `MOVE_DUMP` and `MOVE_MEDIA`, then run
+   `./deploy-ftp.sh`. It imports the dump into the empty database, uploads the photos and
+   runs the deploy tasks; checks go to the new server by IP over HTTP.
+4. Test the new server by IP, then switch DNS. After the switch: clear `MOVE_*` and
+   `SITE_IP`, make sure HTTPS is issued for the domain, and copy over any reservations
+   made on the old server in the meantime.
