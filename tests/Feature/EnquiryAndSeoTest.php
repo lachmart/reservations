@@ -64,6 +64,7 @@ class EnquiryAndSeoTest extends TestCase
     {
         $this->get(route('home'))
             ->assertOk()
+            ->assertSee('<html lang="cs"', false)
             ->assertSee('<title>'.e(config('seo.home.title')).'</title>', false)
             ->assertSee('Pronájem ozvučení a&nbsp;světel', false)
             ->assertSee('"@type":"FAQPage"', false)
