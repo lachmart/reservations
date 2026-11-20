@@ -45,7 +45,9 @@ class ReservationResource extends Resource
                     ->label('Event type')
                     ->options(array_combine(\App\Services\ReservationBooking::EVENT_TYPES, \App\Services\ReservationBooking::EVENT_TYPES)),
                 Forms\Components\Toggle::make('delivery')
-                    ->label('Delivery & set-up'),
+                    ->label('Delivery & pick-up'),
+                Forms\Components\Toggle::make('service')
+                    ->label('Installation / operator (extra)'),
                 Forms\Components\Select::make('delivery_zone')
                     ->label('Delivery zone')
                     ->options(collect(config('contact.delivery_zones'))->map(fn ($z) => $z['label'])->all()),

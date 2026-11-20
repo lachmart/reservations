@@ -49,12 +49,12 @@ return [
     'faq' => [
         [
             'q' => 'Kolik stojí pronájem ozvučení na svatbu nebo oslavu?',
-            'a' => 'Cena se počítá za den. Hotové sety stojí: proslovy a hudba z mobilu 950 Kč, DJ párty se světly 1 290 Kč, svatební obřad 1 500 Kč a svatba s kapelou (2 topy + 2 subwoofery) 4 990 Kč za den. Dovoz, zapojení a odvoz v Olomouci je za 600 Kč, do 25 km za 1 000 Kč. Košík vám spočítá celkovou cenu za celý termín včetně dopravy.',
+            'a' => 'Cena se počítá za den. Hotové sety stojí: proslovy a hudba z mobilu 950 Kč, DJ párty se světly 1 290 Kč, svatební obřad (2 bedny na baterii + mikrofony) 1 190 Kč a svatba s kapelou (2 topy + 2 subwoofery) 4 990 Kč za den. Dovoz a odvoz v Olomouci je za 600 Kč, do 25 km za 1 000 Kč. Instalaci, zapojení nebo obsluhu technikem naceníme zvlášť. Košík vám spočítá celkovou cenu za celý termín včetně dopravy.',
             'link' => ['url' => '/ozvuceni-svatby-olomouc', 'label' => 'Sety pro svatby a oslavy'],
         ],
         [
             'q' => 'Dovezete a zapojíte techniku?',
-            'a' => 'Ano, techniku dovezeme, postavíme, zapojíme a po akci zase odvezeme. V Olomouci za 600 Kč, do 25 km (Šternberk, Prostějov, Přerov, Litovel) za 1 000 Kč, do 50 km za 1 600 Kč, dál podle domluvy. Menší sety si můžete vyzvednout i sami.',
+            'a' => 'Ano. Dovoz a odvoz stojí v Olomouci 600 Kč, do 25 km (Šternberk, Prostějov, Přerov, Litovel) 1 000 Kč, do 50 km 1 600 Kč, dál podle domluvy. Instalaci a zapojení, případně obsluhu technikem po celou akci, naceníme zvlášť podle rozsahu. Menší sety si můžete vyzvednout i sami.',
         ],
         [
             'q' => 'Pro kolik lidí ozvučení zvládne?',

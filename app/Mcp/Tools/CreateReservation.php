@@ -65,11 +65,12 @@ class CreateReservation extends BaseTool
             ->raw('delivery_zone', [
                 'type' => 'string',
                 'enum' => array_keys(ReservationBooking::deliveryZones()),
-                'description' => 'Delivery and set-up zone; its price is added to the total. '
+                'description' => 'Transport zone (delivery and pick-up); its price is added to the total. '
                     .collect(ReservationBooking::deliveryZones())
                         ->map(fn ($z, $k) => "{$k}: {$z['label']} (".(is_null($z['price']) ? 'quoted later' : "{$z['price']} CZK").')')
                         ->implode('; ').'.',
             ])
+            ->boolean('service')->description('Customer wants installation, wiring or an operator on site. Extra cost, quoted later.')
             ->boolean('delivery')->description('Use delivery_zone instead. true without a zone = delivery wanted, priced later.')
             ->string('note')->description('Free-form note for the rental company.');
 
@@ -175,10 +176,12 @@ class CreateReservation extends BaseTool
             'currency' => 'CZK',
             'price_note' => match (true) {
                 ! $reservation->delivery => 'Rental price; the customer picks up the gear in Olomouc.',
-                is_null($reservation->delivery_price) => 'Rental price only. Delivery and set-up are quoted by place and confirmed by the rental company.',
-                default => 'Rental plus estimated delivery and set-up. The rental company confirms the final price.',
+                is_null($reservation->delivery_price) => 'Rental price only. Transport is quoted by place and confirmed by the rental company.',
+                default => 'Rental plus estimated transport (delivery and pick-up). The rental company confirms the final price.',
             },
             'delivery_zone' => $reservation->delivery_zone,
+            'service' => (bool) $reservation->service,
+            'service_note' => $reservation->service ? 'Installation / operator requested; quoted separately, not included in price.' : null,
             'event_place' => $reservation->event_place,
             'event_type' => $reservation->event_type,
             'delivery' => (bool) $reservation->delivery,

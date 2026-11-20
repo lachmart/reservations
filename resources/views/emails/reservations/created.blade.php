@@ -15,12 +15,15 @@
     @php($__delivery = (float) ($reservation->delivery_price ?? 0))
     <li>Cena za techniku: {{ number_format((float) $reservation->price - $__delivery, 2, ',', ' ') }} Kč</li>
     @if($reservation->delivery && ! is_null($reservation->delivery_price))
-        <li>{{ $__zone['label'] ?? 'Dovoz a zapojení' }}: {{ number_format($__delivery, 2, ',', ' ') }} Kč (orientačně)</li>
+        <li>{{ $__zone['label'] ?? 'Dovoz a odvoz' }}: {{ number_format($__delivery, 2, ',', ' ') }} Kč (orientačně)</li>
         <li><strong>Celkem: {{ number_format((float) $reservation->price, 2, ',', ' ') }} Kč</strong></li>
     @elseif($reservation->delivery)
-        <li>Dovoz a zapojení: ano (cenu podle místa potvrdíme)</li>
+        <li>Dovoz a odvoz: ano (cenu podle místa potvrdíme)</li>
     @else
-        <li>Dovoz a zapojení: ne, vyzvednutí osobně</li>
+        <li>Doprava: ne, vyzvednutí osobně</li>
+    @endif
+    @if($reservation->service)
+        <li>Instalace, zapojení nebo obsluha: ano (cenu potvrdíme podle rozsahu)</li>
     @endif
     @if(!empty($reservation->event_type))
         <li>Typ akce: {{ $reservation->event_type }}</li>

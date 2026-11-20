@@ -38,7 +38,8 @@ class PublicServer extends BaseServer
     - Dates accept ISO-8601 (e.g. "2027-07-06" or "2027-07-06 14:00"); end_date must be
       after start_date. A one-day event is e.g. 2027-07-06 10:00 to 2027-07-07 10:00.
     - Give the customer's phone or e-mail (at least one), and the event place and type so
-      delivery can be priced. Delivery and set-up are confirmed and priced separately.
+      transport can be priced. Pick a delivery_zone for transport (delivery and pick-up);
+      installation, wiring or an operator on site are extra (service = true), quoted later.
     - New reservations are unconfirmed and unpaid until the rental company confirms them.
     - This endpoint cannot modify or delete existing reservations, nor manage the catalog.
     TXT;

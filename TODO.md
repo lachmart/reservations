@@ -1,6 +1,7 @@
 # TODO (z testu webu 20. 11. 2026)
 
-Hotovo v kódu: A1–A3, B1–B3, C1 (aria-label), C3 (sety), C4 (FAQ s cenami), C5, D2 (3 vstupní stránky), část D1 a D3, pásma dopravy.
+Hotovo v kódu (ceny dopravy 600/1 000/1 600 Kč potvrzené, instalace a obsluha za příplatek):
+ A1–A3, B1–B3, C1 (aria-label), C3 (sety), C4 (FAQ s cenami), C5, D2 (3 vstupní stránky), část D1 a D3, pásma dopravy.
 Níže je, co zbývá. Většinou jde o obsah nebo rozhodnutí, ne o kód.
 
 ## C. UX a obsah
@@ -10,12 +11,8 @@ Níže je, co zbývá. Většinou jde o obsah nebo rozhodnutí, ne o kód.
       dá přepsat ručně, ale není to vidět. Při `showMonths: 2` flatpickr nepodporuje
       `monthSelectorType: 'dropdown'`. Varianty: vlastní select „měsíc + rok“ nad
       kalendářem, nebo zapnout `allowInput` s parsováním „06.07.2027 do 07.07.2027“.
-- [ ] **C3 zkontrolovat sety** (`database/migrations/2026_11_21_000000_create_event_sets.php`):
-      složení a ceny navrhl Claude. Hlavně: potřebují topy Nexo PS15R2 a subwoofery MT18
-      opravdu „Amprack FP“? Úpravy pak v adminu.
-- [ ] **C4/B2 ceny dopravy** (`config/contact.php`, `delivery_zones`): 600 / 1 000 / 1 600 Kč,
-      dál dohodou. Navrženo bez ceníku, potvrdit. Texty FAQ (`config/seo.php`, `config/landing.php`)
-      ceny opakují, při změně upravit i tam.
+- [ ] **C3 Nexo rack do setu Svatba s kapelou**: PS15R2 potřebují Nexo rack, který v katalogu
+      není. Založit produkt (cena/den, počet kusů) a přidat ho do setu; MT18 jede z Amprack FP.
 
 ## D. SEO
 - [ ] **D1** doplnit `openingHours` do LocalBusiness (`layouts/app.blade.php`), chybí údaje.

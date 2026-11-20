@@ -48,6 +48,7 @@ class GetReservation extends BaseTool
             'delivery' => (bool) $reservation->delivery,
             'delivery_zone' => $reservation->delivery_zone,
             'delivery_price' => $reservation->delivery_price,
+            'service' => (bool) $reservation->service,
             'source' => $reservation->source,
             'is_active' => $reservation->is_active,
             'is_paid' => $reservation->is_paid,

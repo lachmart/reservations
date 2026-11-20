@@ -245,8 +245,13 @@
                                     </label>
                                 @endforeach
                             </div>
-                            <p class="mt-1 text-xs text-faint">Orientační cena za dovoz, zapojení i odvoz. Konečnou potvrdíme.</p>
+                            <p class="mt-1 text-xs text-faint">Orientační cena za dovoz a odvoz. Konečnou potvrdíme.</p>
                         </fieldset>
+                        <label class="flex items-start gap-2 text-sm text-ink">
+                            <input type="hidden" name="service" value="0">
+                            <input type="checkbox" name="service" value="1" class="mt-1" @checked(old('service') === '1')>
+                            <span><span class="font-semibold">Chci i instalaci a zapojení, případně obsluhu</span><br><span class="text-muted">Za příplatek, cenu potvrdíme podle rozsahu.</span></span>
+                        </label>
                         <div><label class="label" for="checkout-note">Poznámka</label><textarea id="checkout-note" name="note" class="field" rows="3" maxlength="1000">{{ old('note') }}</textarea></div>
                         <button class="btn-primary w-full py-3" type="submit" {{ count($items) === 0 ? 'disabled' : '' }}>Odeslat rezervaci</button>
                         <p class="text-center text-xs text-faint">Ozveme se vám s potvrzením a konečnou cenou včetně dovozu.</p>

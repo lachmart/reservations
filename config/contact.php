@@ -15,14 +15,15 @@ return [
         (string) env('RESERVATION_NOTIFY_EMAIL', env('CONTACT_EMAIL', 'info@marakarental.cz'))
     )))),
 
-    // Delivery and set-up, priced per zone around Olomouc (CZK per event: delivery,
-    // set-up and pick-up). price null = priced individually and confirmed later.
+    // Transport, priced per zone around Olomouc (CZK per event: delivery and pick-up).
+    // Installation, wiring and operating the gear are extra, quoted on request.
+    // price null = priced individually and confirmed later.
     // The first zone is the default in the cart.
     'delivery_zones' => [
-        'olomouc' => ['label' => 'Dovoz a zapojení: Olomouc', 'price' => 600],
-        'okoli' => ['label' => 'Dovoz a zapojení: do 25 km (Šternberk, Prostějov, Přerov, Litovel…)', 'price' => 1000],
-        'region' => ['label' => 'Dovoz a zapojení: 25–50 km (Uničov, Hranice, Kroměříž…)', 'price' => 1600],
-        'dal' => ['label' => 'Dovoz a zapojení: dál, cenu potvrdíme', 'price' => null],
+        'olomouc' => ['label' => 'Dovoz a odvoz: Olomouc', 'price' => 600],
+        'okoli' => ['label' => 'Dovoz a odvoz: do 25 km (Šternberk, Prostějov, Přerov, Litovel…)', 'price' => 1000],
+        'region' => ['label' => 'Dovoz a odvoz: 25–50 km (Uničov, Hranice, Kroměříž…)', 'price' => 1600],
+        'dal' => ['label' => 'Dovoz a odvoz: dál, cenu potvrdíme', 'price' => null],
         'pickup' => ['label' => 'Vyzvednu si osobně v Olomouci', 'price' => 0],
     ],
 ];

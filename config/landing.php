@@ -10,19 +10,19 @@ return [
     'pages' => [
         'ozvuceni-svatby-olomouc' => [
             'title' => 'Ozvučení svatby Olomouc: obřad, hostina, kapela i DJ | Maraka rental',
-            'meta_description' => 'Pronájem ozvučení na svatbu v Olomouci a okolí. Hotové sety pro obřad, proslovy, kapelu i DJ s cenou předem, dovoz a zapojení. Rezervace online.',
+            'meta_description' => 'Pronájem ozvučení na svatbu v Olomouci a okolí. Hotové sety pro obřad, proslovy, kapelu i DJ s cenou předem, dovoz i zapojení. Rezervace online.',
             'kicker' => 'Svatby',
             'nav_label' => 'Ozvučení svatby',
             'h1' => 'Ozvučení svatby v Olomouci a okolí',
-            'intro' => 'Půjčíme a zapojíme zvuk na celý svatební den: obřad s mikrofonem pro oddávajícího, hudbu a proslovy na hostině a pořádný zvuk pro kapelu nebo DJ večer. Ceny vidíte předem, termín si ověříte a rezervujete online.',
+            'intro' => 'Půjčíme zvuk na celý svatební den: obřad s mikrofonem pro oddávajícího, hudbu a proslovy na hostině a pořádný zvuk pro kapelu nebo DJ večer. Ceny vidíte předem, termín si ověříte a rezervujete online.',
             'sets_heading' => 'Hotové sety pro svatbu',
-            'sets' => ['svatebmi-balicek-obrad', 'set-proslovy-a-hudba', 'set-dj-party', 'set-svatba-s-kapelou'],
+            'sets' => ['set-svatebni-obrad', 'set-proslovy-a-hudba', 'set-dj-party', 'set-svatba-s-kapelou'],
             'sections' => [
-                ['Obřad', 'Na obřad stačí jedna až dvě bedny a bezdrátový mikrofon pro oddávajícího a svědky. Hudbu na nástup pustíte z mobilu nebo notebooku. Venku na zahradě i v obřadní síni.'],
+                ['Obřad', 'Set Svatební obřad má dvě bedny JBL na baterii a bezdrátový dvojitý mikrofon pro oddávajícího a svědky. Nepotřebujete zásuvku, takže funguje na zahradě, u rybníka i v obřadní síni. Hudbu na nástup pustíte z mobilu.'],
                 ['Hostina a proslovy', 'Na přípitek, proslovy a hudbu k jídlu stačí menší set s bezdrátovým mikrofonem. Pokud je obřad i hostina na jednom místě, vystačíte si s jedním setem po celý den.'],
                 ['Kapela', 'Většina svatebních kapel vozí vlastní mixpult a potřebuje jen reproduktory. Set Svatba s kapelou má dva topy Nexo a dva subwoofery a utáhne sál do zhruba 250 hostů. Bez subwooferů by basa a bicí na tanečním parketu zněly slabě.'],
                 ['DJ', 'DJ zapojí svůj kontrolér rovnou do aktivních beden. Set DJ párty přidává dvě LED světla, aby parket nebyl po setmění potmě.'],
-                ['Jak to probíhá', 'Vyberte termín a set a odešlete rezervaci, nebo nám jen napište poptávku. Ozveme se s potvrzením. V den svatby techniku dovezeme, zapojíme, vyzkoušíme a po akci zase odvezeme.'],
+                ['Jak to probíhá', 'Vyberte termín a set a odešlete rezervaci, nebo nám jen napište poptávku. Ozveme se s potvrzením. V den svatby techniku dovezeme a po akci odvezeme. Instalaci a zapojení, případně obsluhu po celou akci, vám rádi naceníme zvlášť.'],
             ],
             'products_heading' => 'Doplňky na svatbu',
             'products' => [
@@ -37,7 +37,7 @@ return [
             ],
             'faq' => [
                 ['Potřebuju na svatbu subwoofer?', 'Na obřad a proslovy ne. Na kapelu nebo DJ, kde se tančí, ano: bez subwooferu chybí basy a hudba zní plochá. Proto ho mají sety Svatba s kapelou i větší sestavy.'],
-                ['Kolik stojí ozvučení svatby?', 'Set na obřad nebo proslovy vyjde od 950 Kč za den, DJ párty se světly na 1 290 Kč a zvuk pro kapelu (2 topy + 2 subwoofery) na 4 990 Kč za den. K tomu dovoz, zapojení a odvoz: v Olomouci 600 Kč, do 25 km 1 000 Kč.'],
+                ['Kolik stojí ozvučení svatby?', 'Set na obřad nebo proslovy vyjde od 950 Kč za den, DJ párty se světly na 1 290 Kč a zvuk pro kapelu (2 topy + 2 subwoofery) na 4 990 Kč za den. K tomu dovoz a odvoz: v Olomouci 600 Kč, do 25 km 1 000 Kč. Instalace a obsluha za příplatek.'],
                 ['Jak dlouho dopředu rezervovat?', 'Svatební sobota v sezóně bývá obsazená i rok dopředu. Termín si můžete zarezervovat online hned, jakmile znáte datum.'],
                 ['Zapojíte techniku i na zahradě nebo ve stanu?', 'Ano, potřebujeme jen zásuvku 230 V poblíž. Prodlužovací kabely a rozbočovače přivezeme.'],
             ],
@@ -45,7 +45,7 @@ return [
 
         'ozvuceni-kapely' => [
             'title' => 'Ozvučení kapely: pronájem PA, mixpultů a mikrofonů Olomouc | Maraka rental',
-            'meta_description' => 'Pronájem ozvučení pro kapelu v Olomouci: PA Nexo se subwoofery, digitální mixpulty Allen&Heath, mikrofony na zpěv i bicí a kabeláž. Ceny online, dovoz a zapojení.',
+            'meta_description' => 'Pronájem ozvučení pro kapelu v Olomouci: PA Nexo se subwoofery, digitální mixpulty Allen&Heath, mikrofony na zpěv i bicí a kabeláž. Ceny online, dovoz, instalace i obsluha.',
             'kicker' => 'Kapely',
             'nav_label' => 'Ozvučení kapely',
             'h1' => 'Ozvučení pro kapelu: PA, mixpult, mikrofony',
@@ -74,7 +74,7 @@ return [
                 'Sennheiser e609',
             ],
             'faq' => [
-                ['Dovezete a zapojíte PA i pro kapelu?', 'Ano. Techniku dovezeme, postavíme a zapojíme, kapela si pak připojí svůj mixpult. V Olomouci za 600 Kč, do 25 km za 1 000 Kč.'],
+                ['Dovezete a zapojíte PA i pro kapelu?', 'Ano. Dovoz a odvoz stojí v Olomouci 600 Kč, do 25 km 1 000 Kč. Postavení a zapojení PA, případně zvukaře na celou akci, naceníme zvlášť.'],
                 ['Půjčíte i odposlechy?', 'Jako odposlechy fungují aktivní bedny dB Technologies Opera. Kolik jich potřebujete, záleží na sestavě, napište nám.'],
                 ['Můžeme si techniku vyzvednout sami?', 'Ano, v Olomouci. V košíku zvolte vyzvednutí osobně.'],
             ],
@@ -101,6 +101,7 @@ return [
                 'dB Technologies Opera 15',
                 'dB Technologies Opera Reevo 212',
                 'JBL Eon Compact One',
+                'AKG WMS40 Mini Dual',
                 'Nexo PS10R2',
                 'Nexo PS15R2 (2000W, 1x15"+1x3")',
                 'Subwoofer MT18',

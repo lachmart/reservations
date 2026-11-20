@@ -61,10 +61,10 @@
 {"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"create-reservation","arguments":{
   "name":"Jana Nováková","phone":"+420 777 123 456","email":"jana@example.com",
   "start_date":"2027-07-06 10:00","end_date":"2027-07-07 10:00",
-  "event_type":"Svatba","event_place":"Olomouc","delivery":true,
+  "event_type":"Svatba","event_place":"Olomouc","delivery_zone":"olomouc",
   "items":[{"product_id":12,"quantity":2},{"product_id":15,"quantity":2}]
 }}}</code></pre>
-        <p class="mt-3 text-sm text-muted">Stačí telefon, nebo e-mail. Cena v odpovědi je za techniku; dovoz a zapojení naceníme podle místa. Popis serveru: <a href="{{ url('/mcp/server-card.json') }}" class="font-semibold text-accent-ink underline dark:text-accent">server-card.json</a>.</p>
+        <p class="mt-3 text-sm text-muted">Stačí telefon, nebo e-mail. Cena v odpovědi je za techniku a dopravu podle zvoleného pásma (<code>delivery_zone</code>); instalaci nebo obsluhu (<code>service</code>) naceníme zvlášť. Popis serveru: <a href="{{ url('/mcp/server-card.json') }}" class="font-semibold text-accent-ink underline dark:text-accent">server-card.json</a>.</p>
 
         <div class="mt-12 rounded-2xl px-6 py-6" style="background:var(--ink)">
             <p class="font-display text-lg font-bold" style="color:var(--paper)">Raději napřímo?</p>

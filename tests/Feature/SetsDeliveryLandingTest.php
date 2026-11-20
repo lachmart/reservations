@@ -29,6 +29,8 @@ class SetsDeliveryLandingTest extends TestCase
         'dB Technologies Opera 12' => [500, 6],
         'Sennheiser XSW 2-835 B' => [300, 1],
         'Allen&Heath ZED6' => [200, 1],
+        'JBL Eon Compact One' => [500, 2],
+        'AKG WMS40 Mini Dual' => [250, 1],
     ];
 
     private function seedCatalog(): void
@@ -169,5 +171,46 @@ class SetsDeliveryLandingTest extends TestCase
             ->assertOk()
             ->assertSee(url('ozvuceni-svatby-olomouc'))
             ->assertSee(url('pronajem-reproduktoru-olomouc'));
+    }
+
+    public function test_ceremony_set_reuses_the_old_bundle_and_swaps_its_contents(): void
+    {
+        $this->seedCatalog();
+        $old = Product::factory()->create(['name' => 'Svatební balíček – obřad', 'slug' => 'svatebmi-balicek-obrad', 'price_per_day' => 1500, 'stock' => 1]);
+        $old->bundleItems()->attach(Product::where('name', 'dB Technologies Opera 15')->value('id'), ['amount' => 2]);
+
+        $migration = require database_path('migrations/2026_11_22_000000_rebuild_ceremony_set.php');
+        $migration->up();
+        $migration->up();
+
+        $set = $old->fresh();
+        $this->assertSame('set-svatebni-obrad', $set->slug);
+        $this->assertSame(1190.0, (float) $set->price_per_day);
+        $this->assertEqualsCanonicalizing(
+            ['JBL Eon Compact One' => 2, 'Konig&Meyer 21450 black' => 2, 'AKG WMS40 Mini Dual' => 1],
+            $set->bundleItems->mapWithKeys(fn ($c) => [$c->name => (int) $c->pivot->amount])->all(),
+        );
+        $this->assertSame(1, Product::where('name', 'like', '%obřad%')->count());
+
+        $this->runSetsMigration();
+        $this->get('/ozvuceni-svatby-olomouc')->assertOk()->assertSee('Set Svatební obřad');
+    }
+
+    public function test_service_request_is_stored_and_not_priced(): void
+    {
+        Mail::fake();
+        $p = Product::factory()->create(['stock' => 4, 'price_per_day' => 500]);
+        $this->withSession(['cart' => [
+            'start_date' => '2027-07-06 10:00:00', 'end_date' => '2027-07-07 10:00:00',
+            'items' => [$p->id => 1], 'bundles' => [],
+        ]]);
+
+        $this->post(route('cart.checkout'), ['name' => 'Jana', 'phone' => '1', 'delivery_zone' => 'olomouc', 'service' => '1'])
+            ->assertSessionHasNoErrors();
+
+        $r = Reservation::firstOrFail();
+        $this->assertTrue($r->service);
+        $this->assertSame(1100.0, (float) $r->price); // rental + transport only
+        Mail::assertSent(\App\Mail\ReservationCreated::class, fn ($m) => str_contains($m->render(), 'Instalace, zapojení nebo obsluha'));
     }
 }

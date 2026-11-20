@@ -29,11 +29,12 @@ Každý řádek je samostatný POST na endpoint výše (JSON-RPC 2.0):
 {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"my-agent","version":"1.0"}}}
 {"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"list-products","arguments":{}}}
 {"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"check-product-availability","arguments":{"product_id":12,"start_date":"2027-07-06 10:00","end_date":"2027-07-07 10:00"}}}
-{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"create-reservation","arguments":{"name":"Jana Nováková","phone":"+420 777 123 456","start_date":"2027-07-06 10:00","end_date":"2027-07-07 10:00","event_type":"Svatba","event_place":"Olomouc","delivery":true,"items":[{"product_id":12,"quantity":2},{"product_id":15,"quantity":2}]}}}
+{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"create-reservation","arguments":{"name":"Jana Nováková","phone":"+420 777 123 456","start_date":"2027-07-06 10:00","end_date":"2027-07-07 10:00","event_type":"Svatba","event_place":"Olomouc","delivery_zone":"olomouc","items":[{"product_id":12,"quantity":2},{"product_id":15,"quantity":2}]}}}
 ```
 
-Nová rezervace je nepotvrzená a nezaplacená, dokud ji nepotvrdíme. Cena je za techniku,
-dovoz a zapojení naceníme podle místa akce.
+Nová rezervace je nepotvrzená a nezaplacená, dokud ji nepotvrdíme. Cena zahrnuje techniku
+a dopravu podle pásma (`delivery_zone`: olomouc 600 Kč, okoli 1 000 Kč, region 1 600 Kč,
+dal dohodou, pickup 0 Kč). Instalaci, zapojení nebo obsluhu (`service: true`) naceníme zvlášť.
 
 ## Klíčové stránky
 

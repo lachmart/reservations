@@ -43,7 +43,7 @@ class ReservationBooking
     }
 
     /**
-     * Event details used to price delivery and set-up.
+     * Event details used to price transport and on-site service.
      */
     public static function eventRules(): array
     {
@@ -51,6 +51,7 @@ class ReservationBooking
             'event_place' => ['nullable', 'string', 'max:255'],
             'event_type' => ['nullable', 'string', 'max:100'],
             'delivery' => ['nullable', 'boolean'],
+            'service' => ['nullable', 'boolean'],
             'delivery_zone' => ['nullable', 'string', Rule::in(array_keys(self::deliveryZones()))],
             'note' => ['nullable', 'string', 'max:1000'],
         ];
@@ -240,6 +241,7 @@ class ReservationBooking
                 'delivery' => $delivery['delivery'],
                 'delivery_zone' => $delivery['delivery_zone'],
                 'delivery_price' => $delivery['delivery_price'],
+                'service' => (bool) ($details['service'] ?? false),
                 'source' => $source,
                 'start_date' => $start,
                 'end_date' => $end,
