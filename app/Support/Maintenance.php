@@ -103,7 +103,7 @@ class Maintenance
         try {
             Mail::raw(
                 "Zkušební e-mail z webu ".config('app.url')." (".now()->format('d.m.Y H:i').").\n"
-                ."Odesílání přes ".config('mail.mailers.smtp.host')." funguje. Není potřeba odpovídat.",
+                ."Odesílání (".self::mailRoute().") funguje. Není potřeba odpovídat.",
                 fn ($m) => $m->to($to)->subject('Maraka rental: zkušební e-mail'),
             );
         } catch (Throwable $e) {
@@ -112,7 +112,14 @@ class Maintenance
             return [false, 'Sending failed: '.$e->getMessage()];
         }
 
-        return [true, 'Sent to '.implode(', ', (array) $to).' via '.config('mail.mailers.smtp.host').'.'];
+        return [true, 'Sent to '.implode(', ', (array) $to).' via '.self::mailRoute().'.'];
+    }
+
+    private static function mailRoute(): string
+    {
+        $mailer = (string) config('mail.default');
+
+        return $mailer === 'smtp' ? 'SMTP '.config('mail.mailers.smtp.host') : $mailer;
     }
 
     private function stepMigrate(): array
