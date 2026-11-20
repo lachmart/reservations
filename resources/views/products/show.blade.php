@@ -3,7 +3,7 @@
 @section('title', $product->name . ' — pronájem Olomouc | Maraka rental')
 @section('meta_description', 'Pronájem ' . $product->name . ' za ' . number_format((float) $product->price_per_day, 0, ',', ' ') . ' Kč/den' . ($product->category ? ' — ' . $product->category->name : '') . '. Zkontrolujte dostupnost na váš termín a rezervujte online. Olomouc a okolí.')
 @section('og_type', 'product')
-@if($product->mainImageUrl())@section('og_image', $product->mainImageUrl())@endif
+@if($product->displayImageUrl())@section('og_image', $product->displayImageUrl())@endif
 
 @php($seoPrice = number_format((float) $product->price_per_day, 2, '.', ''))
 @push('schema')
@@ -13,7 +13,7 @@
     '@type' => 'Product',
     'name' => $product->name,
     'description' => $product->description ? strip_tags($product->description) : ('Pronájem ' . $product->name . ' pro vaši akci.'),
-    'image' => $product->mainImageUrl(),
+    'image' => $product->displayImageUrl(),
     'category' => optional($product->category)->name,
     'offers' => [
         '@type' => 'Offer',
@@ -50,7 +50,7 @@
     @php($avatarUrl = method_exists($product,'getFirstMediaUrl') ? $product->getFirstMediaUrl('avatar') : null)
     @php($fallbackAny = method_exists($product,'getFirstMediaUrl') ? $product->getFirstMediaUrl() : null)
     @php($galleryFirstUrl = ($galleryItems && $galleryItems->count() > 0) ? ($galleryItems->first()?->getUrl()) : null)
-    @php($mainUrl = $avatarUrl ?: ($galleryFirstUrl ?: $fallbackAny))
+    @php($mainUrl = $avatarUrl ?: ($galleryFirstUrl ?: ($fallbackAny ?: $product->displayImageUrl())))
     @php($datesSet = !empty($start) && !empty($end))
 
     <a href="{{ route('products.index') }}" class="text-sm font-semibold text-accent-ink hover:underline dark:text-accent">← Zpět na techniku</a>

@@ -77,6 +77,9 @@ class McpPublicServerTest extends TestCase
             ],
         ])));
 
+        // Czech wall-clock time, labelled with the Prague offset (summer: +02:00).
+        $this->assertSame('2027-07-06T10:00:00+02:00', $data['start_date']);
+
         // 1 day * (2 * 1000 + 2 * 1200)
         $this->assertSame(4400.0, (float) $data['price']);
         $this->assertSame(1, $data['days']);

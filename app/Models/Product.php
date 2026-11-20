@@ -157,6 +157,26 @@ class Product extends Model implements HasMedia
     }
 
     /**
+     * Image to show for the product: its own photo, or for a set without one, the
+     * photo of its first component that has a photo. Category tiles and the hero
+     * keep using mainImageUrl() so sets don't repeat their components there.
+     */
+    public function displayImageUrl(): ?string
+    {
+        if ($url = $this->mainImageUrl()) {
+            return $url;
+        }
+
+        foreach ($this->bundleItems as $child) {
+            if ($url = $child->mainImageUrl()) {
+                return $url;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Which icon to show when the product has no photo yet.
      * Matched on the product name first, then falls back to the category.
      */

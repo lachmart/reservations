@@ -81,8 +81,8 @@ class UpdateReservation extends BaseTool
             'changed_fields' => array_keys($data),
             'is_active' => $reservation->is_active,
             'is_paid' => $reservation->is_paid,
-            'start_date' => optional($reservation->start_date)->toIso8601String(),
-            'end_date' => optional($reservation->end_date)->toIso8601String(),
+            'start_date' => \App\Support\LocalTime::iso($reservation->start_date),
+            'end_date' => \App\Support\LocalTime::iso($reservation->end_date),
             'price' => $reservation->price,
         ]);
     }

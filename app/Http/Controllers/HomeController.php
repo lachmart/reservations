@@ -14,7 +14,7 @@ class HomeController extends Controller
         // gear: products that have a photo, then most valuable.
         $featured = Product::query()
             ->available()
-            ->with(['category', 'media'])
+            ->with(['category', 'media', 'bundleItems.media'])
             ->withCount(['media', 'bundleItems'])
             ->orderByDesc('bundle_items_count')
             ->orderByDesc('media_count')

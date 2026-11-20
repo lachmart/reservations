@@ -17,7 +17,7 @@ class LandingController extends Controller
         abort_unless(is_array($page), 404);
 
         $sets = $this->ordered(
-            Product::query()->available()->with(['category', 'media', 'bundleItems'])
+            Product::query()->available()->with(['category', 'media', 'bundleItems.media'])
                 ->whereIn('slug', $page['sets'] ?? [])->get(),
             'slug',
             $page['sets'] ?? [],
