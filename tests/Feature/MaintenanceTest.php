@@ -61,4 +61,19 @@ class MaintenanceTest extends TestCase
             ->callAction(TestAction::make('migrate'))
             ->assertNotified();
     }
+
+    public function test_database_import_refuses_a_database_that_has_tables(): void
+    {
+        config(['app.maintenance_token' => 'secret']);
+        file_put_contents(Maintenance::importPath(), gzencode('CREATE TABLE should_not_exist (id INT);'));
+
+        try {
+            $this->post('/_maintenance/import-database', [], ['X-Maintenance-Token' => 'secret'])
+                ->assertStatus(500)
+                ->assertSee('not empty');
+            $this->assertFileExists(Maintenance::importPath());
+        } finally {
+            @unlink(Maintenance::importPath());
+        }
+    }
 }

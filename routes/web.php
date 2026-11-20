@@ -46,7 +46,7 @@ Route::get('/thank-you', [CartController::class, 'thankyou'])->name('cart.thanky
 
 // Server housekeeping without SSH (deploy-ftp.sh); token-protected, 404 if unset.
 Route::post('/_maintenance/{task}', MaintenanceController::class)
-    ->whereIn('task', array_keys(Maintenance::TASKS))
+    ->whereIn('task', array_keys(Maintenance::TASKS + Maintenance::SCRIPT_TASKS))
     ->middleware('throttle:10,1')
     ->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class);
 

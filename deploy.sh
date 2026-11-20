@@ -102,6 +102,7 @@ RSYNC_ARGS=(-az --delete --human-readable
   --exclude 'node_modules'
   --exclude 'vendor'                        # rebuilt on the server by Composer
   --exclude '.ddev'
+  --exclude '/.build' --exclude 'deploy-ftp.sh' --exclude '.deploy-ftp.env*'
   --exclude 'tests' --exclude '.idea' --exclude '.vscode' --exclude '.fleet'
   --exclude 'auth.json'
   --exclude '/public/hot' --exclude '/public/storage'

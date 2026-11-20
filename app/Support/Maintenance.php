@@ -3,6 +3,8 @@
 namespace App\Support;
 
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Throwable;
 
 /**
@@ -20,6 +22,19 @@ class Maintenance
     ];
 
     /**
+     * Tasks only for the deploy script (not shown as admin buttons).
+     */
+    public const SCRIPT_TASKS = [
+        'import-database' => 'Import storage/app/import.sql.gz into an EMPTY database (moving hosts)',
+    ];
+
+    /** Where the moving dump is uploaded; deleted after a successful import. */
+    public static function importPath(): string
+    {
+        return storage_path('app/import.sql.gz');
+    }
+
+    /**
      * @return array{ok: bool, output: string}
      */
     public function run(string $task): array
@@ -29,7 +44,7 @@ class Maintenance
 
         $steps = match ($task) {
             'deploy' => ['migrate', 'optimize', 'storage-link'],
-            'migrate', 'optimize', 'storage-link' => [$task],
+            'migrate', 'optimize', 'storage-link', 'import-database' => [$task],
             default => throw new \InvalidArgumentException("Unknown maintenance task [{$task}]."),
         };
 
@@ -43,6 +58,40 @@ class Maintenance
         }
 
         return ['ok' => $ok, 'output' => implode("\n\n", $log)];
+    }
+
+    /**
+     * One-off import when moving hosts. Refuses to touch a database that already
+     * has tables, so it can never overwrite live data.
+     */
+    private function stepImportDatabase(): array
+    {
+        $path = self::importPath();
+
+        if (! is_file($path)) {
+            return [false, 'No dump at storage/app/import.sql.gz.'];
+        }
+
+        if (Schema::getTableListing() !== []) {
+            return [false, 'The database is not empty; refusing to import over existing tables.'];
+        }
+
+        $sql = gzdecode((string) file_get_contents($path));
+        if ($sql === false || trim($sql) === '') {
+            return [false, 'The dump could not be read (expected gzip SQL).'];
+        }
+
+        try {
+            DB::unprepared($sql);
+        } catch (Throwable $e) {
+            report($e);
+
+            return [false, 'Import failed: '.$e->getMessage()];
+        }
+
+        @unlink($path);
+
+        return [true, 'Imported '.count(Schema::getTableListing()).' tables; the dump file was deleted.'];
     }
 
     private function stepMigrate(): array
