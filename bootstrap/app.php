@@ -15,6 +15,11 @@ return Application::configure(basePath: dirname(__DIR__))
         // Redirect old/non-canonical hosts (api.*) to the canonical APP_URL host.
         $middleware->prepend(\App\Http\Middleware\EnforceCanonicalDomain::class);
 
+        // Point agents at the MCP server card and llms.txt from every page.
+        $middleware->web(append: [
+            \App\Http\Middleware\AddDiscoveryLinks::class,
+        ]);
+
         $middleware->api(append: [
             \Illuminate\Session\Middleware\StartSession::class,
         ]);

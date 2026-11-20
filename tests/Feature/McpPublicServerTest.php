@@ -286,4 +286,12 @@ class McpPublicServerTest extends TestCase
                 ->assertHeader('Cache-Control', 'max-age=3600, public');
         }
     }
+
+    public function test_pages_advertise_server_card_and_llms_txt_in_link_header(): void
+    {
+        $link = $this->get('/')->assertOk()->headers->get('Link');
+
+        $this->assertStringContainsString('<'.url('/mcp/server-card.json').'>; rel="service-desc"', $link);
+        $this->assertStringContainsString('<'.url('/llms.txt').'>; rel="describedby"', $link);
+    }
 }
