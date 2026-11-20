@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exceptions\ItemsUnavailable;
 use App\Models\Product;
 use App\Services\ReservationBooking;
+use App\Support\CartCount;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
@@ -193,7 +194,7 @@ class CartController extends Controller
             return response()->json(['status' => 'ok', 'start_date' => $cart['start_date'], 'end_date' => $cart['end_date']]);
         }
 
-        return back()->with('success', 'Term updated.');
+        return back()->with('success', 'Termín byl nastaven.');
     }
 
     public function add(Request $request): RedirectResponse|JsonResponse
@@ -214,7 +215,7 @@ class CartController extends Controller
 
         // If it's a bundle, we skip basic validation because stock on bundle might not be used correctly
         if (! $isBundle && $available !== null && ($currentQty + $amount) > $available) {
-            $message = "Cannot add – available quantity is {$available} pcs, you already have {$currentQty} pcs in cart.";
+            $message = "Nelze přidat: k dispozici je {$available} ks a v košíku už máte {$currentQty} ks.";
             if ($request->expectsJson()) {
                 return response()->json(['status' => 'error', 'message' => $message], 422);
             }
@@ -231,10 +232,10 @@ class CartController extends Controller
                     $required = (int) $child->pivot->amount * $amount;
                     if (($existing + $required) > $available) {
                         if ($request->expectsJson()) {
-                            return response()->json(['status' => 'error', 'message' => 'Requested bundle quantity is not available for the selected term.'], 422);
+                            return response()->json(['status' => 'error', 'message' => 'Set v tomto počtu není ve zvoleném termínu dostupný.'], 422);
                         }
 
-                        return back()->withErrors(['amount' => 'Requested bundle quantity is not available for the selected term.'])->withInput();
+                        return back()->withErrors(['amount' => 'Set v tomto počtu není ve zvoleném termínu dostupný.'])->withInput();
                     }
                 }
             }
@@ -251,10 +252,10 @@ class CartController extends Controller
                 $existing = (int) Arr::get($cart['items'], $product->id, 0);
                 if (($existing + $amount) > $available) {
                     if ($request->expectsJson()) {
-                        return response()->json(['status' => 'error', 'message' => 'Requested quantity is not available for the selected term.'], 422);
+                        return response()->json(['status' => 'error', 'message' => 'Požadované množství není ve zvoleném termínu dostupné.'], 422);
                     }
 
-                    return back()->withErrors(['amount' => 'Requested quantity is not available for the selected term.'])->withInput();
+                    return back()->withErrors(['amount' => 'Požadované množství není ve zvoleném termínu dostupné.'])->withInput();
                 }
             }
             $cart['items'][$product->id] = (int) Arr::get($cart['items'], $product->id, 0) + $amount;
@@ -264,14 +265,14 @@ class CartController extends Controller
 
         // JSON/AJAX path: do not redirect
         if ($request->expectsJson()) {
-            $totalCount = (int) array_sum((array) ($cart['items'] ?? []));
+            $totalCount = CartCount::of($cart);
             $perProductCount = (method_exists($product, 'isBundle') && $product->isBundle())
                 ? (int) Arr::get($cart, 'bundles.'.$product->id, 0)
                 : (int) Arr::get($cart, 'items.'.$product->id, 0);
 
             return response()->json([
                 'status' => 'ok',
-                'message' => 'Item was added to cart.',
+                'message' => 'Přidáno do košíku.',
                 'cart_count' => $totalCount,
                 'product_id' => (int) $product->id,
                 'product_is_bundle' => method_exists($product, 'isBundle') ? (bool) $product->isBundle() : false,
@@ -280,7 +281,7 @@ class CartController extends Controller
         }
 
         // Fallback: redirect for non-AJAX
-        return redirect()->back()->with('success', 'Item was added to cart.');
+        return redirect()->back()->with('success', 'Přidáno do košíku.');
     }
 
     public function update(Request $request, Product $product): RedirectResponse|JsonResponse
@@ -295,7 +296,7 @@ class CartController extends Controller
         $available = $product->available_quantity ?? $product->stock;
 
         if (! $isBundle && $available !== null && $amount > $available) {
-            $message = "Maximum quantity is {$available} pcs.";
+            $message = "Maximálně {$available} ks.";
             if ($request->expectsJson()) {
                 return response()->json(['status' => 'error', 'message' => $message], 422);
             }
@@ -305,17 +306,17 @@ class CartController extends Controller
 
         if (! isset($cart['items'][$product->id]) && ! $isBundle && ! isset($cart['bundles'][$product->id])) {
             if ($request->expectsJson()) {
-                return response()->json(['status' => 'error', 'message' => 'Item is not in cart.'], 404);
+                return response()->json(['status' => 'error', 'message' => 'Položka není v košíku.'], 404);
             }
 
-            return back()->withErrors(['item' => 'Item is not in cart.']);
+            return back()->withErrors(['item' => 'Položka není v košíku.']);
         }
         // The provided amount is intended to update only the standalone quantity (excluding bundle contributions)
         $newStandalone = (int) $data['amount'];
         $bundleContrib = $this->bundleContributionForProduct($product, $cart);
         $desiredTotal = $bundleContrib + $newStandalone;
 
-        $message = 'Quantity was updated.';
+        $message = 'Množství bylo upraveno.';
         if (! empty($cart['start_date']) && ! empty($cart['end_date'])) {
             $available = $product->availableForRange($cart['start_date'], $cart['end_date']);
             if ($desiredTotal > $available) {
@@ -323,7 +324,7 @@ class CartController extends Controller
                 $maxStandalone = max(0, (int) $available - (int) $bundleContrib);
                 $newStandalone = $maxStandalone;
                 $desiredTotal = $bundleContrib + $newStandalone;
-                $message = 'Requested quantity was not available, so it was adjusted to maximum available.';
+                $message = 'Tolik kusů není k dispozici, upravili jsme množství na maximum.';
             }
         }
         if ($desiredTotal > 0) {
@@ -334,7 +335,7 @@ class CartController extends Controller
         $this->putCart($request, $cart);
 
         if ($request->expectsJson()) {
-            $totalCount = (int) array_sum((array) ($cart['items'] ?? []));
+            $totalCount = CartCount::of($cart);
 
             return response()->json([
                 'status' => 'ok',
@@ -360,14 +361,14 @@ class CartController extends Controller
         $cart = $this->getCart($request);
         if (! isset($cart['bundles'][$product->id])) {
             if ($request->expectsJson()) {
-                return response()->json(['status' => 'error', 'message' => 'Bundle is not in cart.'], 404);
+                return response()->json(['status' => 'error', 'message' => 'Set není v košíku.'], 404);
             }
 
-            return back()->withErrors(['item' => 'Bundle is not in cart.']);
+            return back()->withErrors(['item' => 'Set není v košíku.']);
         }
         $current = (int) $cart['bundles'][$product->id];
         $requestedAmount = (int) $data['amount'];
-        $message = 'Bundle quantity was updated.';
+        $message = 'Počet setů byl upraven.';
 
         // Clamp to max available bundles when dates are set
         $newAmount = $requestedAmount;
@@ -386,7 +387,7 @@ class CartController extends Controller
             }
             if ($newAmount > $maxNew) {
                 $newAmount = (int) $maxNew;
-                $message = 'Requested bundle quantity was not available, so it was adjusted to maximum available.';
+                $message = 'Tolik setů není k dispozici, upravili jsme počet na maximum.';
             }
         }
 
@@ -409,7 +410,7 @@ class CartController extends Controller
         $this->putCart($request, $cart);
 
         if ($request->expectsJson()) {
-            $totalCount = (int) array_sum((array) ($cart['items'] ?? []));
+            $totalCount = CartCount::of($cart);
 
             return response()->json([
                 'status' => 'ok',
@@ -436,7 +437,7 @@ class CartController extends Controller
         }
         $this->putCart($request, $cart);
 
-        return back()->with('success', 'Item was removed from cart.');
+        return back()->with('success', 'Položka byla odebrána.');
     }
 
     public function removeBundle(Request $request, Product $product): RedirectResponse
@@ -444,7 +445,7 @@ class CartController extends Controller
         // $product is the bundle product
         $cart = $this->getCart($request);
         if (! isset($cart['bundles'][$product->id])) {
-            return back()->withErrors(['item' => 'Bundle is not in cart.']);
+            return back()->withErrors(['item' => 'Set není v košíku.']);
         }
         $bundleQty = (int) $cart['bundles'][$product->id];
         // Reduce child items accordingly
@@ -462,14 +463,14 @@ class CartController extends Controller
         unset($cart['bundles'][$product->id]);
         $this->putCart($request, $cart);
 
-        return back()->with('success', 'Bundle was removed from cart.');
+        return back()->with('success', 'Set byl odebrán.');
     }
 
     public function clear(Request $request): RedirectResponse
     {
         $request->session()->forget('cart');
 
-        return back()->with('success', 'Cart was cleared.');
+        return back()->with('success', 'Košík byl vyprázdněn.');
     }
 
     public function thankyou(): View

@@ -112,7 +112,8 @@
             if (!box) {
                 box = document.createElement('div');
                 box.id = 'toast-box';
-                box.style.cssText = 'position:fixed;top:1rem;right:1rem;z-index:9999;display:flex;flex-direction:column;gap:.5rem';
+                // Below the sticky header and click-through, so it never covers the cart button.
+                box.style.cssText = 'position:fixed;top:4.75rem;right:1rem;left:auto;max-width:calc(100vw - 2rem);z-index:9999;display:flex;flex-direction:column;gap:.5rem;pointer-events:none';
                 document.body.appendChild(box);
             }
             const t = document.createElement('div');
@@ -142,8 +143,8 @@
                     <span class="lg:hidden">Zavolat</span>
                 </a>
                 @php($__cart = session('cart', []))
-                @php($__cartCount = array_sum((array) ($__cart['items'] ?? [])))
-                <a href="{{ route('cart.index') }}" id="nav-cart-link" class="btn-secondary ml-1 py-2" aria-label="Košík{{ $__cartCount > 0 ? ' ('.$__cartCount.' ks)' : '' }}">
+                @php($__cartCount = \App\Support\CartCount::of((array) $__cart))
+                <a href="{{ route('cart.index') }}" id="nav-cart-link" class="btn-secondary ml-1 py-2" aria-label="Košík{{ $__cartCount > 0 ? ' ('.$__cartCount.' '.($__cartCount === 1 ? 'položka' : ($__cartCount < 5 ? 'položky' : 'položek')).')' : '' }}">
                     <svg class="size-4" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
                     <span class="hidden sm:inline">Košík</span>
                     <span data-cart-count class="inline-flex min-w-5 items-center justify-center rounded-full bg-accent px-1.5 text-xs font-bold text-accent-ink {{ $__cartCount > 0 ? '' : 'hidden' }}">{{ $__cartCount }}</span>
