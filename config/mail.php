@@ -49,6 +49,12 @@ return [
             'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url(env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
         ],
 
+        // PHP mail() via the hosting's sendmail, for hosts that block outbound
+        // sockets (Váš Hosting FTP plans). See App\Mail\Transport\PhpMailTransport.
+        'phpmail' => [
+            'transport' => 'phpmail',
+        ],
+
         'ses' => [
             'transport' => 'ses',
         ],

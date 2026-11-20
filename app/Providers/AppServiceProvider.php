@@ -21,5 +21,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         \Illuminate\Database\Eloquent\Model::unguard();
+
+        \Illuminate\Support\Facades\Mail::extend('phpmail', fn () => new \App\Mail\Transport\PhpMailTransport);
     }
 }
