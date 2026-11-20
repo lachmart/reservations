@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Support\Maintenance;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Livewire;
 use Mockery;
 use Tests\TestCase;
@@ -83,5 +84,15 @@ class MaintenanceTest extends TestCase
         config(['app.maintenance_token' => 'secret', 'session.driver' => 'database', 'session.table' => 'missing_sessions', 'cache.default' => 'database', 'cache.stores.database.table' => 'missing_cache']);
 
         $this->post('/_maintenance/migrate', [], ['X-Maintenance-Token' => 'secret'])->assertOk();
+    }
+
+    public function test_test_mail_task_sends_to_the_owner(): void
+    {
+        Mail::fake();
+        config(['app.maintenance_token' => 'secret', 'contact.owner_notify' => ['owner@example.com']]);
+
+        $this->post('/_maintenance/test-mail', [], ['X-Maintenance-Token' => 'secret'])
+            ->assertOk()
+            ->assertSee('Sent to owner@example.com');
     }
 }

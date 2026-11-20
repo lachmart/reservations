@@ -4,6 +4,7 @@ namespace App\Support;
 
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Schema;
 use Throwable;
 
@@ -26,6 +27,7 @@ class Maintenance
      */
     public const SCRIPT_TASKS = [
         'import-database' => 'Import storage/app/import.sql.gz into an EMPTY database (moving hosts)',
+        'test-mail' => 'Send a test e-mail to the owner inbox (checks the SMTP settings)',
     ];
 
     /** Where the moving dump is uploaded; deleted after a successful import. */
@@ -44,7 +46,7 @@ class Maintenance
 
         $steps = match ($task) {
             'deploy' => ['migrate', 'optimize', 'storage-link'],
-            'migrate', 'optimize', 'storage-link', 'import-database' => [$task],
+            'migrate', 'optimize', 'storage-link', 'import-database', 'test-mail' => [$task],
             default => throw new \InvalidArgumentException("Unknown maintenance task [{$task}]."),
         };
 
@@ -92,6 +94,25 @@ class Maintenance
         @unlink($path);
 
         return [true, 'Imported '.count(Schema::getTableListing()).' tables; the dump file was deleted.'];
+    }
+
+    private function stepTestMail(): array
+    {
+        $to = config('contact.owner_notify');
+
+        try {
+            Mail::raw(
+                "Zkušební e-mail z webu ".config('app.url')." (".now()->format('d.m.Y H:i').").\n"
+                ."Odesílání přes ".config('mail.mailers.smtp.host')." funguje. Není potřeba odpovídat.",
+                fn ($m) => $m->to($to)->subject('Maraka rental: zkušební e-mail'),
+            );
+        } catch (Throwable $e) {
+            report($e);
+
+            return [false, 'Sending failed: '.$e->getMessage()];
+        }
+
+        return [true, 'Sent to '.implode(', ', (array) $to).' via '.config('mail.mailers.smtp.host').'.'];
     }
 
     private function stepMigrate(): array
