@@ -51,7 +51,7 @@
 
             <div class="lg:col-span-5">
                 @php($heroProduct = $featured->first())
-                @php($heroImg = $heroProduct ? $heroProduct->mainImageUrl() : null)
+                @php($heroImg = $heroProduct ? $heroProduct->displayImageUrl() : null)
                 @if($heroProduct)
                     <a href="{{ route('products.show', $heroProduct) }}" class="group relative mx-auto block max-w-md rounded-2xl border border-line bg-surface p-6 shadow-card transition-[transform,box-shadow] duration-200 ease-out-quart hover:-translate-y-0.5 hover:shadow-lift lg:ml-auto">
                         <div class="flex items-center justify-between">
