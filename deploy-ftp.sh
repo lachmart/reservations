@@ -58,7 +58,7 @@ rsync -a --delete --delete-excluded \
   --exclude '/.claude' --exclude '/.idea' --exclude '/.vscode' --exclude '/.fleet' \
   --exclude '/node_modules' --exclude '/vendor' --exclude '/tests' \
   --exclude '.env' --exclude '.env.*' --exclude '*.env' --exclude '.deploy*' \
-  --exclude '/deploy.sh' --exclude '/deploy-ftp.sh' --exclude '/scripts' \
+  --exclude '/deploy-ftp.sh' --exclude '/scripts' \
   --exclude '/public/hot' --exclude '/public/storage' \
   --exclude '/storage/**' --exclude '/bootstrap/cache/*' \
   --exclude '.DS_Store' --exclude '*.log' --exclude '/*.xlsx' --exclude '/auth.json' \

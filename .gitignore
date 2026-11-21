@@ -21,7 +21,6 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
-.deploy.env
 # local secrets and data, never commit
 *.log
 
