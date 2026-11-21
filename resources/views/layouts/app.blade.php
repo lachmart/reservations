@@ -201,6 +201,7 @@
                     <div>{{ implode(', ', $addrParts) }},</div>
                     <div>{{ $addrCity }}</div>
                     <div>IČO: {{ config('contact.ico') }}</div>
+                    <div class="pt-1">{{ config('contact.hours') }}</div>
                 </address>
             </div>
             <div>

@@ -7,6 +7,9 @@ return [
     'email' => env('CONTACT_EMAIL', 'info@marakarental.cz'),
     'ico' => env('CONTACT_ICO', '07402767'),
     'address' => env('CONTACT_ADDRESS', 'Černá cesta 96/31, 779 00 Olomouc'),
+    // Shown as text; deliberately not in the structured data (Google reads
+    // missing hours as "closed" rather than "by appointment").
+    'hours' => env('CONTACT_HOURS', 'Výdej a vrácení techniky po domluvě'),
 
     // The owner's inbox(es) for new reservations and enquiries. Comma-separated
     // for several inboxes. Keep it different from MAIL_FROM_ADDRESS: a message sent
