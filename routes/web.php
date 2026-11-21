@@ -25,6 +25,11 @@ Route::post('/poptavka', [EnquiryController::class, 'store'])
     ->name('enquiry.store');
 
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+// Removed products → closest current page (config/redirects.php). Registered
+// before products.show so they win over the slug binding's 404.
+foreach (config('redirects.products', []) as $oldSlug => $target) {
+    Route::permanentRedirect('/products/'.$oldSlug, $target);
+}
 Route::get('/products/{product:slug}', [ProductController::class, 'show'])->name('products.show');
 
 // Cart routes
