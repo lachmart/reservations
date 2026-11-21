@@ -1,4 +1,12 @@
 #!/usr/bin/env bash
+
+# LEGACY: this deployed to the old SSH hosting, cancelled on 2026-11-21.
+# Production now runs on FTP-only hosting: use ./deploy-ftp.sh (see DEPLOY.md).
+# Kept for hosts with SSH; set ALLOW_SSH_DEPLOY=1 to run it on purpose.
+if [[ "${ALLOW_SSH_DEPLOY:-0}" != "1" ]]; then
+  echo "deploy.sh is legacy (old SSH hosting is gone). Use ./deploy-ftp.sh, or set ALLOW_SSH_DEPLOY=1." >&2
+  exit 1
+fi
 #
 # Repeatable deploy for the Reservations app to shared/SSH hosting.
 #

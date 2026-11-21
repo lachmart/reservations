@@ -2,7 +2,9 @@
 
 Production: **www.marakarental.cz on Váš Hosting, FTP only** (no SSH, no Composer on
 the server, PHP 8.5). Deploy with [`deploy-ftp.sh`](./deploy-ftp.sh). The older
-SSH-based flow is kept in [`DEPLOY-SSH.md`](./DEPLOY-SSH.md) for hosts that have SSH.
+SSH-based flow (`deploy.sh`, the old hosting was cancelled on 2026-11-21) is kept in
+[`DEPLOY-SSH.md`](./DEPLOY-SSH.md) for hosts that have SSH; it refuses to run unless
+`ALLOW_SSH_DEPLOY=1`.
 
 ## How it works
 
