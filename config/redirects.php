@@ -1,10 +1,11 @@
 <?php
 
 /*
-| Permanent (301) redirects for product pages that no longer exist, so links
-| and search results for removed gear land on the closest current product or
-| category instead of a 404. Keys are old product slugs; values are paths.
-| Found in Search Console (Indexing → Not found) on 2026-11-21.
+| Hand-picked 301 targets for removed products (closest current product). They
+| win over the automatic ones: any product deleted or renamed in the admin is
+| remembered in the product_redirects table and redirected to its category or
+| new URL without editing this file. These 12 came from Search Console's
+| 'Not found (404)' report on 2026-11-21, before the automatic redirects.
 */
 
 return [

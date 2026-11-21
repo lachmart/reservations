@@ -29,6 +29,35 @@ class Product extends Model implements HasMedia
                 $product->slug = self::uniqueSlug($product->name, $product->getKey());
             }
         });
+
+        // Old URLs keep working: a renamed product's old slug points to the new
+        // URL, a deleted product's slug to its category (301, see routes/web.php).
+        static::updated(function (self $product) {
+            $old = $product->getOriginal('slug');
+            if ($product->wasChanged('slug') && filled($old)) {
+                ProductRedirect::remember($old, '/products/'.$product->slug);
+            }
+            // If this slug was once redirected elsewhere, the live product wins.
+            ProductRedirect::where('old_slug', $product->slug)->delete();
+        });
+
+        static::created(function (self $product) {
+            ProductRedirect::where('old_slug', $product->slug)->delete();
+        });
+
+        static::deleted(function (self $product) {
+            if (filled($product->slug)) {
+                ProductRedirect::remember($product->slug, $product->categoryUrl());
+            }
+        });
+    }
+
+    /** Listing page of the product's category, or the whole catalog. */
+    public function categoryUrl(): string
+    {
+        $slug = $this->category()->value('slug');
+
+        return $slug ? '/products?category='.$slug : '/products';
     }
 
     public static function uniqueSlug(string $name, $ignoreId = null): string

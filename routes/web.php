@@ -25,12 +25,16 @@ Route::post('/poptavka', [EnquiryController::class, 'store'])
     ->name('enquiry.store');
 
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-// Removed products → closest current page (config/redirects.php). Registered
-// before products.show so they win over the slug binding's 404.
-foreach (config('redirects.products', []) as $oldSlug => $target) {
-    Route::permanentRedirect('/products/'.$oldSlug, $target);
-}
-Route::get('/products/{product:slug}', [ProductController::class, 'show'])->name('products.show');
+Route::get('/products/{product:slug}', [ProductController::class, 'show'])
+    ->name('products.show')
+    // A product that no longer exists: 301 to where it went (renamed) or its
+    // category (deleted), see App\Models\ProductRedirect; otherwise 404.
+    ->missing(function (\Illuminate\Http\Request $request) {
+        $target = \App\Models\ProductRedirect::targetFor((string) $request->route('product'));
+        abort_unless($target, 404);
+
+        return redirect($target, 301);
+    });
 
 // Cart routes
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
