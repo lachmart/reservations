@@ -51,7 +51,7 @@ return [
             'h1' => 'Ozvučení pro kapelu: PA, mixpult, mikrofony',
             'intro' => 'Hrajete na svatbě, plese, v klubu nebo na menším festivalu a potřebujete reproduktory, mixpult nebo celý zvuk? Půjčíme PA systém Nexo se subwoofery, digitální mixpulty Allen&Heath, mikrofony na zpěv i bicí a kabeláž. Ceny jsou online, termín ověříte hned.',
             'sets_heading' => 'Hotové sety pro kapelu',
-            'sets' => ['set-ziva-kapela', 'set-velky-zvuk-nexo'],
+            'sets' => ['set-ziva-kapela', 'set-velky-zvuk-nexo', 'set-mixpult-sq5-stagebox'],
             'sections' => [
                 ['Kompletní zvuk a světla', 'Set Živá kapela má dva topy Nexo PS10, dva subwoofery, zesilovačový rack, digitální mixpult Allen&Heath CQ-20B, bezdrátový mikrofon, šest LED světel Fractal a dva reflektory Varytec na stativech. Pokryje sál nebo stan zhruba do 200 lidí. Máte vlastní mixpult? Půjčíme i jen reproduktory.'],
                 ['Mixpult a stagebox', 'Na větší sestavy půjčujeme digitální mixpulty Allen&Heath SQ5 a CQ-20B, kompaktní XR18 ovládané z tabletu a stagebox, aby od pódia vedl jen jeden kabel.'],

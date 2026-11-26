@@ -54,6 +54,7 @@
             <li><a href="{{ url('/products/set-dj-party') }}" class="font-semibold text-ink hover:underline">DJ párty</a> — 1 390 Kč / den</li>
             <li><a href="{{ url('/products/set-ziva-kapela') }}" class="font-semibold text-ink hover:underline">Živá kapela</a> — 6 390 Kč / den</li>
             <li><a href="{{ url('/products/set-velky-zvuk-nexo') }}" class="font-semibold text-ink hover:underline">Velký zvuk Nexo</a> — 6 490 Kč / den</li>
+            <li><a href="{{ url('/products/set-mixpult-sq5-stagebox') }}" class="font-semibold text-ink hover:underline">Mixpult SQ5 + stagebox</a> — 3 000 Kč / den</li>
         </ul>
 
         <h2 class="mt-10 font-display text-xl font-bold text-ink">Ukázka kompletní rezervace</h2>

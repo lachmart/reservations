@@ -37,6 +37,9 @@ class SetsDeliveryLandingTest extends TestCase
         'DJI Mic 2' => [250, 1],
         'Shure SM58' => [100, 3],
         'SPEAKON (Titanex 2x2,5mm + Neutrik) - 5m' => [10, 2],
+        'Allen&Heath SQ5 + case' => [2000, 1],
+        'Allen&Heath Stagebox' => [1000, 1],
+        'CAT 5 - 50m' => [100, 1],
     ];
 
     private function seedCatalog(): void
@@ -274,6 +277,7 @@ class SetsDeliveryLandingTest extends TestCase
 
         $rack = Product::where('name', 'Nexo rack')->sole();
         $this->assertSame([1000.0, 1, $amps->id], [(float) $rack->price_per_day, (int) $rack->stock, $rack->category_id]);
+        $this->assertStringContainsString('NEXO DTD-TN TD, Lab.gruppen FP10000Q, patch panel', $rack->description);
 
         $set = Product::where('slug', 'set-velky-zvuk-nexo')->sole();
         $this->assertSame('Set Velký zvuk Nexo (2× PS15, 4× MT18)', $set->name);
@@ -284,6 +288,23 @@ class SetsDeliveryLandingTest extends TestCase
         ], $set->bundleItems->mapWithKeys(fn ($c) => [$c->name => (int) $c->pivot->amount])->all());
         $this->assertSame(7060.0, $set->bundleItems->sum(fn ($c) => (float) $c->price_per_day * (int) $c->pivot->amount));
         $this->get(route('products.show', $set))->assertOk()->assertSee('ušetříte 570');
+    }
+
+    public function test_sq5_and_stagebox_become_a_set_for_3000(): void
+    {
+        $this->seedCatalog();
+        $sety = Category::factory()->create(['name' => 'Sety', 'slug' => 'sety']);
+        $migration = require database_path('migrations/2026_11_26_000012_sq5_stagebox_set.php');
+        $migration->up();
+        $migration->up();
+
+        $set = Product::where('slug', 'set-mixpult-sq5-stagebox')->sole();
+        $this->assertSame(['Set Mixpult SQ5 + stagebox', 3000.0, $sety->id], [$set->name, (float) $set->price_per_day, $set->category_id]);
+        $this->assertEqualsCanonicalizing(
+            ['Allen&Heath SQ5 + case' => 1, 'Allen&Heath Stagebox' => 1, 'CAT 5 - 50m' => 1],
+            $set->bundleItems->mapWithKeys(fn ($c) => [$c->name => (int) $c->pivot->amount])->all(),
+        );
+        $this->get(route('products.show', $set))->assertOk()->assertSee('ušetříte 100');
     }
 
     public function test_gravity_stand_is_renamed_to_km_213_and_the_old_url_redirects(): void

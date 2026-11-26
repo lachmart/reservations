@@ -38,7 +38,7 @@ return new class extends Migration
 
         DB::transaction(function () use ($amps, $sety) {
             Product::firstOrCreate(['name' => self::RACK], [
-                'description' => '<p>Rack s elektronikou Nexo, bez kterého topy Nexo PS15R2 nehrají. Půjčujeme ho hlavně v setu Velký zvuk Nexo.</p>',
+                'description' => "Obsahuje: NEXO DTD-TN TD, Lab.gruppen FP10000Q, patch panel. Vše v jednom racku 4U.\n\nTopy Nexo PS15R2 bez něj nehrají, půjčujeme ho hlavně v setu Velký zvuk Nexo.",
                 'category_id' => $amps->id,
                 'price_per_day' => 1000,
                 'stock' => 1,
