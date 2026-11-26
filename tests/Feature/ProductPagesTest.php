@@ -45,6 +45,16 @@ class ProductPagesTest extends TestCase
         $this->assertStringNotContainsString('&amp;amp;', $html);
     }
 
+    public function test_rich_description_keeps_its_formatting(): void
+    {
+        $html = '<p><strong>Obsahuje:</strong></p><ul><li><p>Procesor Rane RPM 26</p></li></ul><ul><li><p>Zesilovač FP14000</p></li></ul><p>Vše v jednom racku 4U.</p>';
+        $product = Product::factory()->create(['description' => $html, 'price_per_day' => 100, 'stock' => 1]);
+
+        $this->get(route('products.show', $product))
+            ->assertOk()
+            ->assertSee('<div class="rich-text mt-2 whitespace-pre-line leading-relaxed text-muted">'.$html.'</div>', false);
+    }
+
     public function test_product_show_uses_session_dates_for_availability(): void
     {
         $product = Product::factory()->create(['stock' => 5, 'price_per_day' => 10]);

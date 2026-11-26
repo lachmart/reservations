@@ -173,7 +173,7 @@
                 <div class="mt-8">
                     <div class="rule"></div>
                     <h2 class="mt-6 font-display text-lg font-bold text-ink">Popis</h2>
-                    <div class="prose mt-2 max-w-none whitespace-pre-line leading-relaxed text-muted">{!! $product->description !!}</div>
+                    <div class="rich-text mt-2 whitespace-pre-line leading-relaxed text-muted">{!! $product->description !!}</div>
                 </div>
             @endif
         </div>
