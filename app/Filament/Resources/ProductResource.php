@@ -28,8 +28,11 @@ class ProductResource extends Resource
             ->components([
                 Forms\Components\TextInput::make('name')
                     ->required(),
+                // Optional: the site falls back to "Pronájem … pro vaši akci."
+                // The live column is NOT NULL, and an empty editor sends
+                // "<p></p>", so anything without text is stored as ''.
                 Forms\Components\RichEditor::make('description')
-                    ->required()
+                    ->dehydrateStateUsing(fn ($state) => preg_replace('/[\s\x{00A0}]+/u', '', html_entity_decode(strip_tags((string) $state))) !== '' ? $state : '')
                     ->columnSpanFull(),
                 Forms\Components\Select::make('category_id')
                     ->label('Kategorie')

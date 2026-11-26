@@ -60,6 +60,33 @@ class ProductAdminPhotosTest extends TestCase
         $this->assertSame('', Product::where('name', 'Allen&Heath ZEDi-10')->value('status'));
     }
 
+    public function test_admin_saves_a_product_with_an_empty_description(): void
+    {
+        $this->actingAs(User::factory()->create());
+        $category = Category::factory()->create();
+        $product = Product::factory()->create(['description' => '', 'category_id' => $category->id]);
+
+        Livewire::test(CreateProduct::class)
+            ->fillForm(['name' => 'Bez popisu', 'description' => null, 'category_id' => $category->id, 'price_per_day' => 100, 'stock' => 1])
+            ->call('create')
+            ->assertHasNoFormErrors();
+        $this->assertSame('', Product::where('name', 'Bez popisu')->value('description'));
+
+        // An existing product with an empty description saves too, and real
+        // text still goes through.
+        Livewire::test(EditProduct::class, ['record' => $product->getKey()])
+            ->fillForm(['price_per_day' => 321])
+            ->call('save')
+            ->assertHasNoFormErrors();
+        $this->assertSame(321.0, (float) $product->fresh()->price_per_day);
+
+        Livewire::test(EditProduct::class, ['record' => $product->getKey()])
+            ->fillForm(['description' => '<p>Malý mixpult se 2 mikrofonními vstupy.</p>'])
+            ->call('save')
+            ->assertHasNoFormErrors();
+        $this->assertStringContainsString('Malý mixpult se 2 mikrofonními vstupy.', $product->fresh()->description);
+    }
+
     public function test_migration_moves_admin_main_photos_to_avatar_and_leaves_replaced_ones(): void
     {
         $single = Product::factory()->create();
