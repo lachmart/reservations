@@ -79,7 +79,7 @@ return [
             'title' => 'Pronájem mikrofonů Olomouc — Shure, Sennheiser, bezdrátové | Maraka rental',
             'h1' => 'Pronájem mikrofonů',
             'meta_description' => 'Mikrofony k pronájmu: Shure SM58 a Beta58 na zpěv, bezdrátové Sennheiser a AKG, Audix na bicí a kondenzátorové mikrofony na nástroje. Olomouc a okolí.',
-            'intro' => 'Na zpěv a proslovy Shure SM58 a Beta58, bezdrátové Sennheiser a AKG na obřad nebo moderování, Audix na bicí a kondenzátorové AKG C1000 a sE8 na nástroje. Stativy a kabely najdete také v sekci Zvuk.',
+            'intro' => 'Na zpěv a proslovy Shure SM58 a Beta58, bezdrátové Sennheiser a AKG na moderování, Audix na bicí a kondenzátorové AKG C1000 a sE8 na nástroje. Stativy a kabely najdete také v sekci Zvuk.',
         ],
         'pocitace' => [
             'title' => 'Pronájem notebooků se softwarem pro zvukaře | Maraka rental',
@@ -93,7 +93,7 @@ return [
     'faq' => [
         [
             'q' => 'Kolik stojí pronájem ozvučení na svatbu nebo oslavu?',
-            'a' => 'Cena se počítá za den. Hotové sety stojí: proslovy a hudba z mobilu 950 Kč, DJ párty s mixpultem a světly 1 390 Kč, svatební obřad (2 bedny na baterii + mikrofony) 1 190 Kč a živá kapela (2 topy, 2 subwoofery, mixpult, bezdrátový mikrofon a 8 světel) 6 390 Kč za den. Dovoz a odvoz v Olomouci je za 600 Kč, do 25 km za 1 000 Kč. Instalaci, zapojení nebo obsluhu technikem naceníme zvlášť. Košík vám spočítá celkovou cenu za celý termín včetně dopravy.',
+            'a' => 'Cena se počítá za den. Hotové sety stojí: proslovy a hudba z mobilu 950 Kč, DJ párty s mixpultem a světly 1 390 Kč, svatební obřad (2 bedny na baterii, klopové mikrofony DJI a drátový mikrofon) 1 300 Kč a živá kapela (2 topy, 2 subwoofery, mixpult, bezdrátový mikrofon a 8 světel) 6 390 Kč za den. Dovoz a odvoz v Olomouci je za 600 Kč, do 25 km za 1 000 Kč. Instalaci, zapojení nebo obsluhu technikem naceníme zvlášť. Košík vám spočítá celkovou cenu za celý termín včetně dopravy.',
             'link' => ['url' => '/ozvuceni-svatby-olomouc', 'label' => 'Sety pro svatby a oslavy'],
         ],
         [

@@ -18,7 +18,7 @@ return [
             'sets_heading' => 'Hotové sety pro svatbu',
             'sets' => ['set-svatebni-obrad', 'set-proslovy-a-hudba', 'set-dj-party', 'set-ziva-kapela'],
             'sections' => [
-                ['Obřad', 'Set Svatební obřad má dvě bedny JBL na baterii a bezdrátový dvojitý mikrofon pro oddávajícího a svědky. Nepotřebujete zásuvku, takže funguje na zahradě, u rybníka i v obřadní síni. Hudbu na nástup pustíte z mobilu.'],
+                ['Obřad', 'Set Svatební obřad má dvě bedny JBL na baterii, dva bezdrátové klopové mikrofony DJI pro oddávající a drátový mikrofon pro svědky. Nepotřebujete zásuvku, takže funguje na zahradě, u rybníka i v obřadní síni. Hudbu na nástup pustíte z mobilu.'],
                 ['Hostina a proslovy', 'Na přípitek, proslovy a hudbu k jídlu stačí menší set s bezdrátovým mikrofonem. Pokud je obřad i hostina na jednom místě, vystačíte si s jedním setem po celý den.'],
                 ['Kapela', 'Set Živá kapela je kompletní: dva topy Nexo PS10, dva subwoofery, digitální mixpult, bezdrátový mikrofon na proslovy a osm LED světel, z toho dva bílé reflektory na kapelu. Utáhne sál do zhruba 200 hostů. Bez subwooferů by basa a bicí na tanečním parketu zněly slabě.'],
                 ['DJ', 'DJ zapojí svůj kontrolér rovnou do aktivních beden. Set DJ párty přidává dvě LED světla, aby parket nebyl po setmění potmě.'],

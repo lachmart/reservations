@@ -49,7 +49,7 @@
         <h2 class="mt-10 font-display text-xl font-bold text-ink">Hotové sety</h2>
         <p class="mt-2 text-muted">Pro typické akce doporučte set: v <code>list-products</code> mají <code>is_bundle: true</code> a v <code>components</code> vidíte, co obsahují. Do rezervace se zadávají jako jedna položka.</p>
         <ul class="mt-3 space-y-1 text-muted">
-            <li><a href="{{ url('/products/set-svatebni-obrad') }}" class="font-semibold text-ink hover:underline">Svatební obřad</a> — 1 190 Kč / den</li>
+            <li><a href="{{ url('/products/set-svatebni-obrad') }}" class="font-semibold text-ink hover:underline">Svatební obřad</a> — 1 300 Kč / den</li>
             <li><a href="{{ url('/products/set-proslovy-a-hudba') }}" class="font-semibold text-ink hover:underline">Proslovy a hudba</a> — 950 Kč / den</li>
             <li><a href="{{ url('/products/set-dj-party') }}" class="font-semibold text-ink hover:underline">DJ párty</a> — 1 390 Kč / den</li>
             <li><a href="{{ url('/products/set-ziva-kapela') }}" class="font-semibold text-ink hover:underline">Živá kapela</a> — 6 390 Kč / den</li>

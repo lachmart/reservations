@@ -34,6 +34,8 @@ class SetsDeliveryLandingTest extends TestCase
         'AKG WMS40 Mini Dual' => [250, 1],
         'Allen&Heath CQ-20B (rack)' => [1200, 1],
         'Varytec LED Studio 150 2900K' => [250, 2],
+        'DJI Mic 2' => [250, 1],
+        'Shure SM58' => [100, 3],
     ];
 
     private function seedCatalog(): void
@@ -257,6 +259,30 @@ class SetsDeliveryLandingTest extends TestCase
         $sum = $band->bundleItems->sum(fn ($c) => (float) $c->price_per_day * (int) $c->pivot->amount);
         $this->assertSame(6280.0, $sum);
         $this->get(route('products.show', $band))->assertOk()->assertSee('ušetříte 590');
+    }
+
+    public function test_ceremony_set_swaps_the_akg_for_dji_lavaliers_and_a_wired_mic(): void
+    {
+        $this->seedCatalog();
+        $old = Product::factory()->create(['name' => 'Svatební balíček – obřad', 'slug' => 'svatebmi-balicek-obrad', 'price_per_day' => 1500, 'stock' => 1]);
+        (require database_path('migrations/2026_11_22_000000_rebuild_ceremony_set.php'))->up();
+        $migration = require database_path('migrations/2026_11_26_000007_ceremony_set_gets_dji_and_wired_mic.php');
+        $migration->up();
+        $migration->up();
+
+        $set = $old->fresh();
+        $this->assertEqualsCanonicalizing(
+            ['JBL Eon Compact One' => 2, 'Konig&Meyer 21450 black' => 2, 'DJI Mic 2' => 1, 'Shure SM58' => 1, 'XLR - XLR (Sommer cable + Neutrik) - 10m' => 1],
+            $set->bundleItems->mapWithKeys(fn ($c) => [$c->name => (int) $c->pivot->amount])->all(),
+        );
+        $this->assertSame(1300.0, (float) $set->price_per_day);
+        $this->assertSame(1, (int) $set->stock);
+        $this->assertStringContainsString('klopovými mikrofony DJI Mic 2 pro oddávající a s drátovým mikrofonem Shure SM58', $set->description);
+        $this->assertStringNotContainsString('dvojitým', $set->description);
+
+        // Parts 1 460 Kč, so the set keeps its 160 Kč saving.
+        $this->assertSame(1460.0, $set->bundleItems->sum(fn ($c) => (float) $c->price_per_day * (int) $c->pivot->amount));
+        $this->get(route('products.show', $set))->assertOk()->assertSee('ušetříte 160');
     }
 
     public function test_band_set_is_renamed_to_ziva_kapela_and_the_old_url_redirects(): void
