@@ -16,11 +16,11 @@ return [
             'h1' => 'Ozvučení svatby v Olomouci a okolí',
             'intro' => 'Půjčíme zvuk na celý svatební den: obřad s mikrofonem pro oddávajícího, hudbu a proslovy na hostině a pořádný zvuk pro kapelu nebo DJ večer. Ceny vidíte předem, termín si ověříte a rezervujete online.',
             'sets_heading' => 'Hotové sety pro svatbu',
-            'sets' => ['set-svatebni-obrad', 'set-proslovy-a-hudba', 'set-dj-party', 'set-svatba-s-kapelou'],
+            'sets' => ['set-svatebni-obrad', 'set-proslovy-a-hudba', 'set-dj-party', 'set-ziva-kapela'],
             'sections' => [
                 ['Obřad', 'Set Svatební obřad má dvě bedny JBL na baterii a bezdrátový dvojitý mikrofon pro oddávajícího a svědky. Nepotřebujete zásuvku, takže funguje na zahradě, u rybníka i v obřadní síni. Hudbu na nástup pustíte z mobilu.'],
                 ['Hostina a proslovy', 'Na přípitek, proslovy a hudbu k jídlu stačí menší set s bezdrátovým mikrofonem. Pokud je obřad i hostina na jednom místě, vystačíte si s jedním setem po celý den.'],
-                ['Kapela', 'Set Svatba s kapelou je kompletní: dva topy Nexo PS10, dva subwoofery, digitální mixpult, bezdrátový mikrofon na proslovy a osm LED světel, z toho dva bílé reflektory na kapelu. Utáhne sál do zhruba 200 hostů. Bez subwooferů by basa a bicí na tanečním parketu zněly slabě.'],
+                ['Kapela', 'Set Živá kapela je kompletní: dva topy Nexo PS10, dva subwoofery, digitální mixpult, bezdrátový mikrofon na proslovy a osm LED světel, z toho dva bílé reflektory na kapelu. Utáhne sál do zhruba 200 hostů. Bez subwooferů by basa a bicí na tanečním parketu zněly slabě.'],
                 ['DJ', 'DJ zapojí svůj kontrolér rovnou do aktivních beden. Set DJ párty přidává dvě LED světla, aby parket nebyl po setmění potmě.'],
                 ['Jak to probíhá', 'Vyberte termín a set a odešlete rezervaci, nebo nám jen napište poptávku. Ozveme se s potvrzením. V den svatby techniku dovezeme a po akci odvezeme. Instalaci a zapojení, případně obsluhu po celou akci, vám rádi naceníme zvlášť.'],
             ],
@@ -36,7 +36,7 @@ return [
                 'Allen&Heath ZEDi-8',
             ],
             'faq' => [
-                ['Potřebuju na svatbu subwoofer?', 'Na obřad a proslovy ne. Na kapelu nebo DJ, kde se tančí, ano: bez subwooferu chybí basy a hudba zní plochá. Proto ho mají sety Svatba s kapelou i větší sestavy.'],
+                ['Potřebuju na svatbu subwoofer?', 'Na obřad a proslovy ne. Na kapelu nebo DJ, kde se tančí, ano: bez subwooferu chybí basy a hudba zní plochá. Proto ho mají set Živá kapela i větší sestavy.'],
                 ['Kolik stojí ozvučení svatby?', 'Set na obřad nebo proslovy vyjde od 950 Kč za den, DJ párty s mixpultem a světly na 1 390 Kč a zvuk a světla pro kapelu (2 topy, 2 subwoofery, mixpult a 8 LED světel) na 6 390 Kč za den. K tomu dovoz a odvoz: v Olomouci 600 Kč, do 25 km 1 000 Kč. Instalace a obsluha za příplatek.'],
                 ['Jak dlouho dopředu rezervovat?', 'Svatební sobota v sezóně bývá obsazená i rok dopředu. Termín si můžete zarezervovat online hned, jakmile znáte datum.'],
                 ['Zapojíte techniku i na zahradě nebo ve stanu?', 'Ano, potřebujeme jen zásuvku 230 V poblíž. Prodlužovací kabely a rozbočovače přivezeme.'],
@@ -51,9 +51,9 @@ return [
             'h1' => 'Ozvučení pro kapelu: PA, mixpult, mikrofony',
             'intro' => 'Hrajete na svatbě, plese, v klubu nebo na menším festivalu a potřebujete reproduktory, mixpult nebo celý zvuk? Půjčíme PA systém Nexo se subwoofery, digitální mixpulty Allen&Heath, mikrofony na zpěv i bicí a kabeláž. Ceny jsou online, termín ověříte hned.',
             'sets_heading' => 'Hotový set pro kapelu',
-            'sets' => ['set-svatba-s-kapelou'],
+            'sets' => ['set-ziva-kapela'],
             'sections' => [
-                ['Kompletní zvuk a světla', 'Set Svatba s kapelou má dva topy Nexo PS10, dva subwoofery, zesilovačový rack, digitální mixpult Allen&Heath CQ-20B, bezdrátový mikrofon, šest LED světel Fractal a dva reflektory Varytec na stativech. Pokryje sál nebo stan zhruba do 200 lidí. Máte vlastní mixpult? Půjčíme i jen reproduktory.'],
+                ['Kompletní zvuk a světla', 'Set Živá kapela má dva topy Nexo PS10, dva subwoofery, zesilovačový rack, digitální mixpult Allen&Heath CQ-20B, bezdrátový mikrofon, šest LED světel Fractal a dva reflektory Varytec na stativech. Pokryje sál nebo stan zhruba do 200 lidí. Máte vlastní mixpult? Půjčíme i jen reproduktory.'],
                 ['Mixpult a stagebox', 'Na větší sestavy půjčujeme digitální mixpulty Allen&Heath SQ5 a CQ-20B, kompaktní XR18 ovládané z tabletu a stagebox, aby od pódia vedl jen jeden kabel.'],
                 ['Mikrofony na zpěv a bicí', 'Shure SM58 a Beta58 na zpěv, SM57 na kytary a virbl, Audix D6 na kopák a další mikrofony na bicí. Stojany a XLR kabely v různých délkách.'],
                 ['Kolik výkonu potřebujete', 'Do zhruba 100 lidí bez bicích stačí dvě aktivní bedny. Kapela s bicími v sále pro 150 až 250 lidí potřebuje dva topy a dva subwoofery. Na větší akci nám napište, sestavu navrhneme.'],
@@ -88,7 +88,7 @@ return [
             'h1' => 'Pronájem reproduktorů v Olomouci',
             'intro' => 'Aktivní bedny na oslavu, proslovy nebo DJ, bedna na baterii ven a výkonné topy se subwoofery pro kapelu. Ke každé bedně přidáme stativ a kabely, cenu za den vidíte u každé položky.',
             'sets_heading' => 'Sety s reproduktory',
-            'sets' => ['set-proslovy-a-hudba', 'set-dj-party', 'set-svatba-s-kapelou'],
+            'sets' => ['set-proslovy-a-hudba', 'set-dj-party', 'set-ziva-kapela'],
             'sections' => [
                 ['Na proslovy a hudbu z mobilu', 'Na raut, oslavu nebo prezentaci do zhruba 60 lidí stačí jedna aktivní bedna dB Technologies Opera 12 na stativu. Zapojíte do ní mobil, notebook nebo mikrofon.'],
                 ['Ven bez zásuvky', 'JBL EON ONE Compact hraje na baterii, takže se hodí na zahradu, k ohni nebo na krátký proslov venku.'],

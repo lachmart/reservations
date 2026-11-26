@@ -42,8 +42,8 @@ class HomeController extends Controller
      * (first = the large hero image). Missing or photo-less slugs are skipped.
      */
     private const CATEGORY_SHOWCASE = [
-        'sety' => ['set-svatba-s-kapelou', 'set-dj-party', 'set-svatebni-obrad'],
-        'zvuk' =>['nexo-ps15r2-2000w-1x151x3', 'allenheath-sq5-case', 'shure-sm58'],
+        'sety' => ['set-ziva-kapela', 'set-dj-party', 'set-svatebni-obrad'],
+        'zvuk' => ['nexo-ps15r2-2000w-1x151x3', 'allenheath-sq5-case', 'shure-sm58'],
         'svetla' => ['cameo-thunderwash-600-rgbw', 'varytec-theatre-spot-6501000-fresnel', 'chauvet-proffesional-amhaze-whisper-2000w'],
     ];
 

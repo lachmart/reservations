@@ -157,12 +157,13 @@ class SetsDeliveryLandingTest extends TestCase
     {
         $this->seedCatalog();
         $this->runSetsMigration();
+        (require database_path('migrations/2026_11_26_000006_band_set_becomes_ziva_kapela.php'))->up();
 
         $this->get('/ozvuceni-svatby-olomouc')
             ->assertOk()
             ->assertSee('<h1', false)
             ->assertSee('Ozvučení svatby v Olomouci a okolí')
-            ->assertSee('Set Svatba s kapelou')
+            ->assertSee('Set Živá kapela')
             ->assertSee('"@type":"FAQPage"', false)
             ->assertSee('id="poptavka"', false);
 
@@ -256,6 +257,26 @@ class SetsDeliveryLandingTest extends TestCase
         $sum = $band->bundleItems->sum(fn ($c) => (float) $c->price_per_day * (int) $c->pivot->amount);
         $this->assertSame(6280.0, $sum);
         $this->get(route('products.show', $band))->assertOk()->assertSee('ušetříte 590');
+    }
+
+    public function test_band_set_is_renamed_to_ziva_kapela_and_the_old_url_redirects(): void
+    {
+        $this->seedCatalog();
+        $this->runSetsMigration();
+        (require database_path('migrations/2026_11_26_000002_band_set_adds_mixer_mic_and_lights.php'))->up();
+        $migration = require database_path('migrations/2026_11_26_000006_band_set_becomes_ziva_kapela.php');
+        $migration->up();
+        $migration->up();
+
+        $set = Product::where('slug', 'set-ziva-kapela')->firstOrFail();
+        $this->assertSame('Set Živá kapela (zvuk, mixpult, světla)', $set->name);
+        $this->assertStringContainsString('na svatbě, plese, firemním večírku nebo oslavě', $set->description);
+        $this->get('/products/set-svatba-s-kapelou')->assertStatus(301)->assertRedirect('/products/set-ziva-kapela');
+        $this->get('/ozvuceni-kapely')->assertOk()->assertSee('Set Živá kapela');
+
+        $migration->down();
+        $this->assertSame('Set Svatba s kapelou (zvuk, mixpult, světla)', $set->fresh()->name);
+        $this->assertSame('set-svatba-s-kapelou', $set->fresh()->slug);
     }
 
     public function test_zed6_is_renamed_to_zedi8_and_joins_the_dj_set(): void

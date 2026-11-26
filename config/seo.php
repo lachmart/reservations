@@ -61,7 +61,7 @@ return [
             'title' => 'Pronájem reproboxů Nexo PS10 a PS15 Olomouc | Maraka rental',
             'h1' => 'Pronájem pasivních reproboxů Nexo',
             'meta_description' => 'Výkonné pasivní topy Nexo PS10 a PS15 k pronájmu pro kapely, plesy a větší sály. Se zesilovačovým rackem a subwoofery. Olomouc a okolí.',
-            'intro' => 'Pasivní topy Nexo potřebují zesilovač. Pro kapelu je půjčujeme se zesilovačovým rackem a subwoofery, nejjednodušeji v setu Svatba s kapelou.',
+            'intro' => 'Pasivní topy Nexo potřebují zesilovač. Pro kapelu je půjčujeme se zesilovačovým rackem a subwoofery, nejjednodušeji v setu Živá kapela.',
         ],
         'subwoofery' => [
             'title' => 'Pronájem subwooferů Olomouc | Maraka rental',
@@ -93,7 +93,7 @@ return [
     'faq' => [
         [
             'q' => 'Kolik stojí pronájem ozvučení na svatbu nebo oslavu?',
-            'a' => 'Cena se počítá za den. Hotové sety stojí: proslovy a hudba z mobilu 950 Kč, DJ párty s mixpultem a světly 1 390 Kč, svatební obřad (2 bedny na baterii + mikrofony) 1 190 Kč a svatba s kapelou (2 topy, 2 subwoofery, mixpult, bezdrátový mikrofon a 8 světel) 6 390 Kč za den. Dovoz a odvoz v Olomouci je za 600 Kč, do 25 km za 1 000 Kč. Instalaci, zapojení nebo obsluhu technikem naceníme zvlášť. Košík vám spočítá celkovou cenu za celý termín včetně dopravy.',
+            'a' => 'Cena se počítá za den. Hotové sety stojí: proslovy a hudba z mobilu 950 Kč, DJ párty s mixpultem a světly 1 390 Kč, svatební obřad (2 bedny na baterii + mikrofony) 1 190 Kč a živá kapela (2 topy, 2 subwoofery, mixpult, bezdrátový mikrofon a 8 světel) 6 390 Kč za den. Dovoz a odvoz v Olomouci je za 600 Kč, do 25 km za 1 000 Kč. Instalaci, zapojení nebo obsluhu technikem naceníme zvlášť. Košík vám spočítá celkovou cenu za celý termín včetně dopravy.',
             'link' => ['url' => '/ozvuceni-svatby-olomouc', 'label' => 'Sety pro svatby a oslavy'],
         ],
         [
