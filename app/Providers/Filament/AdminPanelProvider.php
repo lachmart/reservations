@@ -29,6 +29,9 @@ class  AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            // "Forgot password?" on the login page; invited users set their
+            // own password through the same link (see InviteAdminUser).
+            ->passwordReset()
             ->colors([
                 'primary' => Color::Emerald,
             ])

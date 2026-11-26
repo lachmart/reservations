@@ -25,6 +25,7 @@ use App\Mcp\Tools\ListProducts;
 use App\Mcp\Tools\ListReservations;
 use App\Mcp\Tools\ListTags;
 use App\Mcp\Tools\SyncProductTags;
+use App\Mcp\Tools\InviteAdminUser;
 use App\Mcp\Tools\UpdateCategory;
 use App\Mcp\Tools\UpdateProduct;
 use App\Mcp\Tools\UpdateReservation;
@@ -94,5 +95,8 @@ class AdminServer extends Server
         CreatePort::class,
         SyncProductTags::class,
         AttachProductPort::class,
+
+        // Admin access
+        InviteAdminUser::class,
     ];
 }

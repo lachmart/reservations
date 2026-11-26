@@ -1,0 +1,55 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Models\User;
+use Filament\Auth\Notifications\ResetPassword;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
+use Tests\TestCase;
+
+class InviteAdminUserTest extends TestCase
+{
+    use RefreshDatabase;
+
+    private function invite(array $arguments)
+    {
+        config(['mcp.token' => 'secret']);
+
+        return $this->withToken('secret')->postJson('/mcp/admin', [
+            'jsonrpc' => '2.0', 'id' => 1, 'method' => 'tools/call',
+            'params' => ['name' => 'invite-admin-user', 'arguments' => $arguments],
+        ])->assertOk();
+    }
+
+    public function test_invite_creates_the_account_and_emails_a_set_password_link(): void
+    {
+        Notification::fake();
+
+        $response = $this->invite(['name' => 'Radim Test', 'email' => 'radim@example.test']);
+        $this->assertFalse((bool) $response->json('result.isError'), (string) $response->json('result.content.0.text'));
+        $text = (string) $response->json('result.content.0.text');
+        $this->assertStringNotContainsStringIgnoringCase('password":', $text);
+
+        $user = User::where('email', 'radim@example.test')->sole();
+        $this->assertSame('Radim Test', $user->name);
+
+        Notification::assertSentTo($user, ResetPassword::class, function (ResetPassword $n) {
+            return str_contains($n->url, '/admin/password-reset/reset');
+        });
+
+        // The login page offers "Forgot password?" for when the link expires.
+        $this->get('/admin/password-reset/request')->assertOk();
+    }
+
+    public function test_invite_refuses_an_existing_email(): void
+    {
+        Notification::fake();
+        User::factory()->create(['email' => 'radim@example.test']);
+
+        $response = $this->invite(['name' => 'Radim', 'email' => 'radim@example.test']);
+
+        $this->assertTrue((bool) $response->json('result.isError'));
+        Notification::assertNothingSent();
+    }
+}
