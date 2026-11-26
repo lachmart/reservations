@@ -290,7 +290,7 @@ class SetsDeliveryLandingTest extends TestCase
         $this->get(route('products.show', $set))->assertOk()->assertSee('ušetříte 570');
     }
 
-    public function test_sq5_and_stagebox_become_a_set_for_3000(): void
+    public function test_sq5_and_stagebox_become_a_set_for_2790(): void
     {
         $this->seedCatalog();
         $sety = Category::factory()->create(['name' => 'Sety', 'slug' => 'sety']);
@@ -299,12 +299,12 @@ class SetsDeliveryLandingTest extends TestCase
         $migration->up();
 
         $set = Product::where('slug', 'set-mixpult-sq5-stagebox')->sole();
-        $this->assertSame(['Set Mixpult SQ5 + stagebox', 3000.0, $sety->id], [$set->name, (float) $set->price_per_day, $set->category_id]);
+        $this->assertSame(['Set Mixpult SQ5 + stagebox', 2790.0, $sety->id], [$set->name, (float) $set->price_per_day, $set->category_id]);
         $this->assertEqualsCanonicalizing(
             ['Allen&Heath SQ5 + case' => 1, 'Allen&Heath Stagebox' => 1, 'CAT 5 - 50m' => 1],
             $set->bundleItems->mapWithKeys(fn ($c) => [$c->name => (int) $c->pivot->amount])->all(),
         );
-        $this->get(route('products.show', $set))->assertOk()->assertSee('ušetříte 100');
+        $this->get(route('products.show', $set))->assertOk()->assertSee('ušetříte 310');
     }
 
     public function test_gravity_stand_is_renamed_to_km_213_and_the_old_url_redirects(): void
