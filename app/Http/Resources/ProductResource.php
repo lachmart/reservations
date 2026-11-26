@@ -22,7 +22,12 @@ class ProductResource extends JsonResource
             'stock' => (int) $this->stock,
             'category' => new CategoryResource($this->whenLoaded('category')),
             'tags' => TagResource::collection($this->whenLoaded('tags')),
-            'images' => $this->getMedia()->map(fn($media) => [
+            // Main photo, then the gallery; the old "default" collection only
+            // when there is nothing else (same order as Product::mainImageUrl()).
+            'images' => $this->getMedia('avatar')->concat($this->getMedia('product-images'))
+                ->whenEmpty(fn ($media) => $this->getMedia())
+                ->values()
+                ->map(fn($media) => [
                 'id' => $media->id,
                 'url' => $media->getUrl(),
                 'thumb' => $media->getUrl('thumb'),

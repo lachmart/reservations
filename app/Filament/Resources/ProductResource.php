@@ -31,8 +31,6 @@ class ProductResource extends Resource
                 Forms\Components\RichEditor::make('description')
                     ->required()
                     ->columnSpanFull(),
-                Forms\Components\TextInput::make('status')
-                    ->required(),
                 Forms\Components\Select::make('category_id')
                     ->label('Kategorie')
                     ->options(fn () => \App\Models\Category::treeOptions())
@@ -64,7 +62,10 @@ class ProductResource extends Resource
                     ->relationship('tags', 'name'),
                 \Filament\Schemas\Components\Grid::make(2) // Two columns
                 ->schema([
+                    // The main photo lives in the "avatar" collection (the site
+                    // and the MCP photo tools read and write it there).
                     SpatieMediaLibraryFileUpload::make('avatar')
+                        ->collection('avatar')
                         ->image()
                         ->imageEditor(),
                     SpatieMediaLibraryFileUpload::make('gallery')
@@ -83,8 +84,6 @@ class ProductResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('status')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('category.name')
                     ->label('Category')

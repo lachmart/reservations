@@ -132,6 +132,16 @@ class Product extends Model implements HasMedia
     ];
 
     /**
+     * `status` is an unused leftover from the original scaffold, but the live
+     * products table has it NOT NULL without a default, so new rows get ''.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'status' => '',
+    ];
+
+    /**
      * The attributes that should be cast to native types.
      *
      * @var array
