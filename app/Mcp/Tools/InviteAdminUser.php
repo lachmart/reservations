@@ -18,7 +18,7 @@ use Laravel\Mcp\Server\Attributes\Title;
  * Gives someone access to the admin without anybody handling a password: the
  * account gets a random password that is never shown, and the person receives
  * the admin's "set your password" email link. If the link expires (60 min),
- * "Forgot password?" on the login page sends a new one.
+ * "Forgot password?" on the login page or inviting again sends a new one.
  */
 #[Title('Invite admin user')]
 class InviteAdminUser extends BaseTool
@@ -26,6 +26,7 @@ class InviteAdminUser extends BaseTool
     public function description(): string
     {
         return 'Create an admin (Filament) account and email the person a link to set their own password. '
+            .'For an existing account it only emails a fresh link (name and password stay). '
             .'No password is returned or needed.';
     }
 
@@ -41,14 +42,17 @@ class InviteAdminUser extends BaseTool
     {
         $validator = Validator::make($arguments, [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'email' => ['required', 'email', 'max:255'],
         ]);
 
         if ($validator->fails()) {
             return Response::error($validator->errors()->first());
         }
 
-        $user = User::create([
+        // Inviting an existing account again just sends a fresh link.
+        $user = User::where('email', $arguments['email'])->first();
+        $created = ! $user;
+        $user ??= User::create([
             'name' => $arguments['name'],
             'email' => $arguments['email'],
             'password' => Str::password(48),
@@ -62,6 +66,7 @@ class InviteAdminUser extends BaseTool
 
         return Response::json([
             'invited' => true,
+            'created' => $created,
             'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,

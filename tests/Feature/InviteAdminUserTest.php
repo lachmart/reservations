@@ -57,14 +57,18 @@ class InviteAdminUserTest extends TestCase
         $this->assertSame(0, DB::table('jobs')->count());
     }
 
-    public function test_invite_refuses_an_existing_email(): void
+    public function test_inviting_an_existing_account_only_sends_a_fresh_link(): void
     {
         Notification::fake();
-        User::factory()->create(['email' => 'radim@example.test']);
+        $user = User::factory()->create(['name' => 'Radim', 'email' => 'radim@example.test']);
+        $hash = $user->password;
 
-        $response = $this->invite(['name' => 'Radim', 'email' => 'radim@example.test']);
+        $response = $this->invite(['name' => 'Someone Else', 'email' => 'radim@example.test']);
 
-        $this->assertTrue((bool) $response->json('result.isError'));
-        Notification::assertNothingSent();
+        $this->assertFalse((bool) $response->json('result.isError'));
+        $this->assertFalse(json_decode($response->json('result.content.0.text'), true)['created']);
+        $this->assertSame(['Radim', $hash], [$user->fresh()->name, $user->fresh()->password]);
+        $this->assertSame(1, User::count());
+        Notification::assertSentTo($user, ResetPassword::class);
     }
 }
