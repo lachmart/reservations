@@ -299,7 +299,7 @@ class SetsDeliveryLandingTest extends TestCase
         $migration->up();
 
         $set = Product::where('slug', 'set-mixpult-sq5-stagebox')->sole();
-        $this->assertSame(['Set SQ5 + stagebox + cívka UTP', 3000.0, $sety->id], [$set->name, (float) $set->price_per_day, $set->category_id]);
+        $this->assertSame(['Set Mixpult SQ5 + stagebox', 3000.0, $sety->id], [$set->name, (float) $set->price_per_day, $set->category_id]);
         $this->assertEqualsCanonicalizing(
             ['Allen&Heath SQ5 + case' => 1, 'Allen&Heath Stagebox' => 1, 'CAT 5 - 50m' => 1],
             $set->bundleItems->mapWithKeys(fn ($c) => [$c->name => (int) $c->pivot->amount])->all(),

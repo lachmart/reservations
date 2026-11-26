@@ -44,7 +44,7 @@ dal dohodou, pickup 0 Kč). Instalaci, zapojení nebo obsluhu (`service: true`) 
 - Set DJ párty (2 aktivní bedny na stativech, mixpult Allen&Heath ZEDi-8, 2 LED světla, kabely): 1 390 Kč — https://www.marakarental.cz/products/set-dj-party
 - Set Živá kapela (2 topy Nexo PS10 + 2 subwoofery, zesilovač, mixpult Allen&Heath CQ-20B, bezdrátový mikrofon, 6 LED světel Fractal + 2 reflektory Varytec na stativech, kabeláž): 6 390 Kč — https://www.marakarental.cz/products/set-ziva-kapela
 - Set Velký zvuk Nexo (2 topy Nexo PS15 + 4 subwoofery MT18, Nexo rack, zesilovač, kabeláž): 6 490 Kč — https://www.marakarental.cz/products/set-velky-zvuk-nexo
-- Set SQ5 + stagebox + cívka UTP (digitální mixpult Allen&Heath SQ5, stagebox AR2412, 50m cívka UTP): 3 000 Kč — https://www.marakarental.cz/products/set-mixpult-sq5-stagebox
+- Set Mixpult SQ5 + stagebox (digitální mixpult Allen&Heath SQ5, stagebox AR2412, 50m kabel CAT5): 3 000 Kč — https://www.marakarental.cz/products/set-mixpult-sq5-stagebox
 
 Každý započatý den (24 h) se počítá jako jeden den.
 

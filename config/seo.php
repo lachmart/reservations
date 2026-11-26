@@ -93,7 +93,7 @@ return [
     'faq' => [
         [
             'q' => 'Kolik stojí pronájem ozvučení na svatbu nebo oslavu?',
-            'a' => 'Cena se počítá za den. Hotové sety stojí: proslovy a hudba z mobilu 950 Kč, DJ párty s mixpultem a světly 1 390 Kč, svatební obřad (2 bedny na baterii, klopové mikrofony DJI a drátový mikrofon) 1 300 Kč a živá kapela (2 topy, 2 subwoofery, mixpult, bezdrátový mikrofon a 8 světel) 6 390 Kč, velký zvuk Nexo (2 topy PS15, 4 subwoofery) 6 490 Kč a digitální mixpult SQ5 se stageboxem a cívkou UTP 3 000 Kč za den. Dovoz a odvoz v Olomouci je za 600 Kč, do 25 km za 1 000 Kč. Instalaci, zapojení nebo obsluhu technikem naceníme zvlášť. Košík vám spočítá celkovou cenu za celý termín včetně dopravy.',
+            'a' => 'Cena se počítá za den. Hotové sety stojí: proslovy a hudba z mobilu 950 Kč, DJ párty s mixpultem a světly 1 390 Kč, svatební obřad (2 bedny na baterii, klopové mikrofony DJI a drátový mikrofon) 1 300 Kč a živá kapela (2 topy, 2 subwoofery, mixpult, bezdrátový mikrofon a 8 světel) 6 390 Kč, velký zvuk Nexo (2 topy PS15, 4 subwoofery) 6 490 Kč a digitální mixpult SQ5 se stageboxem 3 000 Kč za den. Dovoz a odvoz v Olomouci je za 600 Kč, do 25 km za 1 000 Kč. Instalaci, zapojení nebo obsluhu technikem naceníme zvlášť. Košík vám spočítá celkovou cenu za celý termín včetně dopravy.',
             'link' => ['url' => '/ozvuceni-svatby-olomouc', 'label' => 'Sety pro svatby a oslavy'],
         ],
         [

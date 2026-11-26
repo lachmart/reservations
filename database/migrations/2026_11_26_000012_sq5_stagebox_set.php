@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * A digital desk set: the Allen&Heath SQ5 in its case, the stagebox (AR2412)
- * and the 50 m UTP reel (CAT5) that links them. Parts 3 100 Kč, the set 3 000 Kč.
+ * and the 50 m CAT5 cable that links them. Parts 3 100 Kč, the set 3 000 Kč.
  * Does nothing without the catalog; safe to re-run.
  */
 return new class extends Migration
@@ -37,8 +37,8 @@ return new class extends Migration
             ));
 
             $set = Product::firstOrCreate(['slug' => self::SLUG], [
-                'name' => 'Set SQ5 + stagebox + cívka UTP',
-                'description' => "Digitální mixpult Allen&Heath SQ5 v case a stagebox s Allen&Heath AR2412 (24 vstupů, 12 výstupů), propojené 50m cívkou UTP. Mikrofony a nástroje zapojíte do stageboxu na pódiu a k mixpultu vede jen jeden kabel.\n\nMikrofony, kabely, odposlechy nebo notebook s ovládacím softwarem rádi přidáme.",
+                'name' => 'Set Mixpult SQ5 + stagebox',
+                'description' => "Digitální mixpult Allen&Heath SQ5 v case a stagebox s Allen&Heath AR2412 (24 vstupů, 12 výstupů), propojené jedním 50m kabelem CAT5. Mikrofony a nástroje zapojíte do stageboxu na pódiu a k mixpultu vede jen jeden kabel.\n\nMikrofony, kabely, odposlechy nebo notebook s ovládacím softwarem rádi přidáme.",
                 'category_id' => $sety->id,
                 'price_per_day' => 3000,
                 'stock' => max(1, $stock),
