@@ -44,10 +44,10 @@ return [
             'intro' => 'Bezpečné napájení pro pódium i venkovní akci: silové kabely Titanex 32A a 16A, redukce, powerboxy a prodlužovací bubny v různých délkách.',
         ],
 
-        // Subcategories (Zvuk › …) and newer sections.
+        // Newer sections and subcategories (Zvuk › …).
         'sety' => [
-            'title' => 'Hotové sety ozvučení k pronájmu — svatba, DJ, kapela | Maraka rental',
-            'h1' => 'Hotové sety ozvučení',
+            'title' => 'Hotové sety ozvučení a světel k pronájmu — svatba, DJ, kapela | Maraka rental',
+            'h1' => 'Hotové sety ozvučení a světel',
             'meta_description' => 'Ozvučení na svatbu, oslavu nebo pro kapelu v jednom balíčku: bedny, stativy, mikrofony, kabely a u větších setů i světla. Olomouc a okolí.',
             'intro' => 'Set obsahuje všechno, co k akci potřebujete, včetně stativů a kabelů, a vyjde levněji než jednotlivé kusy. Vyberte podle typu akce a počtu hostů.',
         ],
@@ -72,8 +72,8 @@ return [
         'mixpulty' => [
             'title' => 'Pronájem mixpultů Olomouc — Allen&Heath SQ5, CQ-20B, XR18 | Maraka rental',
             'h1' => 'Pronájem mixpultů',
-            'meta_description' => 'Digitální mixpulty Allen&Heath SQ5 a CQ-20B, XR18 ovládaný z tabletu, malý ZED6 a stagebox k pronájmu. Pro kapely, konference i proslovy v Olomouci.',
-            'intro' => 'Od malého ZED6 na proslovy po digitální SQ5 pro kapelu. CQ-20B a XR18 se ovládají z tabletu nebo notebooku, stagebox zjednoduší kabeláž od pódia.',
+            'meta_description' => 'Digitální mixpulty Allen&Heath SQ5 a CQ-20B, XR18 ovládaný z tabletu, malý ZEDi-8 a stagebox k pronájmu. Pro kapely, konference i proslovy v Olomouci.',
+            'intro' => 'Od malého ZEDi-8 na proslovy po digitální SQ5 pro kapelu. CQ-20B a XR18 se ovládají z tabletu nebo notebooku, stagebox zjednoduší kabeláž od pódia.',
         ],
         'mikrofony' => [
             'title' => 'Pronájem mikrofonů Olomouc — Shure, Sennheiser, bezdrátové | Maraka rental',
@@ -93,7 +93,7 @@ return [
     'faq' => [
         [
             'q' => 'Kolik stojí pronájem ozvučení na svatbu nebo oslavu?',
-            'a' => 'Cena se počítá za den. Hotové sety stojí: proslovy a hudba z mobilu 950 Kč, DJ párty se světly 1 290 Kč, svatební obřad (2 bedny na baterii + mikrofony) 1 190 Kč a svatba s kapelou (2 topy, 2 subwoofery, mixpult, bezdrátový mikrofon a světla) 5 690 Kč za den. Dovoz a odvoz v Olomouci je za 600 Kč, do 25 km za 1 000 Kč. Instalaci, zapojení nebo obsluhu technikem naceníme zvlášť. Košík vám spočítá celkovou cenu za celý termín včetně dopravy.',
+            'a' => 'Cena se počítá za den. Hotové sety stojí: proslovy a hudba z mobilu 950 Kč, DJ párty s mixpultem a světly 1 390 Kč, svatební obřad (2 bedny na baterii + mikrofony) 1 190 Kč a svatba s kapelou (2 topy, 2 subwoofery, mixpult, bezdrátový mikrofon a 8 světel) 6 390 Kč za den. Dovoz a odvoz v Olomouci je za 600 Kč, do 25 km za 1 000 Kč. Instalaci, zapojení nebo obsluhu technikem naceníme zvlášť. Košík vám spočítá celkovou cenu za celý termín včetně dopravy.',
             'link' => ['url' => '/ozvuceni-svatby-olomouc', 'label' => 'Sety pro svatby a oslavy'],
         ],
         [

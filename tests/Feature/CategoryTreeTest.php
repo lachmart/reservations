@@ -129,9 +129,55 @@ class CategoryTreeTest extends TestCase
         $sub = Category::create(['name' => 'Reproboxy', 'slug' => 'reproboxy', 'parent_id' => $this->zvuk->id]);
         $box = $this->product('Opera 12', $sub);
         $laptop = $this->product('ThinkPad', Category::create(['name' => 'Počítače', 'slug' => 'pocitace']));
+        $set = $this->product('Set Svatební obřad (2× JBL + mikrofony)', Category::create(['name' => 'Sety', 'slug' => 'sety']));
 
         $this->assertSame('speaker', $box->placeholderKind());
         $this->assertSame('laptop', $laptop->placeholderKind());
+        $this->assertSame('package', $set->placeholderKind());
+    }
+
+    public function test_sets_become_the_first_section_with_the_sets_listed_in_the_menu(): void
+    {
+        Category::query()->delete();
+        $zvuk = Category::create(['name' => 'Zvuk', 'slug' => 'zvuk', 'position' => 1]);
+        $distro = Category::create(['name' => 'Distro', 'slug' => 'distro', 'position' => 6]);
+        $sety = Category::create(['name' => 'Sety', 'slug' => 'sety', 'parent_id' => $zvuk->id, 'position' => 1]);
+        $mics = Category::create(['name' => 'Mikrofony', 'slug' => 'mikrofony', 'parent_id' => $zvuk->id, 'position' => 7]);
+        $this->product('Shure SM58', $mics);
+        $this->product('Powerbox', $distro);
+        $this->product('Set Svatba s kapelou (zvuk, mixpult, světla)', $sety, ['slug' => 'set-svatba-s-kapelou', 'price_per_day' => 6390]);
+        $dj = $this->product('Set DJ párty (2 bedny + světla)', $sety, ['slug' => 'set-dj-party', 'price_per_day' => 1290]);
+
+        $migration = require database_path('migrations/2026_11_26_000003_sets_become_a_section.php');
+        $migration->up();
+        $migration->up();
+
+        $this->assertNull($sety->fresh()->parent_id);
+        $this->assertSame(['Sety', 'Zvuk', 'Distro'], Category::roots()->ordered()->pluck('name')->all());
+
+        $response = $this->get('/')->assertOk();
+        $html = $response->getContent();
+        $menu = substr($html, strpos($html, 'id="mega-menu"'));
+        $menu = substr($menu, 0, strpos($menu, '</script>'));
+
+        // Sety comes first and lists the sets (cheapest first) with short names and prices.
+        $this->assertStringContainsString(route('products.show', $dj), $menu);
+        $order = array_map(fn ($needle) => strpos($menu, $needle), ['category=sety', 'DJ párty', '1 290 Kč', 'Svatba s kapelou', '6 390 Kč', 'category=zvuk', 'category=mikrofony']);
+        $this->assertNotContains(false, $order);
+        $sorted = $order;
+        sort($sorted);
+        $this->assertSame($sorted, $order);
+        $this->assertStringNotContainsString('Set DJ', $menu);
+        // … and not again in the "Další" column.
+        $this->assertSame(1, substr_count($menu, 'category=sety'));
+
+        // On the homepage Sety is the first tile, wide because there are three sections.
+        $tiles = $this->between($response, 'Co si u&nbsp;nás půjčíte', 'Oblíbená technika');
+        $this->assertLessThan(strpos($tiles, 'category=zvuk'), strpos($tiles, 'category=sety'));
+        $this->assertMatchesRegularExpression('#category=sety"\s+class="[^"]*col-span-2#', $tiles);
+
+        $migration->down();
+        $this->assertSame($zvuk->id, $sety->fresh()->parent_id);
     }
 
     public function test_deleting_a_section_promotes_its_subcategories(): void

@@ -16,8 +16,10 @@
     <link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt">
     <link rel="service-desc" type="application/json" href="{{ url('/mcp/server-card.json') }}" title="MCP server card">
     @php
-        $seoTitle = trim($__env->yieldContent('title')) ?: 'Maraka rental — půjčovna ozvučení a světel Olomouc';
-        $seoDesc = trim($__env->yieldContent('meta_description')) ?: 'Půjčovna profesionální zvukové a světelné techniky pro akce až do 600 osob v Olomouci a okolí. Vyberte termín, sestavte si vybavení a rezervujte online.';
+        // @section('title', $value) escapes the value already; decode it so the
+        // {{ }} below doesn't escape it twice ("Allen&amp;amp;Heath").
+        $seoTitle = html_entity_decode(trim($__env->yieldContent('title')), ENT_QUOTES | ENT_HTML5, 'UTF-8') ?: 'Maraka rental — půjčovna ozvučení a světel Olomouc';
+        $seoDesc = html_entity_decode(trim($__env->yieldContent('meta_description')), ENT_QUOTES | ENT_HTML5, 'UTF-8') ?: 'Půjčovna profesionální zvukové a světelné techniky pro akce až do 600 osob v Olomouci a okolí. Vyberte termín, sestavte si vybavení a rezervujte online.';
         $seoCanonical = trim($__env->yieldContent('canonical')) ?: request()->url();
         $seoImage = trim($__env->yieldContent('og_image'));
         $seoType = trim($__env->yieldContent('og_type')) ?: 'website';
@@ -161,12 +163,29 @@
             </nav>
         </div>
 
-        {{-- Category menu: sections with their subcategories --}}
+        {{-- Category menu: the sets, then sections with their subcategories, then the rest --}}
         @if($__menu->isNotEmpty())
+            @php($__sety = $__sets->isNotEmpty() ? $__menu->firstWhere('slug', 'sety') : null)
             @php($__withSubs = $__menu->filter(fn ($s) => $s->children->isNotEmpty()))
-            @php($__plain = $__menu->filter(fn ($s) => $s->children->isEmpty()))
+            @php($__plain = $__menu->filter(fn ($s) => $s->children->isEmpty() && $s !== $__sety))
+            @php($__cols = ($__sety ? 1 : 0) + $__withSubs->sum(fn ($s) => $s->children->count() > 6 ? 2 : 1) + ($__plain->isNotEmpty() ? 1 : 0))
             <div id="mega-menu" class="absolute inset-x-0 top-full hidden max-h-[calc(100dvh-4rem)] overflow-y-auto border-b border-line bg-paper shadow-lift" data-mega>
-                <div class="wrap grid grid-cols-2 gap-x-8 gap-y-6 py-6 md:grid-cols-4">
+                <div @class(['wrap grid grid-cols-2 gap-x-8 gap-y-6 py-6 md:grid-cols-4', 'lg:grid-cols-5' => $__cols >= 5])>
+                    @if($__sety)
+                        <div>
+                            <a href="{{ route('products.index', ['category' => $__sety->slug]) }}" class="font-display text-base font-extrabold text-ink hover:text-accent-ink">{{ $__sety->name }}</a>
+                            <ul class="mt-2 space-y-1">
+                                @foreach($__sets as $__p)
+                                    <li>
+                                        <a href="{{ route('products.show', $__p) }}" class="flex items-baseline justify-between gap-3 py-0.5 text-sm text-muted hover:text-ink">
+                                            <span>{{ \Illuminate\Support\Str::of($__p->name)->before(' (')->replaceStart('Set ', '') }}</span>
+                                            <span class="shrink-0 tabular-nums text-faint">{{ number_format((float) $__p->price_per_day, 0, ',', ' ') }} Kč</span>
+                                        </a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
                     @foreach($__withSubs as $__s)
                         @php($__wide = $__s->children->count() > 6)
                         <div @class(['md:col-span-2' => $__wide])>

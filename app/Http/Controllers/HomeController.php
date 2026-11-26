@@ -42,7 +42,8 @@ class HomeController extends Controller
      * (first = the large hero image). Missing or photo-less slugs are skipped.
      */
     private const CATEGORY_SHOWCASE = [
-        'zvuk' => ['nexo-ps15r2-2000w-1x151x3', 'allenheath-sq5-case', 'shure-sm58'],
+        'sety' => ['set-svatba-s-kapelou', 'set-dj-party', 'set-svatebni-obrad'],
+        'zvuk' =>['nexo-ps15r2-2000w-1x151x3', 'allenheath-sq5-case', 'shure-sm58'],
         'svetla' => ['cameo-thunderwash-600-rgbw', 'varytec-theatre-spot-6501000-fresnel', 'chauvet-proffesional-amhaze-whisper-2000w'],
     ];
 
@@ -50,6 +51,7 @@ class HomeController extends Controller
      * Up to three photo URLs for a category tile: the curated showcase first, then
      * topped up with the most valuable photographed products of distinct kinds
      * (so we don't show three microphones or seven lengths of the same cable).
+     * Sets without a photo of their own show their main component.
      *
      * @return list<string>
      */
@@ -57,10 +59,10 @@ class HomeController extends Controller
     {
         $products = Product::inCategory($category)
             ->available()
-            ->with(['media', 'category.parent'])
+            ->with(['media', 'category.parent', 'bundleItems.media'])
             ->orderByDesc('price_per_day')
             ->get()
-            ->filter(fn (Product $p) => $p->mainImageUrl());
+            ->filter(fn (Product $p) => $p->displayImageUrl());
 
         $showcase = self::CATEGORY_SHOWCASE[$category->slug] ?? [];
         $ordered = $products->sortBy(function (Product $p) use ($showcase) {
@@ -73,10 +75,11 @@ class HomeController extends Controller
         $kinds = [];
         foreach ($ordered as $p) {
             $kind = $p->placeholderKind();
-            if (! in_array($p->slug, $showcase, true) && in_array($kind, $kinds, true)) {
+            $url = $p->displayImageUrl();
+            if (in_array($url, $urls, true) || (! in_array($p->slug, $showcase, true) && in_array($kind, $kinds, true))) {
                 continue;
             }
-            $urls[] = $p->mainImageUrl();
+            $urls[] = $url;
             $kinds[] = $kind;
             if (count($urls) === 3) {
                 break;

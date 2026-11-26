@@ -34,6 +34,17 @@ class ProductPagesTest extends TestCase
         $resp2->assertSee('Camera');
     }
 
+    public function test_title_and_meta_are_escaped_once(): void
+    {
+        $product = Product::factory()->create(['name' => 'Allen&Heath SQ5', 'price_per_day' => 100, 'stock' => 1]);
+
+        $html = $this->get(route('products.show', $product))->assertOk()->getContent();
+
+        $this->assertStringContainsString('<title>Allen&amp;Heath SQ5 — pronájem Olomouc', $html);
+        $this->assertStringContainsString('og:title" content="Allen&amp;Heath SQ5', $html);
+        $this->assertStringNotContainsString('&amp;amp;', $html);
+    }
+
     public function test_product_show_uses_session_dates_for_availability(): void
     {
         $product = Product::factory()->create(['stock' => 5, 'price_per_day' => 10]);

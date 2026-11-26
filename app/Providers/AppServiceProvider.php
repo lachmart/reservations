@@ -24,10 +24,19 @@ class AppServiceProvider extends ServiceProvider
 
         \Illuminate\Support\Facades\Mail::extend('phpmail', fn () => new \App\Mail\Transport\PhpMailTransport);
 
-        // Category menu in the site header. A broken DB must not take the
-        // whole layout down with it, so it falls back to no menu.
+        // Category menu in the site header, with the ready-made sets listed
+        // under Sety. A broken DB must not take the whole layout down with
+        // it, so it falls back to no menu.
         \Illuminate\Support\Facades\View::composer('layouts.app', function ($view) {
-            $view->with('__menu', rescue(fn () => \App\Models\Category::menu(), fn () => collect(), report: false));
+            $menu = rescue(fn () => \App\Models\Category::menu(), fn () => collect(), report: false);
+            $sety = $menu->firstWhere('slug', 'sety');
+            $sets = $sety ? rescue(
+                fn () => \App\Models\Product::inCategory($sety)->available()->orderBy('price_per_day')->get(['id', 'name', 'slug', 'price_per_day']),
+                fn () => collect(),
+                report: false,
+            ) : collect();
+
+            $view->with(['__menu' => $menu, '__sets' => $sets]);
         });
     }
 }

@@ -20,7 +20,7 @@ return [
             'sections' => [
                 ['Obřad', 'Set Svatební obřad má dvě bedny JBL na baterii a bezdrátový dvojitý mikrofon pro oddávajícího a svědky. Nepotřebujete zásuvku, takže funguje na zahradě, u rybníka i v obřadní síni. Hudbu na nástup pustíte z mobilu.'],
                 ['Hostina a proslovy', 'Na přípitek, proslovy a hudbu k jídlu stačí menší set s bezdrátovým mikrofonem. Pokud je obřad i hostina na jednom místě, vystačíte si s jedním setem po celý den.'],
-                ['Kapela', 'Set Svatba s kapelou je kompletní: dva topy Nexo PS10, dva subwoofery, digitální mixpult, bezdrátový mikrofon na proslovy a čtyři LED světla. Utáhne sál do zhruba 200 hostů. Bez subwooferů by basa a bicí na tanečním parketu zněly slabě.'],
+                ['Kapela', 'Set Svatba s kapelou je kompletní: dva topy Nexo PS10, dva subwoofery, digitální mixpult, bezdrátový mikrofon na proslovy a osm LED světel, z toho dva bílé reflektory na kapelu. Utáhne sál do zhruba 200 hostů. Bez subwooferů by basa a bicí na tanečním parketu zněly slabě.'],
                 ['DJ', 'DJ zapojí svůj kontrolér rovnou do aktivních beden. Set DJ párty přidává dvě LED světla, aby parket nebyl po setmění potmě.'],
                 ['Jak to probíhá', 'Vyberte termín a set a odešlete rezervaci, nebo nám jen napište poptávku. Ozveme se s potvrzením. V den svatby techniku dovezeme a po akci odvezeme. Instalaci a zapojení, případně obsluhu po celou akci, vám rádi naceníme zvlášť.'],
             ],
@@ -33,11 +33,11 @@ return [
                 'Fractal Lights 9x10W',
                 'Cameo Thunderwash 600 RGBW',
                 'Chauvet Proffesional Amhaze Whisper 2000W',
-                'Allen&Heath ZED6',
+                'Allen&Heath ZEDi-8',
             ],
             'faq' => [
                 ['Potřebuju na svatbu subwoofer?', 'Na obřad a proslovy ne. Na kapelu nebo DJ, kde se tančí, ano: bez subwooferu chybí basy a hudba zní plochá. Proto ho mají sety Svatba s kapelou i větší sestavy.'],
-                ['Kolik stojí ozvučení svatby?', 'Set na obřad nebo proslovy vyjde od 950 Kč za den, DJ párty se světly na 1 290 Kč a zvuk a světla pro kapelu (2 topy, 2 subwoofery, mixpult a 4 LED světla) na 5 690 Kč za den. K tomu dovoz a odvoz: v Olomouci 600 Kč, do 25 km 1 000 Kč. Instalace a obsluha za příplatek.'],
+                ['Kolik stojí ozvučení svatby?', 'Set na obřad nebo proslovy vyjde od 950 Kč za den, DJ párty s mixpultem a světly na 1 390 Kč a zvuk a světla pro kapelu (2 topy, 2 subwoofery, mixpult a 8 LED světel) na 6 390 Kč za den. K tomu dovoz a odvoz: v Olomouci 600 Kč, do 25 km 1 000 Kč. Instalace a obsluha za příplatek.'],
                 ['Jak dlouho dopředu rezervovat?', 'Svatební sobota v sezóně bývá obsazená i rok dopředu. Termín si můžete zarezervovat online hned, jakmile znáte datum.'],
                 ['Zapojíte techniku i na zahradě nebo ve stanu?', 'Ano, potřebujeme jen zásuvku 230 V poblíž. Prodlužovací kabely a rozbočovače přivezeme.'],
             ],
@@ -53,7 +53,7 @@ return [
             'sets_heading' => 'Hotový set pro kapelu',
             'sets' => ['set-svatba-s-kapelou'],
             'sections' => [
-                ['Kompletní zvuk a světla', 'Set Svatba s kapelou má dva topy Nexo PS10, dva subwoofery, zesilovačový rack, digitální mixpult Allen&Heath CQ-20B, bezdrátový mikrofon a čtyři LED světla na stativech. Pokryje sál nebo stan zhruba do 200 lidí. Máte vlastní mixpult? Půjčíme i jen reproduktory.'],
+                ['Kompletní zvuk a světla', 'Set Svatba s kapelou má dva topy Nexo PS10, dva subwoofery, zesilovačový rack, digitální mixpult Allen&Heath CQ-20B, bezdrátový mikrofon, šest LED světel Fractal a dva reflektory Varytec na stativech. Pokryje sál nebo stan zhruba do 200 lidí. Máte vlastní mixpult? Půjčíme i jen reproduktory.'],
                 ['Mixpult a stagebox', 'Na větší sestavy půjčujeme digitální mixpulty Allen&Heath SQ5 a CQ-20B, kompaktní XR18 ovládané z tabletu a stagebox, aby od pódia vedl jen jeden kabel.'],
                 ['Mikrofony na zpěv a bicí', 'Shure SM58 a Beta58 na zpěv, SM57 na kytary a virbl, Audix D6 na kopák a další mikrofony na bicí. Stojany a XLR kabely v různých délkách.'],
                 ['Kolik výkonu potřebujete', 'Do zhruba 100 lidí bez bicích stačí dvě aktivní bedny. Kapela s bicími v sále pro 150 až 250 lidí potřebuje dva topy a dva subwoofery. Na větší akci nám napište, sestavu navrhneme.'],

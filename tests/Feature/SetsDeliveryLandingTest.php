@@ -33,6 +33,7 @@ class SetsDeliveryLandingTest extends TestCase
         'JBL Eon Compact One' => [500, 2],
         'AKG WMS40 Mini Dual' => [250, 1],
         'Allen&Heath CQ-20B (rack)' => [1200, 1],
+        'Varytec LED Studio 150 2900K' => [250, 2],
     ];
 
     private function seedCatalog(): void
@@ -254,6 +255,65 @@ class SetsDeliveryLandingTest extends TestCase
 
         $sum = $band->bundleItems->sum(fn ($c) => (float) $c->price_per_day * (int) $c->pivot->amount);
         $this->assertSame(6280.0, $sum);
+        $this->get(route('products.show', $band))->assertOk()->assertSee('ušetříte 590');
+    }
+
+    public function test_zed6_is_renamed_to_zedi8_and_joins_the_dj_set(): void
+    {
+        $this->seedCatalog();
+        $this->runSetsMigration();
+        $migration = require database_path('migrations/2026_11_26_000005_zedi8_replaces_zed6_and_dj_set_update.php');
+        $migration->up();
+        $migration->up();
+
+        $mixer = Product::where('slug', 'allenheath-zedi-8')->firstOrFail();
+        $this->assertSame('Allen&Heath ZEDi-8', $mixer->name);
+        $this->assertFalse(Product::where('name', 'Allen&Heath ZED6')->exists());
+        $this->get('/products/allenheath-zed6')->assertStatus(301)->assertRedirect('/products/allenheath-zedi-8');
+
+        $dj = Product::where('slug', 'set-dj-party')->firstOrFail();
+        $parts = $dj->bundleItems->pluck('pivot.amount', 'name')->map(fn ($a) => (int) $a)->all();
+        $this->assertSame(1, $parts['Allen&Heath ZEDi-8']);
+        $this->assertSame(2, $parts['dB Technologies Opera 15']);
+        $this->assertSame(2, $parts['Fractal Lights 9x10W']);
+        $this->assertArrayNotHasKey('Gravity LS TBTV 28', $parts);
+        // 1 290 + 200 for the mixer − 100 for the light stand.
+        $this->assertSame(1390.0, (float) $dj->price_per_day);
+        $this->assertSame('Set DJ párty (2 bedny, mixpult, světla)', $dj->name);
+        $this->assertStringContainsString('na stativech, mixpult Allen&Heath ZEDi-8 a dvě LED světla, včetně kabelů', $dj->description);
+        $this->assertStringNotContainsString('na stativu', $dj->description);
+        $this->assertStringContainsString('DJ připojí kontrolér do mixpultu', $dj->description);
+
+        // The speeches set keeps the same mixer under its new name.
+        $speeches = Product::where('slug', 'set-proslovy-a-hudba')->firstOrFail();
+        $this->assertContains('Allen&Heath ZEDi-8', $speeches->bundleItems->pluck('name')->all());
+    }
+
+    public function test_band_set_gets_varytec_spots_and_six_fractals_and_stays_590_below_its_parts(): void
+    {
+        $this->seedCatalog();
+        Product::where('name', 'Subwoofer MT18')->update(['price_per_day' => 500]);
+        $this->runSetsMigration();
+        (require database_path('migrations/2026_11_22_000002_band_set_uses_ps10.php'))->up();
+        (require database_path('migrations/2026_11_26_000002_band_set_adds_mixer_mic_and_lights.php'))->up();
+        $migration = require database_path('migrations/2026_11_26_000004_band_set_gets_more_lights.php');
+        $migration->up();
+        $migration->up();
+
+        $band = Product::where('slug', 'set-svatba-s-kapelou')->firstOrFail();
+        $parts = $band->bundleItems->pluck('pivot.amount', 'name')->map(fn ($a) => (int) $a)->all();
+        $this->assertSame(2, $parts['Varytec LED Studio 150 2900K']);
+        $this->assertSame(6, $parts['Fractal Lights 9x10W']);
+        $this->assertSame(2, $parts['Gravity LS TBTV 28']);
+        $this->assertSame(1, $parts['Allen&Heath CQ-20B (rack)']);
+        $this->assertCount(12, $parts);
+        $this->assertSame(6390.0, (float) $band->price_per_day);
+        $this->assertSame(1, (int) $band->stock);
+        $this->assertStringContainsString('na proslovy, šest LED světel Fractal a dva reflektory Varytec', $band->description);
+        $this->assertStringNotContainsString('čtyři LED', $band->description);
+
+        $sum = $band->bundleItems->sum(fn ($c) => (float) $c->price_per_day * (int) $c->pivot->amount);
+        $this->assertSame(6980.0, $sum);
         $this->get(route('products.show', $band))->assertOk()->assertSee('ušetříte 590');
     }
 }

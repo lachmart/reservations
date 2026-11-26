@@ -206,8 +206,7 @@ class Product extends Model implements HasMedia
     /**
      * Image to show for the product: its own photo, or for a set without one, the
      * photo of its main component (largest share of the set's value, e.g. the
-     * speakers rather than a stand). Category tiles keep using mainImageUrl() so
-     * sets don't repeat their components there.
+     * speakers rather than a stand).
      */
     public function displayImageUrl(): ?string
     {
@@ -239,6 +238,11 @@ class Product extends Model implements HasMedia
         // Stage gear (stands, truss) — brand names like "Elation" would otherwise match lights.
         if ($section === 'stage') {
             return 'stand';
+        }
+
+        // Sets ("… + mikrofony" in the name would otherwise read as a mic).
+        if ($section === 'sety') {
+            return 'package';
         }
 
         // A subcategory that says it all (names like "sE8 Stereo (pár)" would
