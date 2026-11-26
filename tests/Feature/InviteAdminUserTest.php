@@ -5,6 +5,9 @@ namespace Tests\Feature;
 use App\Models\User;
 use Filament\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Notifications\Events\NotificationSent;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
@@ -40,6 +43,18 @@ class InviteAdminUserTest extends TestCase
 
         // The login page offers "Forgot password?" for when the link expires.
         $this->get('/admin/password-reset/request')->assertOk();
+    }
+
+    public function test_set_password_mail_goes_out_right_away_without_a_queue_worker(): void
+    {
+        // Production queues to the database and runs no worker.
+        config(['queue.default' => 'database']);
+        Event::fake([NotificationSent::class]);
+
+        $this->invite(['name' => 'Radim Test', 'email' => 'radim@example.test']);
+
+        Event::assertDispatched(NotificationSent::class, fn ($e) => $e->notifiable->email === 'radim@example.test');
+        $this->assertSame(0, DB::table('jobs')->count());
     }
 
     public function test_invite_refuses_an_existing_email(): void

@@ -12,7 +12,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Filament's password-reset mail is a queued notification, but the
+        // FTP hosting runs no queue worker, so it would sit in the jobs table
+        // forever. Send it right away (admin invites and "Forgot password?").
+        $this->app->bind(
+            \Filament\Auth\Notifications\ResetPassword::class,
+            fn ($app, array $params) => (new \Filament\Auth\Notifications\ResetPassword($params['token']))->onConnection('sync'),
+        );
     }
 
     /**
