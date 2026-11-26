@@ -9,12 +9,12 @@
 @push('schema')
 <script type="application/ld+json">
 {!! json_encode(array_filter([
-    '@context' => 'https://schema.org',
+    '@@context' => 'https://schema.org',
     '@type' => 'Product',
     'name' => $product->name,
     'description' => $product->description ? strip_tags($product->description) : ('Pronájem ' . $product->name . ' pro vaši akci.'),
     'image' => $product->displayImageUrl(),
-    'category' => optional($product->category)->name,
+    'category' => $product->category?->full_name,
     'offers' => [
         '@type' => 'Offer',
         'priceCurrency' => 'CZK',
@@ -33,14 +33,15 @@
 </script>
 <script type="application/ld+json">
 {!! json_encode([
-    '@context' => 'https://schema.org',
+    '@@context' => 'https://schema.org',
     '@type' => 'BreadcrumbList',
-    'itemListElement' => array_values(array_filter([
-        ['@type' => 'ListItem', 'position' => 1, 'name' => 'Domů', 'item' => url('/')],
-        ['@type' => 'ListItem', 'position' => 2, 'name' => 'Technika', 'item' => route('products.index')],
-        $product->category ? ['@type' => 'ListItem', 'position' => 3, 'name' => $product->category->name, 'item' => route('products.index', ['category' => $product->category->slug])] : null,
-        ['@type' => 'ListItem', 'position' => $product->category ? 4 : 3, 'name' => $product->name, 'item' => route('products.show', $product)],
-    ])),
+    'itemListElement' => collect([
+        ['name' => 'Domů', 'item' => url('/')],
+        ['name' => 'Technika', 'item' => route('products.index')],
+        $product->category?->parent ? ['name' => $product->category->parent->name, 'item' => route('products.index', ['category' => $product->category->parent->slug])] : null,
+        $product->category ? ['name' => $product->category->name, 'item' => route('products.index', ['category' => $product->category->slug])] : null,
+        ['name' => $product->name, 'item' => route('products.show', $product)],
+    ])->filter()->values()->map(fn ($crumb, $i) => ['@type' => 'ListItem', 'position' => $i + 1] + $crumb)->all(),
 ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
 </script>
 @endpush
@@ -83,7 +84,7 @@
         {{-- Info --}}
         <div data-product-card data-product-id="{{ $product->id }}">
             <div class="flex flex-wrap items-center gap-2">
-                @if($product->category)<span class="badge-accent">{{ $product->category->name }}</span>@endif
+                @if($product->category)<a href="{{ route('products.index', ['category' => $product->category->slug]) }}" class="badge-accent hover:underline">{{ $product->category->name }}</a>@endif
                 @foreach(($product->tags ?? collect()) as $tag)<span class="badge">{{ $tag->name }}</span>@endforeach
             </div>
             <h1 class="mt-3 font-display text-display-md font-extrabold text-ink">{{ $product->name }}</h1>

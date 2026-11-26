@@ -4,14 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Product;
-use App\Models\Tag;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 
 class ProductController extends Controller
 {
     /**
-     * Display a listing of the products with category, tag filters, sorting and text search.
+     * Display a listing of the products with category (incl. subcategories) and
+     * tag filters, sorting and text search.
      */
     public function index(): View
     {
@@ -23,7 +23,6 @@ class ProductController extends Controller
             : (ctype_digit($categoryParam)
                 ? Category::find($categoryParam)
                 : Category::where('slug', $categoryParam)->first());
-        $categoryId = $category?->id;
         $tagIds = array_filter((array) $request->input('tags', []), fn($v) => is_numeric($v));
         $sort = $request->input('sort', 'featured');
         $q = trim((string) $request->input('q', ''));
@@ -41,10 +40,11 @@ class ProductController extends Controller
         $termStart = $cart['start_date'] ?? $start;
         $termEnd = $cart['end_date'] ?? $end;
 
-        $query = Product::query()->available()->with(['category', 'tags', 'bundleItems.media'])->withCount(['media', 'bundleItems']);
+        $query = Product::query()->available()->with(['category.parent', 'tags', 'bundleItems.media'])->withCount(['media', 'bundleItems']);
 
-        if ($categoryId) {
-            $query->where('category_id', $categoryId);
+        if ($category) {
+            // A section lists its subcategories' products too.
+            $query->inCategory($category);
         }
 
         if (!empty($tagIds)) {
@@ -88,23 +88,6 @@ class ProductController extends Controller
 
         $products = $query->paginate(12)->withQueryString();
 
-        $categories = Category::orderBy('name')->get();
-        // Only offer tags that actually lead to something; keep any selected ones visible.
-        $allTags = Tag::query()
-            ->where(function (Builder $q) use ($tagIds) {
-                $q->whereHas('products', fn (Builder $p) => $p->available())
-                    ->orWhereIn('id', $tagIds);
-            })
-            ->with(['products' => fn ($p) => $p->available()->select('products.id', 'products.category_id')->with('category:id,slug')])
-            ->orderBy('name')
-            ->get()
-            ->each(function (Tag $tag) {
-                // Category slugs this tag has rentable products in; the view hides
-                // chips that would lead to an empty list for the chosen category.
-                $tag->category_slugs = $tag->products->pluck('category.slug')->filter()->unique()->values()->all();
-                $tag->unsetRelation('products');
-            });
-
         // Return only the list for AJAX requests
         if ($request->ajax()) {
             return view('products._list', [
@@ -112,11 +95,15 @@ class ProductController extends Controller
             ]);
         }
 
+        // Sections with their subcategories, for the category navigation.
+        $menu = Category::menu();
+        $section = $category ? $menu->firstWhere('id', $category->parent_id ?? $category->id) : null;
+
         return view('products.index', [
             'products' => $products,
-            'categories' => $categories,
-            'allTags' => $allTags,
-            'selectedCategory' => $category?->slug,
+            'menu' => $menu,
+            'category' => $category,
+            'section' => $section,
             'selectedTags' => $tagIds,
             'sort' => $sort,
             'q' => $q,

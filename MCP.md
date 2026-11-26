@@ -59,8 +59,12 @@ the hosting currently blocks).
   optional, may override `price`/`is_active`/`is_paid`, sends no e-mail),
   `update-reservation`, `delete-reservation`, `add-reservation-item`
 - Catalog: `create-product`, `update-product`
-- Linked entities: `list-categories`, `create-category`, `list-tags`, `create-tag`,
-  `list-ports`, `create-port`, `sync-product-tags`, `attach-product-port`
+- Linked entities: `list-categories`, `create-category`, `update-category`,
+  `delete-category`, `list-tags`, `create-tag`, `list-ports`, `create-port`,
+  `sync-product-tags`, `attach-product-port`
+- Categories are a two-level tree: sections (Zvuk, Světla, …) and their subcategories
+  (`parent_id`). `position` orders the menu. A section's listing (and `list-products`
+  with its `category_id`) includes its subcategories' products.
 
 ## Connecting Claude Code
 

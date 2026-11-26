@@ -25,6 +25,7 @@ use App\Mcp\Tools\ListProducts;
 use App\Mcp\Tools\ListReservations;
 use App\Mcp\Tools\ListTags;
 use App\Mcp\Tools\SyncProductTags;
+use App\Mcp\Tools\UpdateCategory;
 use App\Mcp\Tools\UpdateProduct;
 use App\Mcp\Tools\UpdateReservation;
 use App\Mcp\Tools\UploadProductPhoto;
@@ -84,6 +85,7 @@ class AdminServer extends Server
         // Linked entities
         ListCategories::class,
         CreateCategory::class,
+        UpdateCategory::class,
         DeleteCategory::class,
         ListTags::class,
         CreateTag::class,

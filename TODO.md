@@ -5,6 +5,9 @@ Hotovo v kódu (C1: hláška už nepřekrývá ikonu košíku; C2 výběr měsí
 Níže je, co zbývá. Většinou jde o obsah nebo rozhodnutí, ne o kód.
 
 ## C. UX a obsah
+- [ ] **Racky** (Radim, 26. 11.): nafotit a dát na web jako komplet.
+- [ ] **Notebooky** (kategorie Počítače, 300 Kč/den): fotky; ověřit seznam softwaru v popisech
+      („dragnet" = Rane Drag Net? CQ a SQ opravdu i na T470 s Ubuntu?).
 - [ ] **Nexo rack**: PS15R2 potřebují Nexo rack, který v katalogu není. Set Svatba s kapelou
       proto jede s PS10R2. Až bude rack v katalogu, jde případně udělat i větší set s PS15.
 

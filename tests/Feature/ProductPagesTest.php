@@ -54,42 +54,18 @@ class ProductPagesTest extends TestCase
         $resp->assertSee($product->name);
     }
 
-    public function test_tag_filter_hides_tags_without_available_products(): void
+    public function test_tag_links_still_filter_and_keep_the_tag_while_searching(): void
     {
-        $used = Tag::create(['name' => 'Mixpult']);
-        $empty = Tag::create(['name' => 'Beamtag']);
-        $onlyUnavailable = Tag::create(['name' => 'Zerostock']);
-
-        Product::factory()->create(['price_per_day' => 10, 'stock' => 1])->tags()->attach($used);
-        Product::factory()->create(['price_per_day' => 10, 'stock' => 0])->tags()->attach($onlyUnavailable);
-
-        $this->get(route('products.index'))
-            ->assertOk()
-            ->assertSee('tag-'.$used->id, false)
-            ->assertDontSee('tag-'.$empty->id.'"', false)
-            ->assertDontSee('tag-'.$onlyUnavailable->id.'"', false);
-
-        // A tag that is already selected stays visible so it can be unticked.
-        $this->get(route('products.index').'?tags[]='.$empty->id)
-            ->assertSee('tag-'.$empty->id.'"', false);
-    }
-
-    public function test_tag_chips_are_scoped_to_the_selected_category(): void
-    {
-        $sound = Category::factory()->create(['slug' => 'zvuk']);
-        $lights = Category::factory()->create(['slug' => 'svetla']);
+        // Subcategories replaced the tag chips; old ?tags[] links keep working.
         $mic = Tag::create(['name' => 'Mikrofon']);
-        $stand = Tag::create(['name' => 'Svetelny stativ']);
+        Product::factory()->create(['name' => 'Tagged mic', 'price_per_day' => 10, 'stock' => 1])->tags()->attach($mic);
+        Product::factory()->create(['name' => 'Untagged box', 'price_per_day' => 10, 'stock' => 1]);
 
-        Product::factory()->create(['category_id' => $sound->id, 'price_per_day' => 10, 'stock' => 1])->tags()->attach($mic);
-        Product::factory()->create(['category_id' => $lights->id, 'price_per_day' => 10, 'stock' => 1])->tags()->attach($stand);
-
-        $html = $this->get(route('products.index').'?category=zvuk')->assertOk()->getContent();
-
-        $this->assertMatchesRegularExpression('/<div data-tag-categories="zvuk" class="">\s*<input id="tag-'.$mic->id.'"/', $html);
-        $this->assertMatchesRegularExpression('/<div data-tag-categories="svetla" class="hidden">\s*<input id="tag-'.$stand->id.'"/', $html);
-
-        // Without a category every tag is offered.
-        $this->get(route('products.index'))->assertDontSee('class="hidden">', false);
+        $this->get(route('products.index').'?tags[]='.$mic->id)
+            ->assertOk()
+            ->assertSee('Tagged mic')
+            ->assertDontSee('Untagged box')
+            ->assertSee('<input type="hidden" name="tags[]" value="'.$mic->id.'">', false)
+            ->assertDontSee('data-tag-categories', false);
     }
 }

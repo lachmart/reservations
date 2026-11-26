@@ -17,14 +17,14 @@ class LandingController extends Controller
         abort_unless(is_array($page), 404);
 
         $sets = $this->ordered(
-            Product::query()->available()->with(['category', 'media', 'bundleItems.media'])
+            Product::query()->available()->with(['category.parent', 'media', 'bundleItems.media'])
                 ->whereIn('slug', $page['sets'] ?? [])->get(),
             'slug',
             $page['sets'] ?? [],
         );
 
         $products = $this->ordered(
-            Product::query()->available()->with(['category', 'media'])
+            Product::query()->available()->with(['category.parent', 'media'])
                 ->whereIn('name', $page['products'] ?? [])->get(),
             'name',
             $page['products'] ?? [],

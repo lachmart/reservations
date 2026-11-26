@@ -5,7 +5,7 @@
 @push('schema')
 <script type="application/ld+json">
 {!! json_encode([
-    '@context' => 'https://schema.org',
+    '@@context' => 'https://schema.org',
     '@type' => 'FAQPage',
     'mainEntity' => collect(config('seo.faq'))->map(fn ($f) => [
         '@type' => 'Question',
@@ -82,7 +82,7 @@
             <h2 class="text-display-md font-extrabold text-ink">Co si u&nbsp;nás půjčíte</h2>
             <a href="{{ route('products.index') }}" class="hidden text-sm font-semibold text-accent-ink hover:underline sm:inline">Celý katalog →</a>
         </div>
-        <div class="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <div class="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-3">
             @foreach($categories as $cat)
                 <a href="{{ route('products.index', ['category' => $cat->slug]) }}"
                    class="group relative flex flex-col overflow-hidden rounded-xl border border-line bg-surface transition-[box-shadow,transform] duration-200 ease-out-quart hover:-translate-y-0.5 hover:shadow-lift">
@@ -103,7 +103,7 @@
                             <img src="{{ $imgs[0] }}" alt="{{ $cat->name }}" loading="lazy" class="absolute inset-0 size-full object-contain p-6 transition-transform duration-300 ease-out-quart group-hover:scale-105">
                         @else
                             @include('partials.product-placeholder', [
-                                'kind' => match ($cat->slug) { 'zvuk' => 'speaker', 'svetla' => 'light', 'stage' => 'stand', 'distro' => 'power', default => 'generic' },
+                                'kind' => match ($cat->slug) { 'zvuk' => 'speaker', 'svetla' => 'light', 'stage' => 'stand', 'distro' => 'power', 'pocitace' => 'laptop', default => 'generic' },
                                 'size' => 'size-16',
                                 'label' => $cat->name,
                             ])

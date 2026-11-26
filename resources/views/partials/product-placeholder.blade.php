@@ -34,6 +34,9 @@
             @case('stagebox')
                 <rect x="3" y="6" width="18" height="12" rx="1.5"/><circle cx="7" cy="10" r="1.2"/><circle cx="12" cy="10" r="1.2"/><circle cx="17" cy="10" r="1.2"/><circle cx="7" cy="14.5" r="1.2"/><circle cx="12" cy="14.5" r="1.2"/><circle cx="17" cy="14.5" r="1.2"/>
                 @break
+            @case('laptop')
+                <rect x="4.5" y="4.5" width="15" height="10.5" rx="1.2"/><path d="M2.5 18.5h19l-1.5-3.5h-16z"/><path d="M10.5 17h3"/>
+                @break
             @case('package')
                 <path d="M3.5 8 12 3.5 20.5 8v8L12 20.5 3.5 16z"/><path d="M3.5 8 12 12.5 20.5 8M12 12.5v8"/>
                 @break

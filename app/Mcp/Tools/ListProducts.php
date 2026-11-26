@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Mcp\Tools;
 
+use App\Models\Category;
 use App\Models\Product;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
 use Laravel\Mcp\Server\Attributes\Title;
@@ -26,7 +27,7 @@ class ListProducts extends BaseTool
             'search' => $schema->string()
                 ->description('Filter products whose name contains this text.'),
             'category_id' => $schema->integer()
-                ->description('Only products in this category.'),
+                ->description('Only products in this category (a section includes its subcategories).'),
             'available_only' => $schema->boolean()
                 ->description('Only products with positive price and stock.'),
             'limit' => $schema->integer()
@@ -36,14 +37,18 @@ class ListProducts extends BaseTool
 
     protected function run(array $arguments): Response
     {
-        $query = Product::query()->with(['category', 'bundleItems']);
+        $query = Product::query()->with(['category.parent', 'bundleItems']);
 
         if (! empty($arguments['search'])) {
             $query->where('name', 'like', '%'.$arguments['search'].'%');
         }
 
         if (! empty($arguments['category_id'])) {
-            $query->where('category_id', (int) $arguments['category_id']);
+            // A section includes its subcategories.
+            $category = Category::find((int) $arguments['category_id']);
+            $category
+                ? $query->inCategory($category)
+                : $query->whereRaw('1 = 0');
         }
 
         if (! empty($arguments['available_only'])) {
@@ -60,7 +65,7 @@ class ListProducts extends BaseTool
             'products' => $products->map(fn (Product $p) => [
                 'id' => $p->id,
                 'name' => $p->name,
-                'category' => optional($p->category)->name,
+                'category' => $p->category?->full_name,
                 'price_per_day' => $p->price_per_day,
                 'stock' => $p->stock,
                 'is_bundle' => $p->bundleItems->isNotEmpty(),

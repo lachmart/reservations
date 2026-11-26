@@ -4,7 +4,8 @@
 
 Maraka rental (provozovatel Martin Lach, IČO 07402767, Černá cesta 96/31, 779 00 Olomouc)
 pronajímá reprosoustavy, mikrofony, mixpulty, světelnou techniku, stativy a kabeláž pro
-koncerty, svatby a firemní akce.
+koncerty, svatby a firemní akce. Půjčuje i notebooky s nainstalovaným softwarem pro
+ovládání zvukové techniky (NEXO, Allen & Heath, Rane).
 
 ## Rezervace přes MCP
 
@@ -41,7 +42,7 @@ dal dohodou, pickup 0 Kč). Instalaci, zapojení nebo obsluhu (`service: true`) 
 - Set Svatební obřad (2× JBL na baterii, stativy, bezdrátové mikrofony): 1 190 Kč — https://www.marakarental.cz/products/set-svatebni-obrad
 - Set Proslovy a hudba (bedna, stativ, bezdrátový mikrofon, mixpult): 950 Kč — https://www.marakarental.cz/products/set-proslovy-a-hudba
 - Set DJ párty (2 aktivní bedny, 2 LED světla, stativy, kabely): 1 290 Kč — https://www.marakarental.cz/products/set-dj-party
-- Set Svatba s kapelou (2 topy Nexo PS10 + 2 subwoofery, zesilovač, stojny): 4 290 Kč — https://www.marakarental.cz/products/set-svatba-s-kapelou
+- Set Svatba s kapelou (2 topy Nexo PS10 + 2 subwoofery, zesilovač, mixpult Allen&Heath CQ-20B, bezdrátový mikrofon, 4 LED světla na stativech, kabeláž): 5 690 Kč — https://www.marakarental.cz/products/set-svatba-s-kapelou
 
 Každý započatý den (24 h) se počítá jako jeden den.
 

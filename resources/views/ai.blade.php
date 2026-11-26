@@ -52,7 +52,7 @@
             <li><a href="{{ url('/products/set-svatebni-obrad') }}" class="font-semibold text-ink hover:underline">Svatební obřad</a> — 1 190 Kč / den</li>
             <li><a href="{{ url('/products/set-proslovy-a-hudba') }}" class="font-semibold text-ink hover:underline">Proslovy a hudba</a> — 950 Kč / den</li>
             <li><a href="{{ url('/products/set-dj-party') }}" class="font-semibold text-ink hover:underline">DJ párty</a> — 1 290 Kč / den</li>
-            <li><a href="{{ url('/products/set-svatba-s-kapelou') }}" class="font-semibold text-ink hover:underline">Svatba s kapelou</a> — 4 290 Kč / den</li>
+            <li><a href="{{ url('/products/set-svatba-s-kapelou') }}" class="font-semibold text-ink hover:underline">Svatba s kapelou</a> — 5 690 Kč / den</li>
         </ul>
 
         <h2 class="mt-10 font-display text-xl font-bold text-ink">Ukázka kompletní rezervace</h2>

@@ -23,8 +23,8 @@ class ProductController extends Controller
 
         $query = Product::query()->available()->with(['category', 'tags']);
 
-        if ($categoryId) {
-            $query->where('category_id', $categoryId);
+        if ($categoryId && $category = \App\Models\Category::find($categoryId)) {
+            $query->inCategory($category);
         }
 
         if (!empty($tagIds)) {

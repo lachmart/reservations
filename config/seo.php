@@ -43,13 +43,57 @@ return [
             'meta_description' => 'Půjčte si silové kabely 32A a 16A, rozbočovače, powerboxy a prodlužovací bubny pro napájení techniky na akcích v Olomouci a okolí.',
             'intro' => 'Bezpečné napájení pro pódium i venkovní akci: silové kabely Titanex 32A a 16A, redukce, powerboxy a prodlužovací bubny v různých délkách.',
         ],
+
+        // Subcategories (Zvuk › …) and newer sections.
+        'sety' => [
+            'title' => 'Hotové sety ozvučení k pronájmu — svatba, DJ, kapela | Maraka rental',
+            'h1' => 'Hotové sety ozvučení',
+            'meta_description' => 'Ozvučení na svatbu, oslavu nebo pro kapelu v jednom balíčku: bedny, stativy, mikrofony, kabely a u větších setů i světla. Olomouc a okolí.',
+            'intro' => 'Set obsahuje všechno, co k akci potřebujete, včetně stativů a kabelů, a vyjde levněji než jednotlivé kusy. Vyberte podle typu akce a počtu hostů.',
+        ],
+        'reproboxy-aktivni' => [
+            'title' => 'Pronájem aktivních reproboxů Olomouc — dB Technologies, JBL | Maraka rental',
+            'h1' => 'Pronájem aktivních reproboxů',
+            'meta_description' => 'Aktivní reproboxy dB Technologies Opera a JBL Eon Compact na baterii k pronájmu. Bez zesilovače, stačí zapojit. Na oslavy, proslovy i DJ v Olomouci a okolí.',
+            'intro' => 'Aktivní bedny mají zesilovač v sobě: zapojíte je do zásuvky a připojíte mixpult, mobil nebo mikrofon. JBL Eon Compact hraje i na baterii, třeba na venkovní obřad.',
+        ],
+        'reproboxy-pasivni' => [
+            'title' => 'Pronájem reproboxů Nexo PS10 a PS15 Olomouc | Maraka rental',
+            'h1' => 'Pronájem pasivních reproboxů Nexo',
+            'meta_description' => 'Výkonné pasivní topy Nexo PS10 a PS15 k pronájmu pro kapely, plesy a větší sály. Se zesilovačovým rackem a subwoofery. Olomouc a okolí.',
+            'intro' => 'Pasivní topy Nexo potřebují zesilovač. Pro kapelu je půjčujeme se zesilovačovým rackem a subwoofery, nejjednodušeji v setu Svatba s kapelou.',
+        ],
+        'subwoofery' => [
+            'title' => 'Pronájem subwooferů Olomouc | Maraka rental',
+            'h1' => 'Pronájem subwooferů',
+            'meta_description' => 'Subwoofery MT18 k pronájmu pro kapely, DJ a taneční parket. Se zesilovačovým rackem a topy Nexo. Olomouc a okolí.',
+            'intro' => 'Bez subwooferu chybí basy a hudba na parketu zní ploše. Pasivní subwoofery MT18 půjčujeme se zesilovačovým rackem.',
+        ],
+        'mixpulty' => [
+            'title' => 'Pronájem mixpultů Olomouc — Allen&Heath SQ5, CQ-20B, XR18 | Maraka rental',
+            'h1' => 'Pronájem mixpultů',
+            'meta_description' => 'Digitální mixpulty Allen&Heath SQ5 a CQ-20B, XR18 ovládaný z tabletu, malý ZED6 a stagebox k pronájmu. Pro kapely, konference i proslovy v Olomouci.',
+            'intro' => 'Od malého ZED6 na proslovy po digitální SQ5 pro kapelu. CQ-20B a XR18 se ovládají z tabletu nebo notebooku, stagebox zjednoduší kabeláž od pódia.',
+        ],
+        'mikrofony' => [
+            'title' => 'Pronájem mikrofonů Olomouc — Shure, Sennheiser, bezdrátové | Maraka rental',
+            'h1' => 'Pronájem mikrofonů',
+            'meta_description' => 'Mikrofony k pronájmu: Shure SM58 a Beta58 na zpěv, bezdrátové Sennheiser a AKG, Audix na bicí a kondenzátorové mikrofony na nástroje. Olomouc a okolí.',
+            'intro' => 'Na zpěv a proslovy Shure SM58 a Beta58, bezdrátové Sennheiser a AKG na obřad nebo moderování, Audix na bicí a kondenzátorové AKG C1000 a sE8 na nástroje. Stativy a kabely najdete také v sekci Zvuk.',
+        ],
+        'pocitace' => [
+            'title' => 'Pronájem notebooků se softwarem pro zvukaře | Maraka rental',
+            'h1' => 'Pronájem notebooků',
+            'meta_description' => 'Notebooky s Windows, macOS a Ubuntu s nainstalovaným softwarem pro ovládání zvukové techniky: NEXO Dory a NeMo, Allen&Heath CQ a SQ, Rane Drag Net.',
+            'intro' => 'Notebooky připravené k nastavení a ovládání zvukové techniky na akci. U každého najdete seznam nainstalovaného softwaru. Hodí se k našim mixpultům Allen&Heath a reprosoustavám NEXO.',
+        ],
     ],
 
     // Shown on the homepage as an FAQ section and emitted as FAQPage schema.
     'faq' => [
         [
             'q' => 'Kolik stojí pronájem ozvučení na svatbu nebo oslavu?',
-            'a' => 'Cena se počítá za den. Hotové sety stojí: proslovy a hudba z mobilu 950 Kč, DJ párty se světly 1 290 Kč, svatební obřad (2 bedny na baterii + mikrofony) 1 190 Kč a svatba s kapelou (2 topy + 2 subwoofery) 4 290 Kč za den. Dovoz a odvoz v Olomouci je za 600 Kč, do 25 km za 1 000 Kč. Instalaci, zapojení nebo obsluhu technikem naceníme zvlášť. Košík vám spočítá celkovou cenu za celý termín včetně dopravy.',
+            'a' => 'Cena se počítá za den. Hotové sety stojí: proslovy a hudba z mobilu 950 Kč, DJ párty se světly 1 290 Kč, svatební obřad (2 bedny na baterii + mikrofony) 1 190 Kč a svatba s kapelou (2 topy, 2 subwoofery, mixpult, bezdrátový mikrofon a světla) 5 690 Kč za den. Dovoz a odvoz v Olomouci je za 600 Kč, do 25 km za 1 000 Kč. Instalaci, zapojení nebo obsluhu technikem naceníme zvlášť. Košík vám spočítá celkovou cenu za celý termín včetně dopravy.',
             'link' => ['url' => '/ozvuceni-svatby-olomouc', 'label' => 'Sety pro svatby a oslavy'],
         ],
         [

@@ -34,7 +34,9 @@ class ProductResource extends Resource
                 Forms\Components\TextInput::make('status')
                     ->required(),
                 Forms\Components\Select::make('category_id')
-                    ->relationship('category', 'name')
+                    ->label('Kategorie')
+                    ->options(fn () => \App\Models\Category::treeOptions())
+                    ->searchable()
                     ->required(),
                 Forms\Components\TextInput::make('price_per_day')
                     ->label('Price per day')
@@ -86,6 +88,7 @@ class ProductResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('category.name')
                     ->label('Category')
+                    ->formatStateUsing(fn ($state, $record) => $record->category?->full_name ?? $state)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('price_per_day')
                     ->label('Price per day')

@@ -14,7 +14,7 @@ class HomeController extends Controller
         // gear: products that have a photo, then most valuable.
         $featured = Product::query()
             ->available()
-            ->with(['category', 'media', 'bundleItems.media'])
+            ->with(['category.parent', 'media', 'bundleItems.media'])
             ->withCount(['media', 'bundleItems'])
             ->orderByDesc('bundle_items_count')
             ->orderByDesc('media_count')
@@ -22,12 +22,9 @@ class HomeController extends Controller
             ->limit(8)
             ->get();
 
-        // The real sections, with a representative photo for each tile.
-        $categories = Category::query()
-            ->withCount(['products as available_count' => fn ($q) => $q->available()])
-            ->having('available_count', '>', 0)
-            ->orderByDesc('available_count')
-            ->get()
+        // The sections in menu order (counting their subcategories), with a
+        // representative photo for each tile.
+        $categories = Category::menu()
             ->map(function (Category $c) {
                 $c->sample_images = $this->categoryImages($c);
                 $c->sample_image = $c->sample_images[0] ?? null;
@@ -58,9 +55,9 @@ class HomeController extends Controller
      */
     private function categoryImages(Category $category): array
     {
-        $products = Product::where('category_id', $category->id)
+        $products = Product::inCategory($category)
             ->available()
-            ->with(['media', 'category'])
+            ->with(['media', 'category.parent'])
             ->orderByDesc('price_per_day')
             ->get()
             ->filter(fn (Product $p) => $p->mainImageUrl());

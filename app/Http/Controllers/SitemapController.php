@@ -20,9 +20,9 @@ class SitemapController extends Controller
             $urls[] = ['loc' => url($slug), 'priority' => '0.9', 'changefreq' => 'monthly'];
         }
 
-        Category::query()
-            ->whereHas('products', fn ($q) => $q->available())
-            ->get()
+        // Sections and subcategories with something to rent.
+        Category::menu()
+            ->flatMap(fn (Category $section) => collect([$section])->concat($section->children))
             ->each(function (Category $c) use (&$urls) {
                 $urls[] = [
                     'loc' => route('products.index', ['category' => $c->slug]),

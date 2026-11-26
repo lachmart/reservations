@@ -32,6 +32,7 @@ class SetsDeliveryLandingTest extends TestCase
         'Allen&Heath ZED6' => [200, 1],
         'JBL Eon Compact One' => [500, 2],
         'AKG WMS40 Mini Dual' => [250, 1],
+        'Allen&Heath CQ-20B (rack)' => [1200, 1],
     ];
 
     private function seedCatalog(): void
@@ -228,5 +229,31 @@ class SetsDeliveryLandingTest extends TestCase
         $this->assertSame(4290.0, (float) $band->price_per_day);
         $parts = $band->bundleItems->sum(fn ($c) => (float) $c->price_per_day * (int) $c->pivot->amount);
         $this->assertGreaterThan((float) $band->price_per_day, $parts);
+    }
+
+    public function test_band_set_gets_mixer_mic_and_lights_and_stays_cheaper_than_its_parts(): void
+    {
+        $this->seedCatalog();
+        Product::where('name', 'Subwoofer MT18')->update(['price_per_day' => 500]);
+        $this->runSetsMigration();
+        (require database_path('migrations/2026_11_22_000002_band_set_uses_ps10.php'))->up();
+        $migration = require database_path('migrations/2026_11_26_000002_band_set_adds_mixer_mic_and_lights.php');
+        $migration->up();
+        $migration->up();
+
+        $band = Product::where('slug', 'set-svatba-s-kapelou')->firstOrFail();
+        $parts = $band->bundleItems->pluck('pivot.amount', 'name')->map(fn ($a) => (int) $a)->all();
+        $this->assertSame(1, $parts['Allen&Heath CQ-20B (rack)']);
+        $this->assertSame(1, $parts['Sennheiser XSW 2-835 B']);
+        $this->assertSame(4, $parts['Fractal Lights 9x10W']);
+        $this->assertSame(2, $parts['Gravity LS TBTV 28']);
+        $this->assertSame(2, $parts['Nexo PS10R2']);
+        $this->assertSame(5690.0, (float) $band->price_per_day);
+        $this->assertSame(1, (int) $band->stock);
+        $this->assertSame('set-svatba-s-kapelou', $band->slug);
+
+        $sum = $band->bundleItems->sum(fn ($c) => (float) $c->price_per_day * (int) $c->pivot->amount);
+        $this->assertSame(6280.0, $sum);
+        $this->get(route('products.show', $band))->assertOk()->assertSee('ušetříte 590');
     }
 }

@@ -75,6 +75,15 @@ class Product extends Model implements HasMedia
     }
 
     /**
+     * Scope: products listed under a category, i.e. in it or in one of its
+     * subcategories.
+     */
+    public function scopeInCategory(\Illuminate\Database\Eloquent\Builder $query, Category $category): \Illuminate\Database\Eloquent\Builder
+    {
+        return $query->whereIn('category_id', $category->familyIds());
+    }
+
+    /**
      * Scope: only products with positive price and stock.
      */
     public function scopeAvailable(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
@@ -225,9 +234,17 @@ class Product extends Model implements HasMedia
      */
     public function placeholderKind(): string
     {
+        $section = $this->category?->root()->slug;
+
         // Stage gear (stands, truss) — brand names like "Elation" would otherwise match lights.
-        if ($this->category?->slug === 'stage') {
+        if ($section === 'stage') {
             return 'stand';
+        }
+
+        // A subcategory that says it all (names like "sE8 Stereo (pár)" would
+        // otherwise read as a PAR light).
+        if ($this->category?->slug === 'mikrofony') {
+            return 'mic';
         }
 
         $name = Str::slug((string) $this->name, ' ');
@@ -252,11 +269,12 @@ class Product extends Model implements HasMedia
             }
         }
 
-        return match ($this->category?->slug) {
+        return match ($section) {
             'zvuk' => 'speaker',
             'svetla' => 'light',
             'stage' => 'stand',
             'distro' => 'power',
+            'pocitace' => 'laptop',
             default => 'generic',
         };
     }

@@ -50,7 +50,7 @@
     @endphp
     <script type="application/ld+json">
     {!! json_encode([
-        '@context' => 'https://schema.org',
+        '@@context' => 'https://schema.org',
         '@type' => 'LocalBusiness',
         '@id' => config('app.url').'/#business',
         'name' => 'Maraka rental',
@@ -134,9 +134,17 @@
                 <img src="/images/logo.png" alt="Maraka rental" width="569" height="128" class="h-9 w-auto dark:hidden">
                 <img src="/images/logo-dark.png" alt="Maraka rental" width="569" height="128" class="hidden h-9 w-auto dark:block">
             </a>
-            <nav class="flex items-center gap-1">
+            <nav class="flex items-center gap-1 self-stretch">
                 <a href="/" class="nav-link hidden sm:inline-flex">Domů</a>
-                <a href="{{ route('products.index') }}" class="nav-link">Technika</a>
+                <div class="flex items-center self-stretch" data-mega-trigger>
+                    <a href="{{ route('products.index') }}" @class(['nav-link', 'pr-1' => $__menu->isNotEmpty()])>Technika</a>
+                    @if($__menu->isNotEmpty())
+                        <button type="button" class="nav-link px-1.5" aria-expanded="false" aria-controls="mega-menu" data-mega-toggle>
+                            <span class="sr-only">Kategorie techniky</span>
+                            <svg class="size-4 transition-transform duration-200" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                        </button>
+                    @endif
+                </div>
                 <a href="{{ route('home') }}#poptavka" class="nav-link hidden sm:inline-flex">Poptávka</a>
                 <a href="tel:{{ preg_replace('/[^0-9+]/', '', config('contact.phone')) }}" class="btn-primary ml-1 py-2" aria-label="Zavolat {{ config('contact.phone') }}">
                     <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92Z"/></svg>
@@ -152,6 +160,81 @@
                 </a>
             </nav>
         </div>
+
+        {{-- Category menu: sections with their subcategories --}}
+        @if($__menu->isNotEmpty())
+            @php($__withSubs = $__menu->filter(fn ($s) => $s->children->isNotEmpty()))
+            @php($__plain = $__menu->filter(fn ($s) => $s->children->isEmpty()))
+            <div id="mega-menu" class="absolute inset-x-0 top-full hidden max-h-[calc(100dvh-4rem)] overflow-y-auto border-b border-line bg-paper shadow-lift" data-mega>
+                <div class="wrap grid grid-cols-2 gap-x-8 gap-y-6 py-6 md:grid-cols-4">
+                    @foreach($__withSubs as $__s)
+                        @php($__wide = $__s->children->count() > 6)
+                        <div @class(['md:col-span-2' => $__wide])>
+                            <a href="{{ route('products.index', ['category' => $__s->slug]) }}" class="font-display text-base font-extrabold text-ink hover:text-accent-ink">{{ $__s->name }}</a>
+                            <ul @class(['mt-2 space-y-1', 'md:columns-2 md:gap-x-8' => $__wide])>
+                                @foreach($__s->children as $__c)
+                                    <li><a href="{{ route('products.index', ['category' => $__c->slug]) }}" class="block py-0.5 text-sm text-muted hover:text-ink">{{ $__c->name }}</a></li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endforeach
+                    @if($__plain->isNotEmpty())
+                        <div>
+                            <div class="text-xs font-semibold uppercase tracking-wide text-faint">{{ $__withSubs->isNotEmpty() ? 'Další' : 'Kategorie' }}</div>
+                            <ul class="mt-2 space-y-1.5">
+                                @foreach($__plain as $__s)
+                                    <li><a href="{{ route('products.index', ['category' => $__s->slug]) }}" class="font-display text-base font-extrabold text-ink hover:text-accent-ink">{{ $__s->name }}</a></li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                </div>
+                <div class="wrap border-t border-line py-3">
+                    <a href="{{ route('products.index') }}" class="text-sm font-semibold text-accent-ink hover:underline">Celý katalog →</a>
+                </div>
+            </div>
+            <script>
+                (function () {
+                    const panel = document.getElementById('mega-menu');
+                    const trigger = document.querySelector('[data-mega-trigger]');
+                    const toggle = document.querySelector('[data-mega-toggle]');
+                    if (!panel || !trigger || !toggle) return;
+                    let closeTimer = null;
+                    let hoverOpenedAt = 0;
+                    const isOpen = () => !panel.classList.contains('hidden');
+                    function setOpen(open) {
+                        clearTimeout(closeTimer);
+                        panel.classList.toggle('hidden', !open);
+                        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+                        toggle.querySelector('svg').classList.toggle('rotate-180', open);
+                    }
+                    toggle.addEventListener('click', function () {
+                        // The hover that led to this click already opened it: keep it open.
+                        if (isOpen() && Date.now() - hoverOpenedAt < 700) return;
+                        setOpen(!isOpen());
+                    });
+                    // Mouse: open on hover, with a short grace period to reach the panel.
+                    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+                        [trigger, panel].forEach(function (el) {
+                            el.addEventListener('mouseenter', function () {
+                                if (!isOpen()) hoverOpenedAt = Date.now();
+                                setOpen(true);
+                            });
+                            el.addEventListener('mouseleave', function () { closeTimer = setTimeout(function () { setOpen(false); }, 200); });
+                        });
+                    }
+                    document.addEventListener('keydown', function (e) {
+                        if (e.key === 'Escape' && isOpen()) { setOpen(false); toggle.focus(); }
+                    });
+                    document.addEventListener('click', function (e) {
+                        if (isOpen() && !panel.contains(e.target) && !trigger.contains(e.target)) setOpen(false);
+                    });
+                    panel.addEventListener('focusout', function (e) {
+                        if (e.relatedTarget && !panel.contains(e.relatedTarget) && !trigger.contains(e.relatedTarget)) setOpen(false);
+                    });
+                })();
+            </script>
+        @endif
     </header>
 
     <main class="flex-1">

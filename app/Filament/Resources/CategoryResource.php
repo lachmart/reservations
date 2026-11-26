@@ -26,6 +26,20 @@ class CategoryResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->label('Název')
                     ->required(),
+                Forms\Components\Select::make('parent_id')
+                    ->label('Sekce')
+                    ->helperText('Prázdné = hlavní sekce v menu (Zvuk, Světla…). Jinak podkategorie vybrané sekce.')
+                    ->options(fn (?Category $record) => Category::roots()
+                        ->when($record, fn ($q) => $q->whereKeyNot($record->getKey()))
+                        ->ordered()
+                        ->pluck('name', 'id'))
+                    ->disabled(fn (?Category $record) => $record?->children()->exists() ?? false)
+                    ->placeholder('— hlavní sekce —'),
+                Forms\Components\TextInput::make('position')
+                    ->label('Pořadí v menu')
+                    ->numeric()
+                    ->minValue(0)
+                    ->default(0),
             ]);
     }
 
@@ -34,7 +48,18 @@ class CategoryResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label('Název')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('parent.name')
+                    ->label('Sekce')
+                    ->placeholder('—')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('position')
+                    ->label('Pořadí')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('products_count')
+                    ->label('Produktů')
+                    ->counts('products'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -44,6 +69,7 @@ class CategoryResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort(fn ($query) => $query->orderByRaw('COALESCE(parent_id, id)')->orderByRaw('parent_id IS NOT NULL')->orderBy('position'))
             ->filters([
                 //
             ])

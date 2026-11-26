@@ -37,6 +37,12 @@ class DeleteCategory extends BaseTool
             return Response::error('No category found with id '.($arguments['id'] ?? 'null').'.');
         }
 
+        if ($category->children()->exists()) {
+            return Response::error(
+                "Category \"{$category->name}\" has subcategories. Move or delete them first."
+            );
+        }
+
         if ($category->products_count > 0) {
             return Response::error(
                 "Category \"{$category->name}\" still has {$category->products_count} product(s). "
