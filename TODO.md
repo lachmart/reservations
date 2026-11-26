@@ -8,8 +8,8 @@ Níže je, co zbývá. Většinou jde o obsah nebo rozhodnutí, ne o kód.
 - [ ] **Racky** (Radim, 26. 11.): nafotit a dát na web jako komplet.
 - [ ] **Notebooky** (kategorie Počítače, 300 Kč/den): fotky; ověřit seznam softwaru v popisech
       („dragnet" = Rane Drag Net? CQ a SQ opravdu i na T470 s Ubuntu?).
-- [ ] **Nexo rack**: PS15R2 potřebují Nexo rack, který v katalogu není. Set Živá kapela
-      proto jede s PS10R2. Až bude rack v katalogu, jde případně udělat i větší set s PS15.
+- [x] **Nexo rack**: v katalogu (1 000 Kč/den) a s ním set Velký zvuk Nexo (2× PS15R2, 4× MT18,
+      6 490 Kč). Set Živá kapela dál jede s PS10R2. Rack a FP rack zatím nemají fotku.
 
 ## D. SEO
 - [ ] **D1** doplnit `openingHours` do LocalBusiness (`layouts/app.blade.php`), chybí údaje.

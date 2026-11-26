@@ -50,8 +50,8 @@ return [
             'nav_label' => 'Ozvučení kapely',
             'h1' => 'Ozvučení pro kapelu: PA, mixpult, mikrofony',
             'intro' => 'Hrajete na svatbě, plese, v klubu nebo na menším festivalu a potřebujete reproduktory, mixpult nebo celý zvuk? Půjčíme PA systém Nexo se subwoofery, digitální mixpulty Allen&Heath, mikrofony na zpěv i bicí a kabeláž. Ceny jsou online, termín ověříte hned.',
-            'sets_heading' => 'Hotový set pro kapelu',
-            'sets' => ['set-ziva-kapela'],
+            'sets_heading' => 'Hotové sety pro kapelu',
+            'sets' => ['set-ziva-kapela', 'set-velky-zvuk-nexo'],
             'sections' => [
                 ['Kompletní zvuk a světla', 'Set Živá kapela má dva topy Nexo PS10, dva subwoofery, zesilovačový rack, digitální mixpult Allen&Heath CQ-20B, bezdrátový mikrofon, šest LED světel Fractal a dva reflektory Varytec na stativech. Pokryje sál nebo stan zhruba do 200 lidí. Máte vlastní mixpult? Půjčíme i jen reproduktory.'],
                 ['Mixpult a stagebox', 'Na větší sestavy půjčujeme digitální mixpulty Allen&Heath SQ5 a CQ-20B, kompaktní XR18 ovládané z tabletu a stagebox, aby od pódia vedl jen jeden kabel.'],
@@ -88,12 +88,12 @@ return [
             'h1' => 'Pronájem reproduktorů v Olomouci',
             'intro' => 'Aktivní bedny na oslavu, proslovy nebo DJ, bedna na baterii ven a výkonné topy se subwoofery pro kapelu. Ke každé bedně přidáme stativ a kabely, cenu za den vidíte u každé položky.',
             'sets_heading' => 'Sety s reproduktory',
-            'sets' => ['set-proslovy-a-hudba', 'set-dj-party', 'set-ziva-kapela'],
+            'sets' => ['set-proslovy-a-hudba', 'set-dj-party', 'set-ziva-kapela', 'set-velky-zvuk-nexo'],
             'sections' => [
                 ['Na proslovy a hudbu z mobilu', 'Na raut, oslavu nebo prezentaci do zhruba 60 lidí stačí jedna aktivní bedna dB Technologies Opera 12 na stativu. Zapojíte do ní mobil, notebook nebo mikrofon.'],
                 ['Ven bez zásuvky', 'JBL EON ONE Compact hraje na baterii, takže se hodí na zahradu, k ohni nebo na krátký proslov venku.'],
                 ['Na tanec a DJ', 'Dvě větší bedny Opera 15 nebo Opera Reevo 212 utáhnou oslavu do zhruba 100 lidí. Na tanec s pořádnými basy přidejte subwoofer.'],
-                ['Pro kapelu a větší sál', 'Topy Nexo PS10 a PS15 se subwoofery MT18 půjčujeme v setu se zesilovačovým rackem. Pokryjí sál nebo stan pro 150 až 250 lidí.'],
+                ['Pro kapelu a větší sál', 'Topy Nexo PS10 se dvěma subwoofery MT18 půjčujeme v setu Živá kapela, pro sál nebo stan zhruba do 200 lidí. Na větší akci je set Velký zvuk Nexo: dva topy PS15 a čtyři subwoofery MT18.'],
             ],
             'products_heading' => 'Reproduktory a stativy',
             'products' => [
@@ -106,7 +106,7 @@ return [
                 'Nexo PS15R2 (2000W, 1x15"+1x3")',
                 'Subwoofer MT18',
                 'Konig&Meyer 21450 black',
-                'Gravity SP 5322 B',
+                'Konig&Meyer 213',
             ],
             'faq' => [
                 ['Kolik stojí pronájem reproduktoru?', 'Aktivní bedna dB Technologies Opera 12 stojí 500 Kč za den, set s bednou, stativem, bezdrátovým mikrofonem a mixpultem 950 Kč za den.'],

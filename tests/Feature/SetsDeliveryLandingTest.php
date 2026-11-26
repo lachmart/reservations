@@ -36,6 +36,7 @@ class SetsDeliveryLandingTest extends TestCase
         'Varytec LED Studio 150 2900K' => [250, 2],
         'DJI Mic 2' => [250, 1],
         'Shure SM58' => [100, 3],
+        'SPEAKON (Titanex 2x2,5mm + Neutrik) - 5m' => [10, 2],
     ];
 
     private function seedCatalog(): void
@@ -259,6 +260,45 @@ class SetsDeliveryLandingTest extends TestCase
         $sum = $band->bundleItems->sum(fn ($c) => (float) $c->price_per_day * (int) $c->pivot->amount);
         $this->assertSame(6280.0, $sum);
         $this->get(route('products.show', $band))->assertOk()->assertSee('ušetříte 590');
+    }
+
+    public function test_nexo_rack_joins_the_catalog_with_a_big_nexo_set(): void
+    {
+        $this->seedCatalog();
+        Product::where('name', 'Subwoofer MT18')->update(['price_per_day' => 500]);
+        $amps = Category::factory()->create(['name' => 'Zesilovače', 'slug' => 'zesilovace']);
+        $sety = Category::factory()->create(['name' => 'Sety', 'slug' => 'sety']);
+        $migration = require database_path('migrations/2026_11_26_000011_nexo_rack_and_big_nexo_set.php');
+        $migration->up();
+        $migration->up();
+
+        $rack = Product::where('name', 'Nexo rack')->sole();
+        $this->assertSame([1000.0, 1, $amps->id], [(float) $rack->price_per_day, (int) $rack->stock, $rack->category_id]);
+
+        $set = Product::where('slug', 'set-velky-zvuk-nexo')->sole();
+        $this->assertSame('Set Velký zvuk Nexo (2× PS15, 4× MT18)', $set->name);
+        $this->assertSame([6490.0, $sety->id], [(float) $set->price_per_day, $set->category_id]);
+        $this->assertEqualsCanonicalizing([
+            'Nexo PS15R2 (2000W, 1x15"+1x3")' => 2, 'Subwoofer MT18' => 4, 'Nexo rack' => 1, 'Amprack FP' => 1,
+            'SPEAKON (Titanex 2x2,5mm + Neutrik) - 10m' => 4, 'SPEAKON (Titanex 2x2,5mm + Neutrik) - 5m' => 2,
+        ], $set->bundleItems->mapWithKeys(fn ($c) => [$c->name => (int) $c->pivot->amount])->all());
+        $this->assertSame(7060.0, $set->bundleItems->sum(fn ($c) => (float) $c->price_per_day * (int) $c->pivot->amount));
+        $this->get(route('products.show', $set))->assertOk()->assertSee('ušetříte 570');
+    }
+
+    public function test_gravity_stand_is_renamed_to_km_213_and_the_old_url_redirects(): void
+    {
+        $this->seedCatalog();
+        $id = Product::where('name', 'Gravity SP 5322 B')->value('id');
+
+        $migration = require database_path('migrations/2026_11_26_000010_gravity_stand_becomes_km_213.php');
+        $migration->up();
+        $migration->up();
+
+        $stand = Product::find($id);
+        $this->assertSame(['Konig&Meyer 213', 'konigmeyer-213'], [$stand->name, $stand->slug]);
+        $this->assertStringContainsString('138–218 cm', $stand->description);
+        $this->get('/products/gravity-sp-5322-b')->assertStatus(301)->assertRedirect('/products/konigmeyer-213');
     }
 
     public function test_ceremony_set_swaps_the_akg_for_dji_lavaliers_and_a_wired_mic(): void

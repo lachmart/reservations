@@ -113,6 +113,21 @@ class ProductAdminPhotosTest extends TestCase
         $this->assertSame($mainBefore, [$single->fresh()->mainImageUrl(), $replaced->fresh()->mainImageUrl()]);
     }
 
+    public function test_opera_12_shows_the_front_photo_first(): void
+    {
+        $product = Product::factory()->create(['slug' => 'db-technologies-opera-12']);
+        foreach (['opera-12_back', 'opera-12_front'] as $name) {
+            $product->addMedia(UploadedFile::fake()->image("{$name}.jpg", 60, 90))->usingName($name)->toMediaCollection('product-images');
+        }
+        $product->media()->update(['order_column' => null]); // as on production: no stored order
+
+        (require database_path('migrations/2026_11_26_000009_opera_12_front_photo_first.php'))->up();
+
+        $gallery = $product->fresh()->getMedia('product-images');
+        $this->assertSame(['opera-12_front', 'opera-12_back'], $gallery->pluck('name')->all());
+        $this->assertSame($gallery->first()->getUrl(), $product->fresh()->mainImageUrl());
+    }
+
     public function test_api_lists_the_main_photo_and_gallery(): void
     {
         $product = Product::factory()->create(['price_per_day' => 100, 'stock' => 1]);
