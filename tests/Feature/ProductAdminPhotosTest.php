@@ -128,6 +128,21 @@ class ProductAdminPhotosTest extends TestCase
         $this->assertSame($gallery->first()->getUrl(), $product->fresh()->mainImageUrl());
     }
 
+    public function test_admin_can_edit_a_description_with_a_list(): void
+    {
+        // The rich editor syncs its content as a nested JSON tree; a list item's
+        // text sits at data.description.content.N.content.N.content.N.content.N.text,
+        // deeper than Livewire's default 10-level limit (the production error).
+        $this->actingAs(User::factory()->create());
+        $product = Product::factory()->create([
+            'description' => '<p>Obsahuje:</p><ul><li><p>Procesor Rane RPM 26</p></li></ul>',
+        ]);
+
+        Livewire::test(EditProduct::class, ['record' => $product->getKey()])
+            ->set('data.description.content.1.content.0.content.0.content.0.text', 'Procesor Rane RPM 26z')
+            ->assertHasNoErrors();
+    }
+
     public function test_api_lists_the_main_photo_and_gallery(): void
     {
         $product = Product::factory()->create(['price_per_day' => 100, 'stock' => 1]);
