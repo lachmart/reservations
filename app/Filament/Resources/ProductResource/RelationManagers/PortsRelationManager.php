@@ -34,6 +34,7 @@ class PortsRelationManager extends RelationManager
         return $table
             ->columns([
                 TextColumn::make('name')->label('Port Name'),
+                TextColumn::make('gender')->label('Gender'),
                 TextColumn::make('pivot.amount')->label('Amount'),
             ])
             ->headerActions([
@@ -41,7 +42,9 @@ class PortsRelationManager extends RelationManager
                     ->form([
                         Select::make('port_id')
                             ->label('Select Port')
-                            ->options(Port::all()->pluck('name', 'id'))
+                            ->options(fn () => Port::orderBy('name')->get()
+                                ->mapWithKeys(fn (Port $port) => [$port->id => "{$port->name} ({$port->gender->value})"]))
+                            ->searchable()
                             ->required(),
                         TextInput::make('amount')
                             ->numeric()
