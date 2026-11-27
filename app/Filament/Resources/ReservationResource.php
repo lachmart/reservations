@@ -54,12 +54,14 @@ class ReservationResource extends Resource
                     ->label('Delivery price (included in price)')
                     ->numeric()
                     ->suffix('CZK'),
+                // before()/after() find the other field inside the form's data;
+                // a plain 'before:end_date' rule did not, and every save failed.
                 Forms\Components\DateTimePicker::make('start_date')
                     ->required()
-                    ->rule('before:end_date'),
+                    ->before('end_date'),
                 Forms\Components\DateTimePicker::make('end_date')
                     ->required()
-                    ->rule('after:start_date'),
+                    ->after('start_date'),
                 Forms\Components\TextInput::make('price')
                     ->label('Price')
                     ->numeric()
@@ -74,7 +76,38 @@ class ReservationResource extends Resource
                     ->required(),
                 Forms\Components\Toggle::make('is_paid')
                     ->required(),
+                Forms\Components\Repeater::make('extra_items')
+                    ->label('Další věci ze skladu')
+                    ->helperText('Kabely, prodlužky, páska… Objeví se na výpůjčním listu, cenu ani sklad nemění.')
+                    ->table([
+                        Forms\Components\Repeater\TableColumn::make('Co'),
+                        Forms\Components\Repeater\TableColumn::make('Ks')->width('110px'),
+                    ])
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('amount')
+                            ->numeric()
+                            ->integer()
+                            ->minValue(1)
+                            ->default(1)
+                            ->required(),
+                    ])
+                    ->defaultItems(0)
+                    ->addActionLabel('Přidat věc')
+                    ->columnSpanFull(),
             ]);
+    }
+
+    /** Opens the reservation's rental sheet PDF in a new tab. */
+    public static function rentalSheetAction(): \Filament\Actions\Action
+    {
+        return \Filament\Actions\Action::make('rentalSheet')
+            ->label('Výpůjční list (PDF)')
+            ->icon('heroicon-o-clipboard-document-check')
+            ->url(fn (Reservation $record): string => route('filament.admin.rental-sheet', $record))
+            ->openUrlInNewTab();
     }
 
     public static function table(Table $table): Table
@@ -134,6 +167,7 @@ class ReservationResource extends Resource
             ->recordActions([
                 \Filament\Actions\ViewAction::make(),
                 \Filament\Actions\EditAction::make(),
+                static::rentalSheetAction()->label('Výpůjční list'),
             ])
             ->toolbarActions([
                 \Filament\Actions\BulkActionGroup::make([

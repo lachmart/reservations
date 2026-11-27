@@ -13,6 +13,7 @@ class EditReservation extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            ReservationResource::rentalSheetAction(),
             Actions\DeleteAction::make(),
         ];
     }

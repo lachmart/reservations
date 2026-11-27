@@ -32,6 +32,7 @@ class Reservation extends Model
         'delivery_price',
         'service',
         'source',
+        'extra_items',
     ];
 
     /**
@@ -49,6 +50,7 @@ class Reservation extends Model
         'delivery' => 'boolean',
         'delivery_price' => 'decimal:2',
         'service' => 'boolean',
+        'extra_items' => 'array',
     ];
 
     public function reservationItems(): HasMany

@@ -8,4 +8,12 @@ use Filament\Resources\Pages\ViewRecord;
 class ViewReservation extends ViewRecord
 {
     protected static string $resource = ReservationResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            ReservationResource::rentalSheetAction(),
+            \Filament\Actions\EditAction::make(),
+        ];
+    }
 }
